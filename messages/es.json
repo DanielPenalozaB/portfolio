@@ -1,0 +1,80 @@
+{
+	"nav": {
+		"home": "Inicio",
+		"projects": "Proyectos",
+		"services": "Servicios",
+		"contact": "Contacto",
+		"downloadCV": "Descargar CV",
+		"theme": {
+			"light": "Cambiar a Modo Claro",
+			"dark": "Cambiar a Modo Oscuro"
+		},
+		"lang": {
+			"selectedLanguage": "Idioma Seleccionado",
+			"selectLanguage": "Seleccionar Idioma"
+		}
+	},
+	"home": {
+		"metadata": {
+			"title": "John Doe | Portafolio de Desarrollador Full Stack",
+			"description": "Desarrollador Full Stack con experiencia en desarrollo web, aplicaciones móviles y soluciones digitales. Creando aplicaciones innovadoras y escalables con tecnologías modernas.",
+			"keywords": "desarrollador full stack, desarrollador web, ingeniero de software, desarrollador React, desarrollador Node.js, portafolio",
+			"openGraph": {
+				"title": "John Doe - Desarrollador Full Stack",
+				"description": "Construyendo aplicaciones web y móviles modernas con tecnologías de vanguardia",
+				"siteName": "Portafolio de John Doe",
+				"type": "website"
+			}
+		}
+	},
+	"projects": {
+		"metadata": {
+			"title": "Proyectos | Portafolio de Desarrollador Full Stack - John Doe",
+			"description": "Explora mi portafolio de proyectos full-stack con aplicaciones web, apps móviles y soluciones digitales. Descubre cómo resuelvo problemas reales con código.",
+			"keywords": "proyectos de desarrollo, aplicaciones web, aplicaciones móviles, proyectos full stack, portafolio de programación, proyectos tecnológicos",
+			"openGraph": {
+				"title": "Proyectos de Desarrollo - John Doe",
+				"description": "Colección de proyectos y soluciones innovadoras de desarrollo full-stack",
+				"siteName": "Portafolio de John Doe",
+				"type": "website"
+			}
+		}
+	},
+	"services": {
+		"metadata": {
+			"webDev": {
+				"title": "Servicios de Desarrollo Web | Desarrollador Full Stack - John Doe",
+				"description": "Servicios profesionales de desarrollo web incluyendo sitios web personalizados, aplicaciones web y soluciones de comercio electrónico. Experto en React, Node.js y tecnologías web modernas.",
+				"keywords": "desarrollo web, sitios web personalizados, aplicaciones web, desarrollo React, Node.js, soluciones de comercio electrónico",
+				"openGraph": {
+					"title": "Servicios de Desarrollo Web - John Doe",
+					"description": "Soluciones de desarrollo web personalizadas para negocios modernos",
+					"siteName": "Portafolio de John Doe",
+					"type": "website"
+				}
+			},
+			"mobileDev": {
+				"title": "Desarrollo de Aplicaciones Móviles | Desarrollador Full Stack - John Doe",
+				"description": "Desarrollo profesional de aplicaciones móviles para iOS y Android. Creación de aplicaciones nativas y multiplataforma con React Native y tecnologías móviles modernas.",
+				"keywords": "desarrollo de aplicaciones móviles, desarrollo iOS, desarrollo Android, React Native, aplicaciones multiplataforma",
+				"openGraph": {
+					"title": "Servicios de Desarrollo de Aplicaciones Móviles - John Doe",
+					"description": "Desarrollo profesional de aplicaciones móviles para plataformas iOS y Android",
+					"siteName": "Portafolio de John Doe",
+					"type": "website"
+				}
+			},
+			"consulting": {
+				"title": "Consultoría Técnica y Servicios de Diseño | Desarrollador Full Stack - John Doe",
+				"description": "Servicios expertos de consultoría técnica y diseño UI/UX. Ayudando a empresas a tomar decisiones tecnológicas informadas y crear interfaces hermosas y fáciles de usar.",
+				"keywords": "consultoría técnica, diseño UI/UX, arquitectura técnica, transformación digital, consultoría de software",
+				"openGraph": {
+					"title": "Servicios de Consultoría Técnica y Diseño - John Doe",
+					"description": "Soluciones profesionales de consultoría técnica y diseño UI/UX",
+					"siteName": "Portafolio de John Doe",
+					"type": "website"
+				}
+			}
+		}
+	}
+}
