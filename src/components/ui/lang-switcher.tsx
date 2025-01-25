@@ -60,7 +60,7 @@ export default function LangSwitcher() {
 				aria-haspopup="listbox"
 				aria-controls={dropdownId}
 				aria-labelledby={labelId}
-				className="flex w-full items-center gap-2 bg-light px-4 py-2 text-neutral-800 hover:bg-neutral-200 focus:ring-2 focus:ring-dark dark:bg-dark dark:text-neutral-200 dark:hover:bg-neutral-900 dark:focus:ring-light"
+				className="flex w-full items-center gap-2 bg-light px-4 py-2 !text-neutral-800 hover:bg-neutral-200 focus:ring-2 focus:ring-dark dark:bg-dark dark:!text-neutral-200 dark:hover:bg-neutral-900 dark:focus:ring-light"
 			>
 				<GlobeAltIcon className="h-6 w-6" aria-hidden="true" />
 				<span id={labelId} className="sr-only">{t('selectedLanguage')}</span>
@@ -107,7 +107,7 @@ function LanguageOption({ language, isSelected, isFocused, onSelect }: LanguageO
 			id={`language-option-${language.code}`}
 			role="option"
 			aria-selected={isSelected}
-			className={`transition-colors duration-150 rounded-lg ${isSelected ? 'bg-waikawa-200 dark:bg-waikawa-900 text-gray-900 dark:text-white' : '!text-neutral-700'} ${isFocused ? '!bg-neutral-200 dark:!bg-neutral-800 dark:text-neutral-400' : ''}`}
+			className={`transition-colors duration-150 rounded-lg ${isSelected ? 'bg-waikawa-200 dark:bg-waikawa-900 text-gray-900 dark:text-white' : 'text-neutral-500'} ${isFocused ? '!bg-neutral-200 text-neutral-200 dark:!bg-neutral-800 dark:text-neutral-400' : 'hover:!bg-neutral-200 hover:text-neutral-600 hover:dark:!bg-neutral-800 hover:dark:text-neutral-400'}`}
 		>
 			<button
 				onClick={() => onSelect(language.code)}

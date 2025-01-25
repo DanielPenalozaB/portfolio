@@ -10,7 +10,7 @@ export default function Nav() {
 	const t = useTranslations('nav');
 
 	return (
-		<nav className="flex w-full items-center justify-between px-24 py-10 text-neutral-800 dark:text-neutral-200">
+		<nav className="z-20 flex w-full items-center justify-between px-24 py-10 text-neutral-800 dark:text-neutral-200">
 			<div className="flex items-center gap-10">
 				<span className='font-courier-prime'>Daniel Pe&ntilde;aloza</span>
 				<div className="flex items-center gap-4">

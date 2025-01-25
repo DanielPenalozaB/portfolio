@@ -1,4 +1,5 @@
 import { LoaderIcon } from "@/assets/svg";
+import Link from "next/link";
 import { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
 
 const variantStyles = {
@@ -24,6 +25,7 @@ interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonE
 	isDisabled?: boolean;
 	leftIcon?: React.ReactNode;
 	rightIcon?: React.ReactNode;
+	href?: string;
 }
 
 export default function Button({
@@ -35,6 +37,7 @@ export default function Button({
 	className = "",
 	leftIcon,
 	rightIcon,
+	href,
 	...props
 }: ButtonProps) {
 	const baseStyles = "inline-flex items-center gap-2 justify-center font-medium rounded-lg transition-colors duration-200 focus:outline-none disabled:cursor-not-allowed";
@@ -42,6 +45,28 @@ export default function Button({
 	if (typeof children === "string") {
 		props.title = props.title || children.toString()
 	};
+
+	if (href) {
+		return (
+			<Link
+				href={href}
+				className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+				title={props.title}
+				rel="noopener noreferrer"
+			>
+				{isLoading && (
+					<LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+				)}
+				{!isLoading && leftIcon && (
+					<>{leftIcon}</>
+				)}
+				{children}
+				{!isLoading && rightIcon && (
+					<>{rightIcon}</>
+				)}
+			</Link>
+		);
+	}
 
 	return (
 		<button

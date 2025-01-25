@@ -1,4 +1,9 @@
-import Nav from "@/components/nav";
+import Footer from "@/components/home/footer";
+import Hero from "@/components/home/hero";
+import Projects from "@/components/home/projects";
+import Services from "@/components/home/services";
+import Testimonials from "@/components/home/testimonials";
+import Nav from "@/components/ui/nav";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 type PageParams = {
@@ -24,12 +29,16 @@ export async function generateMetadata({ params }: PageParams) {
 
 export default async function Home({ params }: PageParams) {
 	const { locale } = await params;
-
 	setRequestLocale(locale);
 
 	return (
-		<div className="flex min-h-screen flex-col items-center justify-center">
+		<div className="flex min-h-screen flex-col items-center justify-center overflow-x-hidden">
 			<Nav />
+			<Hero />
+			<Services />
+			<Projects />
+			<Testimonials />
+			<Footer />
 		</div>
 	);
 }

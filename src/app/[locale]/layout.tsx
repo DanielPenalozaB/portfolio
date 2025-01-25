@@ -1,20 +1,16 @@
+import { routing } from "@/i18n/routing";
 import type { Metadata } from "next";
-import { Courier_Prime, Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import Providers from "./providers";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
+import { Courier_Prime, Inter } from "next/font/google";
 import { notFound } from "next/navigation";
-import { routing } from "@/i18n/routing";
+import "./globals.css";
+import Providers from "./providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
+  display: 'swap',
 });
 
 export const courierPrime = Courier_Prime({
@@ -62,7 +58,7 @@ export default async function RootLayout(props: Readonly<Props>) {
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${courierPrime.variable} antialiased bg-light dark:bg-dark`}
+        className={`${inter.variable} ${courierPrime.variable} font-sans antialiased bg-light dark:bg-dark`}
       >
         <NextIntlClientProvider messages={messages}>
           <Providers>{props.children}</Providers>

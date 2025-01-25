@@ -25,6 +25,28 @@
 				"siteName": "Portafolio de John Doe",
 				"type": "website"
 			}
+		},
+		"hero": {
+			"title": "Desarrollador <mark>Fullstack</mark> | Artesano Digital",
+			"description": "Soy Daniel Peñaloza, transformando ideas en experiencias digitales perfectas a través del desarrollo web integral."
+		},
+		"services": {
+			"web": {
+				"title": "Desarrollo Web",
+				"description": "Creación de sitios web rápidos, responsivos y fáciles de usar, diseñados para tu marca. Desde diseños elegantes hasta funcionalidades potentes, hago realidad tu visión en línea."
+			},
+			"mobile": {
+				"title": "Desarrollo de Aplicaciones Móviles",
+				"description": "Construyo aplicaciones móviles intuitivas y de alto rendimiento para iOS y Android. Transformo ideas en experiencias digitales fluidas que los usuarios adoran."
+			},
+			"consulting": {
+				"title": "Consultoría",
+				"description": "Guía experta para optimizar tu estrategia digital. Desde soluciones tecnológicas hasta estrategias de crecimiento, te ayudo a tomar decisiones más inteligentes para tu negocio."
+			},
+			"design": {
+				"title": "Diseño",
+				"description": "Creación de diseños visualmente impactantes y funcionales que cautivan y convierten. Ya sea UI/UX o branding, me aseguro de que tus visuals dejen una impresión duradera."
+			}
 		}
 	},
 	"projects": {

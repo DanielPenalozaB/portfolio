@@ -25,6 +25,28 @@
 				"siteName": "Daniel Peñaloza Portfolio",
 				"type": "website"
 			}
+		},
+		"hero": {
+			"title": "<mark>Fullstack</mark> Developer | Digital Craftsman",
+			"description": "I'm Daniel Peñaloza, turning ideas into seamless digital experiences through end-to-end web development."
+		},
+		"services": {
+			"web": {
+				"title": "Web Development",
+				"description": "Crafting fast, responsive, and user-friendly websites tailored to your brand. From sleek designs to powerful functionality, I bring your online vision to life."
+			},
+			"mobile": {
+				"title": "Mobile App Development",
+				"description": "Building intuitive, high-performance mobile apps for iOS and Android. Transforming ideas into seamless digital experiences that users love."
+			},
+			"consulting": {
+				"title": "Consulting",
+				"description": "Expert guidance to streamline your digital strategy. From tech solutions to growth hacks, I help you make smarter decisions for your business."
+			},
+			"design": {
+				"title": "Design",
+				"description": "Creating visually stunning and functional designs that captivate and convert. Whether it’s UI/UX or branding, I ensure your visuals leave a lasting impression."
+			}
 		}
 	},
 	"projects": {
