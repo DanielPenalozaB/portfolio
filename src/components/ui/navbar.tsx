@@ -78,7 +78,7 @@ export default function Navbar() {
                   key={item.name}
                   href={item.href}
                   title={item.name}
-                  className="hover:text-primary flex items-center justify-center p-2 font-medium text-neutral-500 transition-colors hover:text-purple-400"
+                  className="flex items-center justify-center p-2 font-medium text-neutral-500 transition-colors hover:text-purple-400"
                 >
                   {item.name}
                 </Link>
@@ -103,7 +103,7 @@ export default function Navbar() {
                   key={item.name}
                   href={item.href}
                   title={item.name}
-                  className="hover:text-primary flex items-center justify-center p-2 text-lg font-medium text-neutral-500 transition-colors hover:text-purple-400"
+                  className="flex items-center justify-center p-2 text-lg font-medium text-neutral-500 transition-colors hover:text-purple-400"
                   onClick={() => {
                     setIsMenuOpen(false);
                     document.body.style.overflow = 'auto';
