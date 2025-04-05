@@ -14,7 +14,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
+      setScrolled(window.scrollY > 1);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -77,7 +77,8 @@ export default function Navbar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="hover:text-primary flex items-center justify-center p-2 font-medium text-neutral-800 transition-colors hover:text-purple-800"
+                  title={item.name}
+                  className="hover:text-primary flex items-center justify-center p-2 font-medium text-neutral-500 transition-colors hover:text-purple-400"
                 >
                   {item.name}
                 </Link>
@@ -101,7 +102,8 @@ export default function Navbar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="hover:text-primary flex items-center justify-center p-2 text-lg font-medium text-neutral-800 transition-colors hover:text-purple-800"
+                  title={item.name}
+                  className="hover:text-primary flex items-center justify-center p-2 text-lg font-medium text-neutral-500 transition-colors hover:text-purple-400"
                   onClick={() => {
                     setIsMenuOpen(false);
                     document.body.style.overflow = 'auto';
