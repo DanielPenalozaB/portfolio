@@ -1,113 +1,176 @@
+import { defineConfig, globalIgnores } from "eslint/config";
+import typescriptEslint from "@typescript-eslint/eslint-plugin";
+import globals from "globals";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
+    baseDirectory: __dirname,
+    recommendedConfig: js.configs.recommended,
+    allConfig: js.configs.all
 });
 
-const eslintConfig = [
-  ...compat.extends(
-    "next/core-web-vitals",
-    "next/typescript"
-  ),
-  {
-    files: ["**/*.{js,jsx,ts,tsx}"],
+export default defineConfig([globalIgnores(["**/dist/"]), {
+    extends: compat.extends("eslint:recommended", "next", "plugin:@typescript-eslint/recommended"),
+
+    plugins: {
+        "@typescript-eslint": typescriptEslint,
+    },
+
+    languageOptions: {
+        globals: {
+            ...globals.browser,
+            React: true,
+            JSX: "readonly",
+        },
+
+        ecmaVersion: "latest",
+        sourceType: "module",
+
+        parserOptions: {
+            parser: "@typescript-eslint/parser",
+        },
+    },
+
     rules: {
-      // Indentation and spacing rules
-      "indent": ["error", 2, {
-        "SwitchCase": 1,
-        "VariableDeclarator": 1,
-        "outerIIFEBody": 1,
-        "MemberExpression": 1,
-        "FunctionDeclaration": { "parameters": 1, "body": 1 },
-        "FunctionExpression": { "parameters": 1, "body": 1 },
-        "CallExpression": { "arguments": 1 },
-        "ArrayExpression": 1,
-        "ObjectExpression": 1,
-        "ImportDeclaration": 1,
-        "flatTernaryExpressions": false,
-        "ignoreComments": false
-      }],
-      "no-tabs": "off", // Allow tabs
-      "no-mixed-spaces-and-tabs": ["error", "smart-tabs"], // Allow smart tabs
+        "@next/next/no-img-element": "off",
+        "array-bracket-newline": ["error", "consistent"],
 
-      // React & Next.js specific rules
-      "react/react-in-jsx-scope": "off",
-      "react/prop-types": "off",
-      "react/jsx-props-no-spreading": "error",
-      "react/jsx-indent": ["error", 2], // JSX indentation
-      "react/jsx-indent-props": ["error", 2], // JSX props indentation
-      "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "warn",
-      "@next/next/no-img-element": "error",
-      "@next/next/no-html-link-for-pages": "error",
+        "array-bracket-spacing": ["error", "always", {
+            objectsInArrays: true,
+            arraysInArrays: true,
+        }],
 
-      // TypeScript specific rules
-      "@typescript-eslint/no-unused-vars": ["error", {
-        "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_"
-      }],
-      "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/explicit-module-boundary-types": "off",
-      "@typescript-eslint/no-non-null-assertion": "error",
-      "@typescript-eslint/indent": ["error", 2], // TypeScript indentation
+        "arrow-body-style": ["error", "as-needed"],
+        "arrow-parens": ["error", "always"],
+        "brace-style": ["error", "1tbs"],
+        "comma-dangle": ["error", "never"],
+        eqeqeq: ["error"],
 
-      // Import rules
-      "import/prefer-default-export": "off",
-      "import/no-default-export": "off",
-      "import/order": ["error", {
-        "groups": [
-          ["builtin", "external"],
-          "internal",
-          ["parent", "sibling", "index"]
-        ],
-        "newlines-between": "always",
-        "alphabetize": {
-          "order": "asc",
-          "caseInsensitive": true
-        }
-      }],
+        "func-style": ["error", "declaration", {
+            allowArrowFunctions: true,
+        }],
 
-      // Code style
-      "no-console": ["warn", { "allow": ["warn", "error"] }],
-      "no-debugger": "error",
-      "no-unused-vars": "off",
-      "prefer-const": "error",
-      "no-var": "error",
-      "eqeqeq": ["error", "always"],
-      "curly": ["error", "all"],
-      "padding-line-between-statements": [
-        "error",
-        { "blankLine": "always", "prev": "*", "next": "return" },
-        { "blankLine": "always", "prev": ["const", "let", "var"], "next": "*"},
-        { "blankLine": "any", "prev": ["const", "let", "var"], "next": ["const", "let", "var"]}
-      ],
+        "function-paren-newline": ["error", "multiline"],
+        "implicit-arrow-linebreak": ["error", "beside"],
 
-      // Accessibility
-      "jsx-a11y/alt-text": "error",
-      "jsx-a11y/aria-props": "error",
-      "jsx-a11y/aria-proptypes": "error",
-      "jsx-a11y/aria-unsupported-elements": "error",
-      "jsx-a11y/role-has-required-aria-props": "error",
+        indent: ["error", 2, {
+            SwitchCase: 1,
+        }],
 
-      // Security
-      "react/no-danger": "error",
-      "@next/next/no-script-in-document": "error",
-    }
-  },
-  {
-    // Specific rules for test files
-    files: ["**/*.test.{js,jsx,ts,tsx}", "**/*.spec.{js,jsx,ts,tsx}"],
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-      "react/jsx-props-no-spreading": "off",
-    }
-  }
-];
+        "keyword-spacing": ["error", {
+            before: true,
+        }],
 
-export default eslintConfig;
+        "linebreak-style": ["error", "unix"],
+
+        "max-len": ["error", {
+            code: 180,
+            tabWidth: 2,
+            ignoreUrls: true,
+            ignoreStrings: true,
+            ignoreTemplateLiterals: true,
+            ignoreRegExpLiterals: true,
+        }],
+
+        "no-confusing-arrow": ["error"],
+        "no-debugger": ["warn"],
+        "no-else-return": ["error"],
+        "no-empty-function": ["error"],
+        "no-extra-semi": ["error"],
+        "no-lonely-if": ["error"],
+        "no-loop-func": ["error"],
+        "no-multi-assign": ["error"],
+        "no-param-reassign": ["error"],
+        "no-sequences": ["error"],
+        "no-trailing-spaces": ["error"],
+        "no-undef": ["error"],
+        "no-useless-concat": ["error"],
+        "no-var": ["error"],
+        "object-curly-spacing": ["error", "always"],
+        "object-shorthand": ["error", "methods"],
+        "one-var": ["error", "never"],
+
+        "operator-linebreak": ["error", "before", {
+            overrides: {
+                "=": "none",
+            },
+        }],
+
+        "padded-blocks": ["error", "never"],
+
+        "padding-line-between-statements": ["error", {
+            blankLine: "always",
+            prev: "*",
+            next: "multiline-block-like",
+        }, {
+            blankLine: "always",
+            prev: "multiline-block-like",
+            next: "*",
+        }],
+
+        "prefer-arrow-callback": ["error"],
+
+        "prefer-const": ["error", {
+            destructuring: "any",
+            ignoreReadBeforeAssign: false,
+        }],
+
+        "prefer-object-spread": ["error"],
+        "prefer-template": ["error"],
+        quotes: ["error", "single"],
+
+        "semi-spacing": ["error", {
+            before: false,
+            after: true,
+        }],
+
+        semi: ["error", "always"],
+        "space-before-blocks": ["error", "always"],
+
+        "space-before-function-paren": ["error", {
+            anonymous: "always",
+            named: "never",
+            asyncArrow: "always",
+        }],
+
+        "space-in-parens": ["error", "never"],
+
+        "switch-colon-spacing": ["error", {
+            after: true,
+            before: false,
+        }],
+
+        "no-multiple-empty-lines": ["error", {
+            max: 1,
+            maxEOF: 1,
+        }],
+
+        "no-unneeded-ternary": ["error"],
+        "no-promise-executor-return": ["error"],
+        "no-self-compare": ["error"],
+        "no-unmodified-loop-condition": ["error"],
+        "no-unreachable-loop": ["error"],
+        "no-new": ["error"],
+        "no-await-in-loop": ["error"],
+        "no-constructor-return": ["error"],
+        "no-extra-bind": ["error"],
+        "no-extend-native": ["error"],
+        "no-implicit-coercion": ["error"],
+        "no-label-var": ["error"],
+        "no-return-assign": ["error"],
+
+        "no-unused-expressions": ["error", {
+            enforceForJSX: true,
+            allowTaggedTemplates: true,
+        }],
+
+        "operator-assignment": ["error"],
+        yoda: ["error"],
+        "no-nested-ternary": ["off"],
+    },
+}]);
