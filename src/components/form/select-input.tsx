@@ -200,7 +200,7 @@ export default function SelectInput({
   }, [ value ]);
 
   // Base styles
-  const baseClassName = 'flex h-9 w-full rounded-md border border-neutral-300 bg-transparent px-3 py-1 text-base shadow-sm transition-colors placeholder:text-neutral-400 focus-visible:border-calypso-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm';
+  const baseClassName = 'flex h-9 w-full rounded-md border border-neutral-300 bg-transparent px-3 py-1 text-base shadow-sm transition-colors placeholder:text-neutral-400 focus-visible:border-violet-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm';
   const selectClassName = className ? `${baseClassName} ${className}` : baseClassName;
 
   return (

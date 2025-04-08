@@ -3,10 +3,10 @@ import { ButtonHTMLAttributes, DetailedHTMLProps } from 'react';
 import { LoaderIcon } from '../icons/loader';
 
 const variantStyles = {
-  fill: 'bg-calypso text-white hover:bg-calypso-400 focus:bg-calypso-600 disabled:bg-neutral-300 disabled:text-neutral-500',
-  outline: 'border border-calypso text-calypso hover:bg-calypso-100 dark:hover:bg-calypso-900 dark:border-calypso-900 focus:bg-calypso-200 disabled:border-calypso-300 disabled:text-calypso-300 dark:disabled:border-calypso-900 dark:disabled:text-calypso-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent',
-  shades: 'bg-light text-calypso hover:bg-calypso-100 dark:bg-dark dark:hover:bg-calypso-900 disabled:border-calypso-300 disabled:text-calypso-300 dark:disabled:border-calypso-900 dark:disabled:text-calypso-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent',
-  text: 'text-calypso hover:text-calypso-400 focus:text-calypso-600 disabled:text-calypso-300'
+  fill: 'bg-violet-500 text-white hover:bg-violet-400 focus:bg-violet-600 disabled:bg-neutral-300 disabled:text-neutral-500',
+  outline: 'border border-violet-500 text-violet-500 hover:bg-violet-100 dark:hover:bg-violet-900 dark:border-violet-900 focus:bg-violet-200 disabled:border-violet-300 disabled:text-violet-300 dark:disabled:border-violet-900 dark:disabled:text-violet-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent',
+  shades: 'bg-neutral-50 text-violet-500 hover:bg-violet-100 dark:bg-dark dark:hover:bg-violet-900 disabled:border-violet-300 disabled:text-violet-300 dark:disabled:border-violet-900 dark:disabled:text-violet-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent',
+  text: 'text-violet-500hover:text-violet-400 focus:text-violet-600 disabled:text-violet-300'
 };
 
 const sizeStyles = {
@@ -39,7 +39,7 @@ export default function Button({
   href,
   ...props
 }: ButtonProps) {
-  const className = 'inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg font-medium transition-colors duration-200 focus:outline-none disabled:cursor-not-allowed';
+  const className = 'inline-flex cursor-pointer select-none items-center justify-center gap-2 rounded-lg font-medium transition-colors duration-200 focus:outline-none disabled:cursor-not-allowed';
 
   const { type = 'button', ...restProps } = props;
 

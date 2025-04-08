@@ -1,17 +1,21 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Syne, Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/ui/navbar';
 import Footer from '@/components/ui/footer';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: [ 'latin' ]
+const syne = Syne({
+  subsets: [ 'latin' ],
+  variable: '--font-syne',
+  weight: [ '400', '500', '600', '700', '800' ],
+  display: 'swap'
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: [ 'latin' ]
+const inter = Inter({
+  subsets: [ 'latin' ],
+  variable: '--font-inter',
+  weight: [ '400', '500', '600', '700', '800' ],
+  display: 'swap'
 });
 
 export const metadata: Metadata = {
@@ -25,10 +29,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-800`}
-      >
+    <html lang="en" className={`${syne.variable} ${inter.variable}`}>
+      <body className="bg-neutral-800 font-sans antialiased">
         <Navbar />
         {children}
         <Footer />
