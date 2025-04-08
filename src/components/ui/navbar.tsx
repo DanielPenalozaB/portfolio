@@ -1,6 +1,5 @@
 'use client';
 
-import cn from '@/utils/cn';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Bars3Icon } from '../icons/bars3';
@@ -32,10 +31,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={cn(
-          'sticky flex justify-center top-0 z-50 w-full transition-all duration-200 ease-out border-b',
-          isMenuOpen ? 'bg-neutral-50/60 backdrop-blur-sm' : 'bg-transparent'
-        )}
+        className='sticky top-0 z-50 flex w-full justify-center border-b bg-neutral-50/60 backdrop-blur-sm transition-all duration-200 ease-out'
       >
         <div className="container flex h-20 w-full items-center justify-between px-8 transition-all duration-200 ease-in-out">
           <Link href="/" className="text-xl font-bold tracking-tighter transition-colors hover:text-neutral-800">
@@ -67,15 +63,7 @@ export default function Navbar() {
                   key={item.name}
                   href={item.href}
                   title={item.name}
-<<<<<<< HEAD
-<<<<<<< HEAD
                   className="flex items-center justify-center p-2 font-medium text-neutral-500 transition-colors hover:text-purple-400"
-=======
-                  className="hover:text-primary flex items-center justify-center p-2 font-medium text-neutral-500 transition-colors hover:text-purple-400"
->>>>>>> 0386ff9 (POR-3 (feat): Create footer)
-=======
-                  className="flex items-center justify-center p-2 font-medium text-neutral-500 transition-colors hover:text-purple-400"
->>>>>>> 823dd68 (POR-3 (refactor): Remove unused class)
                 >
                   {item.name}
                 </Link>
@@ -100,15 +88,7 @@ export default function Navbar() {
                   key={item.name}
                   href={item.href}
                   title={item.name}
-<<<<<<< HEAD
-<<<<<<< HEAD
                   className="flex items-center justify-center p-2 text-lg font-medium text-neutral-500 transition-colors hover:text-purple-400"
-=======
-                  className="hover:text-primary flex items-center justify-center p-2 text-lg font-medium text-neutral-500 transition-colors hover:text-purple-400"
->>>>>>> 0386ff9 (POR-3 (feat): Create footer)
-=======
-                  className="flex items-center justify-center p-2 text-lg font-medium text-neutral-500 transition-colors hover:text-purple-400"
->>>>>>> 823dd68 (POR-3 (refactor): Remove unused class)
                   onClick={() => {
                     setIsMenuOpen(false);
                     document.body.style.overflow = 'auto';
