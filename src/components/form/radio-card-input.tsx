@@ -61,7 +61,7 @@ export default function RadioCardInput({
             htmlFor={optionId}
             className={cn(
               'relative flex cursor-pointer rounded-lg border p-4',
-              isSelected ? 'outline outline-calypso-500 border-calypso-500 bg-calypso-50' : 'border-neutral-300 hover:bg-neutral-50',
+              isSelected ? 'outline outline-violet-500 border-violet-500 bg-violet-50' : 'border-neutral-300 hover:bg-neutral-50',
               disabled ? 'cursor-not-allowed opacity-50' : ''
             )}
           >
@@ -84,11 +84,11 @@ export default function RadioCardInput({
                   <div
                     className={cn(
                       'flex h-4 w-4 items-center justify-center rounded-full border',
-                      isSelected ? 'border-2 border-calypso-500' : 'border-neutral-300'
+                      isSelected ? 'border-2 border-violet-500' : 'border-neutral-300'
                     )}
                   >
                     {isSelected && (
-                      <div className="h-2 w-2 rounded-full bg-calypso-500"></div>
+                      <div className="h-2 w-2 rounded-full bg-violet-500"></div>
                     )}
                   </div>
                 </div>

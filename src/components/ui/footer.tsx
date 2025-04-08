@@ -15,7 +15,7 @@ export default function Footer() {
               Daniel Pe&ntilde;aloza
             </Link>
             <p className="text-center text-sm font-light text-neutral-500 md:text-left">
-              Full Stack Developer
+              Full Stack & UX/UI Developer
             </p>
           </div>
 
@@ -25,7 +25,7 @@ export default function Footer() {
                 href="https://github.com/DanielPenalozaB"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-neutral-500 transition-colors hover:text-purple-400"
+                className="text-neutral-500 transition-colors hover:text-violet-400"
                 aria-label="GitHub"
                 title='GitHub'
               >
@@ -35,7 +35,7 @@ export default function Footer() {
                 href="https://www.linkedin.com/in/juan-daniel-pe%C3%B1aloza-brito-85b740251/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-neutral-500 transition-colors hover:text-purple-400"
+                className="text-neutral-500 transition-colors hover:text-violet-400"
                 aria-label="LinkedIn"
                 title='LinkedIn'
               >
@@ -43,7 +43,7 @@ export default function Footer() {
               </Link>
               <Link
                 href="mailto:juandanielpenalozabrito@gmail.com"
-                className="text-neutral-500 transition-colors hover:text-purple-400"
+                className="text-neutral-500 transition-colors hover:text-violet-400"
                 aria-label="Email"
                 title='Email'
               >

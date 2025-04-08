@@ -15,3 +15,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-syne);
   font-weight: 600;
 }
+
+p {
+  @apply selection:bg-violet-200! selection:text-violet-400;
+}

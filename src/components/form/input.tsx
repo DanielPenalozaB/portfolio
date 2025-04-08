@@ -49,8 +49,8 @@ export default function Input(props: InputProps) {
   }
 
   // Define base class names
-  const baseInputClassName = 'flex h-9 w-full rounded-md border border-neutral-300 bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-neutral-800 placeholder:text-neutral-400 focus-visible:border-calypso-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm';
-  const baseTextareaClassName = 'flex min-h-[80px] w-full rounded-md border border-neutral-300 bg-transparent px-3 py-2 text-base shadow-sm transition-colors placeholder:text-neutral-400 focus-visible:border-calypso-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm';
+  const baseInputClassName = 'flex h-9 w-full rounded-md border border-neutral-300 bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-neutral-800 placeholder:text-neutral-400 focus-visible:border-violet-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm';
+  const baseTextareaClassName = 'flex min-h-[80px] w-full rounded-md border border-neutral-300 bg-transparent px-3 py-2 text-base shadow-sm transition-colors placeholder:text-neutral-400 focus-visible:border-violet-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm';
 
   // Use cn to conditionally add custom classes
   const inputClassName = cn(baseInputClassName, restProps.className);
