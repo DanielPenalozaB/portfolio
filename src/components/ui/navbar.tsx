@@ -1,25 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Bars3Icon } from '../icons/bars3';
-import { XMarkIcon } from '../icons/xmark';
-import { SunIcon } from '../icons/sun';
-import Button from './button';
 import cn from '@/utils/cn';
+import Link from 'next/link';
+import { useState } from 'react';
+import { Bars3Icon } from '../icons/bars3';
+import { SunIcon } from '../icons/sun';
+import { XMarkIcon } from '../icons/xmark';
+import Button from './button';
 
 export default function Navbar() {
   const [ isMenuOpen, setIsMenuOpen ] = useState(false);
-  const [ scrolled, setScrolled ] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -44,8 +34,7 @@ export default function Navbar() {
       <header
         className={cn(
           'sticky flex justify-center top-0 z-50 w-full transition-all duration-200 ease-out border-b',
-          scrolled || isMenuOpen ? 'bg-neutral-50/60 backdrop-blur-sm' : 'bg-transparent',
-          scrolled ? 'border-neutral-300' : 'border-transparent'
+          isMenuOpen ? 'bg-neutral-50/60 backdrop-blur-sm' : 'bg-transparent'
         )}
       >
         <div className="container flex h-20 w-full items-center justify-between px-8 transition-all duration-200 ease-in-out">
@@ -78,7 +67,15 @@ export default function Navbar() {
                   key={item.name}
                   href={item.href}
                   title={item.name}
+<<<<<<< HEAD
+<<<<<<< HEAD
                   className="flex items-center justify-center p-2 font-medium text-neutral-500 transition-colors hover:text-purple-400"
+=======
+                  className="hover:text-primary flex items-center justify-center p-2 font-medium text-neutral-500 transition-colors hover:text-purple-400"
+>>>>>>> 0386ff9 (POR-3 (feat): Create footer)
+=======
+                  className="flex items-center justify-center p-2 font-medium text-neutral-500 transition-colors hover:text-purple-400"
+>>>>>>> 823dd68 (POR-3 (refactor): Remove unused class)
                 >
                   {item.name}
                 </Link>
@@ -103,7 +100,15 @@ export default function Navbar() {
                   key={item.name}
                   href={item.href}
                   title={item.name}
+<<<<<<< HEAD
+<<<<<<< HEAD
                   className="flex items-center justify-center p-2 text-lg font-medium text-neutral-500 transition-colors hover:text-purple-400"
+=======
+                  className="hover:text-primary flex items-center justify-center p-2 text-lg font-medium text-neutral-500 transition-colors hover:text-purple-400"
+>>>>>>> 0386ff9 (POR-3 (feat): Create footer)
+=======
+                  className="flex items-center justify-center p-2 text-lg font-medium text-neutral-500 transition-colors hover:text-purple-400"
+>>>>>>> 823dd68 (POR-3 (refactor): Remove unused class)
                   onClick={() => {
                     setIsMenuOpen(false);
                     document.body.style.overflow = 'auto';
