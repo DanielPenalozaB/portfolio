@@ -220,10 +220,10 @@ export default function Skills() {
           >
             <tool.icon className="h-6 w-6 text-violet-500" />
             <h3 className="line-clamp-1 font-semibold text-neutral-800">{tool.name}</h3>
-            <div className='flex items-center justify-center gap-2'>
-              <p className="text-sm text-neutral-600">{tool.years || (tool.startDate ? getExperienceString(tool.startDate) : '')}</p>
+            <div className='flex items-center justify-center gap-2 text-sm sm:text-xs'>
+              <p className="text-neutral-600">{tool.years || (tool.startDate ? getExperienceString(tool.startDate) : '')}</p>
               {tool.projects && (
-                <p className="text-sm text-neutral-600">{tool.projects} projects</p>
+                <p className="text-neutral-600">{tool.projects} projects</p>
               )}
             </div>
           </div>
