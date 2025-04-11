@@ -1,14 +1,32 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Bars3Icon } from '../icons/bars3';
 import { SunIcon } from '../icons/sun';
 import { XMarkIcon } from '../icons/xmark';
 import Button from './button';
+import cn from '@/utils/cn';
 
 export default function Navbar() {
   const [ isMenuOpen, setIsMenuOpen ] = useState(false);
+  const [ isScrolled, setIsScrolled ] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -29,7 +47,10 @@ export default function Navbar() {
   return (
     <>
       <header
-        className='sticky top-0 z-50 flex w-full justify-center bg-neutral-50/20 backdrop-blur-md transition-all duration-200 ease-out'
+        className={cn(
+          'sticky top-0 z-50 flex w-full justify-center transition-all duration-200 ease-out',
+          isScrolled && 'bg-neutral-50/60 backdrop-blur-md'
+        )}
       >
         <div className="container flex h-20 w-full items-center justify-between px-8 transition-all duration-200 ease-in-out">
           <Link href="/" className="text-xl font-bold tracking-tighter text-neutral-600 transition-colors hover:text-violet-400">
