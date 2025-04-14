@@ -1,3 +1,4 @@
+import Experience from '@/components/experience';
 import Hero from '@/components/hero';
 import Projects from '@/components/projects';
 import Services from '@/components/services';
@@ -10,6 +11,7 @@ export default function Home() {
       <Projects />
       <Skills />
       <Services />
+      <Experience />
     </>
   );
 }
