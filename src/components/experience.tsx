@@ -75,7 +75,7 @@ export default function Experience() {
                 {exp.startDate} - {exp.endDate}
               </div>
               <div className='flex flex-col'>
-                <h3 className="bg-gradient-to-r from-violet-500 to-fuchsia-500 bg-clip-text text-2xl font-semibold text-transparent">{exp.jobTitle}</h3>
+                <h3 className="w-fit bg-gradient-to-r from-violet-500 to-fuchsia-500 bg-clip-text text-2xl font-semibold text-transparent">{exp.jobTitle}</h3>
                 <Link href={exp.companyUrl} target='_blank' title={exp.company} className='flex w-fit items-center gap-2 hover:underline'>
                   <exp.companyLogo className="h-5 w-5" />
                   <p className='text-neutral-600'>{exp.company}</p>
