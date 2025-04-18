@@ -87,7 +87,7 @@ export default function Testimonials() {
                 <QuoteMarkIcon className="h-8 w-8 text-violet-600" />
               </div>
               <div className="pt-4">
-                <p className="text-lg font-light text-neutral-500">{testimonials[currentIndex].content}</p>
+                <p className="text-neutral-500">{testimonials[currentIndex].content}</p>
               </div>
             </div>
           </div>
