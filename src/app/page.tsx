@@ -1,6 +1,7 @@
 import EducationCertifications from '@/components/education-certifications';
 import Experience from '@/components/experience';
 import Hero from '@/components/hero';
+import LetsWorkTogether from '@/components/lets-work-together';
 import Projects from '@/components/projects';
 import Services from '@/components/services';
 import Skills from '@/components/skills';
@@ -16,6 +17,7 @@ export default function Home() {
       <Experience />
       <EducationCertifications />
       <Testimonials />
+      <LetsWorkTogether />
     </>
   );
 }

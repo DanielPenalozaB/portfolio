@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { GithubIcon } from '../icons/github';
 import { LinkedInIcon } from '../icons/linkedin';
 import { EnvelopeIcon } from '../icons/envelope';
+import FiverrIcon from '../icons/fiverr';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -40,6 +41,16 @@ export default function Footer() {
                 title='LinkedIn'
               >
                 <LinkedInIcon className="h-5 w-5" />
+              </Link>
+              <Link
+                href="https://www.fiverr.com/daniel_penaloza?public_mode=true/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-neutral-500 transition-colors hover:text-violet-400"
+                aria-label="Fiverr"
+                title='Fiverr'
+              >
+                <FiverrIcon className="h-5 w-5" />
               </Link>
               <Link
                 href="mailto:juandanielpenalozabrito@gmail.com"
