@@ -1,7 +1,7 @@
 import React from 'react';
 import SelectInput from './select-input';
 import RadioCardInput, { RadioCardOption } from './radio-card-input';
-import cn from '@/utils/cn'; // Import the cn utility
+import cn from '@/utils/cn';
 
 type ExtendedInputType = React.HTMLInputTypeAttribute | 'select' | 'radioCard' | 'textarea';
 

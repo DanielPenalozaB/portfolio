@@ -1,7 +1,7 @@
 import { useDropdown } from '@/hooks/useDropdown';
 import React, { useState, useEffect, useRef, useMemo, KeyboardEvent, ChangeEvent } from 'react';
-import { CheckIcon } from '../icons';
 import cn from '@/utils/cn';
+import { CheckIcon } from '../icons/check';
 
 interface SelectOption {
   value: string;
