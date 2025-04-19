@@ -74,7 +74,7 @@ export default function LetsWorkTogether() {
         </div>
         <div className='min-w-xs lg:min-w-lg w-full md:max-w-lg'>
           <form
-            action="https://formsubmit.co/mesogoga@mailgolem.com"
+            action="https://formsubmit.co/juandanielpenalozabrito@gmail.com"
             method="POST"
             className='flex w-full flex-col gap-6 rounded-3xl bg-neutral-200/70 p-6'
           >
