@@ -83,7 +83,7 @@ export default function LetsWorkTogether() {
             <input type="text" name="subject" placeholder="Subject*" className="w-full rounded-xl bg-neutral-50 p-4 focus:outline-violet-300" id="subject" />
             <textarea name="details" rows={4} placeholder="Details*" className="w-full rounded-xl bg-neutral-50 p-4 focus:outline-violet-300" id="details" />
             <input type="hidden" name="_captcha" value="false" />
-            <input type="hidden" name="_next" value="/" />
+            <input type="hidden" name="_next" value="https://danielpenalozab.com/" />
             <Button type='submit' size='lg' className='rounded-xl! h-14'>
               Send
             </Button>
