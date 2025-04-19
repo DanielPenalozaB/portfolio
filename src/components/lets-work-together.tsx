@@ -78,10 +78,10 @@ export default function LetsWorkTogether() {
             method="POST"
             className='flex w-full flex-col gap-6 rounded-3xl bg-neutral-200/70 p-6'
           >
-            <input type="text" name="name" placeholder="Name*" className="w-full rounded-xl bg-neutral-50 p-4 focus:outline-violet-300" id="name" />
-            <input type="email" name="email" placeholder="Email*" className="w-full rounded-xl bg-neutral-50 p-4 focus:outline-violet-300" id="email" />
-            <input type="text" name="subject" placeholder="Subject*" className="w-full rounded-xl bg-neutral-50 p-4 focus:outline-violet-300" id="subject" />
-            <textarea name="details" rows={4} placeholder="Details*" className="w-full rounded-xl bg-neutral-50 p-4 focus:outline-violet-300" id="details" />
+            <input type="text" name="name" placeholder="Name*" className="w-full rounded-xl bg-neutral-50 p-4 focus:outline-violet-300" required />
+            <input type="email" name="email" placeholder="Email*" className="w-full rounded-xl bg-neutral-50 p-4 focus:outline-violet-300" required />
+            <input type="text" name="subject" placeholder="Subject*" className="w-full rounded-xl bg-neutral-50 p-4 focus:outline-violet-300" required />
+            <textarea name="details" rows={4} placeholder="Details*" className="w-full rounded-xl bg-neutral-50 p-4 focus:outline-violet-300" required />
             <input type="hidden" name="_captcha" value="false" />
             <input type="hidden" name="_next" value="https://danielpenalozab.com/" />
             <Button type='submit' size='lg' className='rounded-xl! h-14'>
