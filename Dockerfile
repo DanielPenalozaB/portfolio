@@ -31,7 +31,11 @@ WORKDIR /app
 # Set to production environment
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 ENV NEXT_TELEMETRY_DISABLED=1
+
+# Install wget for healthcheck
+RUN apk add --no-cache wget
 
 # Add a non-root user to run the app
 RUN addgroup --system --gid 1001 nodejs
