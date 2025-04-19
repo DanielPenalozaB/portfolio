@@ -1,0 +1,51 @@
+{
+  "version": 2,
+  "name": "nextjs-portfolio",
+  "services": [
+    {
+      "id": "nextjs-app",
+      "type": "docker",
+      "source": {
+        "type": "github",
+        "repository": "your-username/your-portfolio-repo",
+        "branch": "main"
+      },
+      "dockerfile": "./Dockerfile",
+      "environment": [
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        },
+        {
+          "name": "PORT",
+          "value": "3000"
+        },
+        {
+          "name": "NEXT_TELEMETRY_DISABLED",
+          "value": "1"
+        }
+      ],
+      "ports": [
+        {
+          "internal": 3000,
+          "external": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000"
+        ],
+        "interval": "30s",
+        "timeout": "10s",
+        "retries": 3,
+        "start_period": "30s"
+      }
+    }
+  ]
+}
