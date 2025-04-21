@@ -6,10 +6,18 @@ import Projects from '@/components/projects';
 import Services from '@/components/services';
 import Skills from '@/components/skills';
 import Testimonials from '@/components/testimonials';
+import Footer from '@/components/ui/footer';
+import Navbar from '@/components/ui/navbar';
+import { defaultLocale } from '@/i18n/locales';
+import { fetchGlobalData } from '@/lib/api/global';
 
-export default function Home() {
+export default async function Home() {
+  const { data } = await fetchGlobalData(defaultLocale);
+  const { navbar, footer } = data;
+
   return (
     <>
+      <Navbar data={navbar} />
       <Hero />
       <Projects />
       <Skills />
@@ -18,6 +26,7 @@ export default function Home() {
       <EducationCertifications />
       <Testimonials />
       <LetsWorkTogether />
+      <Footer data={footer} locale={defaultLocale} />
     </>
   );
 }

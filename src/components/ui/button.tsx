@@ -1,12 +1,17 @@
+'use client';
+
 import Link from 'next/link';
 import { ButtonHTMLAttributes, DetailedHTMLProps } from 'react';
 import { LoaderIcon } from '../icons/loader';
+import { Locale } from '@/i18n/locales';
+import { useLanguageStore } from '@/i18n/store';
 
 const variantStyles = {
   fill: 'bg-violet-500 text-white hover:bg-violet-400 focus:bg-violet-600 disabled:bg-neutral-300 disabled:text-neutral-500',
   outline: 'border border-violet-500 text-violet-500 hover:bg-violet-100 dark:hover:bg-violet-900 dark:border-violet-900 focus:bg-violet-200 disabled:border-violet-300 disabled:text-violet-300 dark:disabled:border-violet-900 dark:disabled:text-violet-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent',
   shades: 'bg-neutral-50 text-violet-500 hover:bg-violet-100 dark:bg-dark dark:hover:bg-violet-900 disabled:border-violet-300 disabled:text-violet-300 dark:disabled:border-violet-900 dark:disabled:text-violet-900 disabled:hover:bg-transparent dark:disabled:hover:bg-transparent',
-  text: 'text-violet-500hover:text-violet-400 focus:text-violet-600 disabled:text-violet-300'
+  text: 'text-violet-500hover:text-violet-400 focus:text-violet-600 disabled:text-violet-300',
+  link: 'text-violet-500 hover:text-violet-400 focus:text-violet-600 disabled:text-violet-300'
 };
 
 const sizeStyles = {
@@ -26,6 +31,7 @@ export interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTML
 	leftIcon?: React.ReactNode;
 	rightIcon?: React.ReactNode;
 	href?: string;
+  locale?: Locale;
 }
 
 export default function Button({
@@ -37,8 +43,12 @@ export default function Button({
   leftIcon,
   rightIcon,
   href,
+  locale,
   ...props
 }: ButtonProps) {
+  const { currentLocale, getLocalizedPath } = useLanguageStore();
+  const targetLocale = locale || currentLocale;
+  const localizedHref = getLocalizedPath(href || '', targetLocale);
   const className = 'inline-flex cursor-pointer select-none items-center justify-center gap-2 rounded-lg font-medium transition-colors duration-200 focus:outline-none disabled:cursor-not-allowed';
 
   const { type = 'button', ...restProps } = props;
@@ -50,7 +60,7 @@ export default function Button({
   if (href) {
     return (
       <Link
-        href={href}
+        href={localizedHref}
         className={`${className} ${variantStyles[variant]} ${sizeStyles[size]} ${restProps.className}`}
         title={restProps.title}
         rel="noopener noreferrer"
