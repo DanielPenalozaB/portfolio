@@ -23,7 +23,11 @@ const getFallbackMetadata = () => ({
   description: 'Full Stack Developer & UX/UI Designer'
 });
 
-export async function generateMetadata({ params }: { params: { lang: string } }) {
+interface PageProps {
+  params: Promise<{ lang: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps) {
   const awaitedParams = await params;
   const locale = awaitedParams.lang ?? defaultLocale;
 
@@ -94,13 +98,11 @@ export const viewport = {
   initialScale: 1
 };
 
-export default async function LocaleHome({ params }: { params: { lang: string } }) {
+export default async function LocaleHome({ params }: PageProps) {
   const awaitedParams = await params;
   const locale = awaitedParams.lang ?? defaultLocale;
 
-  if (!isValidLocale(locale)) {
-    notFound();
-  }
+  if (!isValidLocale(locale)) notFound();
 
   const { data } = await fetchGlobalData(locale);
   const { navbar, footer } = data;
