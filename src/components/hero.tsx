@@ -41,7 +41,7 @@ export default function Hero() {
             <Button
               href="#services"
               size='lg'
-              className='gap-0! hover:gap-2! focus:gap-2! group'
+              className='gap-0! hover:gap-2! focus:gap-2! group max-sm:px-4'
             >
               Explore services
               <ArrowRightIcon className="h-4 w-0 transition-all duration-150 ease-out group-hover:w-4 group-focus:w-4" />
@@ -50,7 +50,7 @@ export default function Hero() {
               href="/resume.pdf"
               size='lg'
               variant='outline'
-              className='hover:bg-violet-100! border-violet-300! text-violet-400!'
+              className='hover:bg-violet-100! border-violet-300! text-violet-400! max-sm:px-4'
             >
               Download Resume <ArrowDownTrayIcon className="h-4 w-4" />
             </Button>

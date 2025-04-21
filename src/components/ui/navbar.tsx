@@ -52,11 +52,11 @@ export default function Navbar({ data }: NavbarProps) {
           isScrolled && 'bg-neutral-50/60 backdrop-blur-md'
         )}
       >
-        <div className="container flex h-20 w-full items-center justify-between px-8 transition-all duration-200 ease-in-out">
+        <div className="container flex h-20 w-full items-center justify-between px-3 transition-all duration-200 ease-in-out sm:px-8">
           <Button
             variant='link'
             href="/"
-            className="!tracking-tighter! !hover:text-violet-400 !text-xl !font-bold !text-neutral-600 !transition-colors"
+            className="!tracking-tighter! !hover:text-violet-400 !text-xl !font-bold !text-neutral-600 !transition-colors max-sm:px-2.5"
           >
             {data.logoText}
           </Button>
