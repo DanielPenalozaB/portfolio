@@ -44,7 +44,7 @@ export default function Hero() {
               className='gap-0! hover:gap-2! focus:gap-2! group max-sm:px-4'
             >
               Explore services
-              <ArrowRightIcon className="h-4 w-0 transition-all duration-150 ease-out group-hover:w-4 group-focus:w-4" />
+              <ArrowRightIcon className="h-4 w-0 touch-manipulation transition-all duration-150 ease-out group-hover:w-4 group-focus:w-4 group-active:w-4" />
             </Button>
             <Button
               href="/resume.pdf"

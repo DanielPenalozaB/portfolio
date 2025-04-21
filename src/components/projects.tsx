@@ -92,7 +92,7 @@ export default function Projects() {
               project.size === 'large' && 'col-span-12 lg:col-span-8 row-span-1 lg:row-span-2',
               project.size === 'medium' && 'col-span-12 lg:col-span-8',
               project.size === 'small' && 'col-span-12 lg:col-span-4 row-span-1',
-              'group h-64 lg:h-full row-span-1 overflow-hidden rounded-lg outline outline-transparent hover:outline-4 hover:outline-violet-500 bg-violet-200 backdrop-blur-sm transition-all duration-300'
+              'group h-64 lg:h-full row-span-1 overflow-hidden rounded-lg outline outline-transparent hover:outline-4 touch-manipulation active:outline-violet-500 hover:outline-violet-500 bg-violet-200 backdrop-blur-sm transition-all duration-300'
             )}
           >
             <img
@@ -100,19 +100,19 @@ export default function Projects() {
               alt={'Work in progress'}
               width={800}
               height={600}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="tou h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 group-active:scale-105"
             />
-            <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-violet-800 via-transparent to-transparent p-6 group-hover:gap-4 group-hover:via-violet-800/50 group-hover:backdrop-blur-md">
+            <div className="absolute inset-0 flex touch-manipulation flex-col justify-end bg-gradient-to-t from-violet-800 via-transparent to-transparent p-6 group-hover:gap-4 group-hover:via-violet-800/50 group-hover:backdrop-blur-md group-active:gap-4 group-active:via-violet-800/50 group-active:backdrop-blur-md">
               <Link
                 href={`projects/${project.id}`}
                 className='group/title flex flex-col gap-2'
               >
                 <h3 className="text-xl font-light text-white no-underline transition-all duration-300 ease-in-out group-hover/title:underline">{project.title}</h3>
-                <p className="line-clamp-2 max-h-0 text-sm font-light text-neutral-300 no-underline opacity-0 transition-all duration-300 ease-in-out group-hover:max-h-10 group-hover/title:underline group-hover:opacity-100">
+                <p className="line-clamp-2 max-h-0 touch-manipulation text-sm font-light text-neutral-300 no-underline opacity-0 transition-all duration-300 ease-in-out group-hover:max-h-10 group-hover/title:underline group-hover:opacity-100 group-active:max-h-10 group-active:opacity-100">
                   {project.description}
                 </p>
               </Link>
-              <div className="flex max-h-0 flex-wrap gap-2 opacity-0 transition-all duration-300 group-hover:max-h-10 group-hover:opacity-100">
+              <div className="flex max-h-0 touch-manipulation flex-wrap gap-2 opacity-0 transition-all duration-300 group-hover:max-h-10 group-hover:opacity-100 group-active:max-h-10 group-active:opacity-100">
                 {project.tags.slice(0, 3).map((tag) => (
                   <div
                     key={tag}
@@ -129,12 +129,12 @@ export default function Projects() {
                   </div>
                 )}
               </div>
-              <div className="flex max-h-0 gap-2 opacity-0 transition-all duration-300 group-hover:max-h-10 group-hover:opacity-100">
+              <div className="flex max-h-0 touch-manipulation gap-2 opacity-0 transition-all duration-300 group-hover:max-h-10 group-hover:opacity-100 group-active:max-h-10 group-active:opacity-100">
                 {project.github && (
                   <Button
                     size='sm'
                     href={project.github}
-                    className="bg-violet-600/0! hover:text-violet-100! border-transparent! hover:bg-violet-700! h-8 hover:backdrop-blur-sm"
+                    className="bg-violet-600/0! hover:text-violet-100! active:text-violet-100! border-transparent! hover:bg-violet-700! h-8 touch-manipulation hover:backdrop-blur-sm"
                   >
                     <GithubIcon className="h-4 w-4" /> Code
                   </Button>
@@ -143,7 +143,7 @@ export default function Projects() {
                   <Button
                     size='sm'
                     href={project.demo}
-                    className="bg-fuchsia-600/0! hover:text-fuchsia-100! border-transparent! hover:bg-fuchsia-800! h-8 hover:backdrop-blur-sm"
+                    className="bg-fuchsia-600/0! hover:text-fuchsia-100! active:text-fuchsia-100! border-transparent! hover:bg-fuchsia-800! active:bg-fuchsia-800! h-8 touch-manipulation hover:backdrop-blur-sm active:backdrop-blur-sm"
                   >
                     <ArrowTopRightOnSquareIcon className="h-4 w-4" /> Info
                   </Button>
@@ -158,7 +158,7 @@ export default function Projects() {
           <Button
             href="/projects"
             variant="outline"
-            className="mx-auto border-violet-500 text-violet-500 hover:bg-violet-500 hover:text-white"
+            className="mx-auto touch-manipulation border-violet-500 text-violet-500 hover:bg-violet-500 hover:text-white active:bg-violet-500 active:text-white"
           >
             View All Projects
           </Button>
