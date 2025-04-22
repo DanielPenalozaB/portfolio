@@ -1,18 +1,17 @@
-import { Locale } from '@/i18n/locales';
 import { Company } from './company';
+import { ServiceItem } from './service';
 
 export interface Education {
   id: number;
   documentId: string;
-  gradeTitle?: string;
-  description: string;
+  jobTitle: string;
   startDate: string;
-  endDate: string | null;
+  endDate: string;
+  description: string;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
-  locale: Locale;
-  url?: null | string;
-  jobTitle?: string;
-  company?: Company;
+  locale: string;
+  techStack: ServiceItem[];
+  company: Company;
 }
