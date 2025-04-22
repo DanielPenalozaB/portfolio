@@ -22,7 +22,6 @@ export default function SocialLinks({ links }: { links: SocialLink[] }) {
             key={link.id}
             href={link.href}
             target={link.platform !== 'email' ? '_blank' : undefined}
-            rel="noopener noreferrer"
             className="text-neutral-500 transition-colors hover:text-violet-400"
             aria-label={link.platform}
             title={link.platform}
