@@ -216,7 +216,7 @@ export default function Skills() {
           <div
             key={index}
             title={tool.name}
-            className="col-span-3 flex touch-manipulation flex-col items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-center outline outline-transparent transition-all duration-150 hover:scale-105 hover:bg-violet-200 hover:outline-4 hover:outline-violet-500 active:scale-105 active:bg-violet-200 active:outline-4 md:col-span-2 xl:col-span-1"
+            className="col-span-3 flex touch-manipulation flex-col items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-center outline outline-transparent transition-all duration-150 hover:scale-105 hover:bg-violet-200 hover:outline-4 hover:outline-violet-500 active:scale-105 active:bg-violet-200 active:outline-4 focus:scale-105 focus:bg-violet-200 focus:outline-4 md:col-span-2 xl:col-span-1"
           >
             <tool.icon className="h-6 w-6 text-violet-500" />
             <h3 className="line-clamp-1 font-semibold text-neutral-800">{tool.name}</h3>
