@@ -1,16 +1,17 @@
 import { Company } from './company';
+import { ServiceItem } from './service';
 
-export interface Education {
+export interface Experience {
   id: number;
   documentId: string;
-  gradeTitle: string;
-  description: string;
+  jobTitle: string;
   startDate: string;
   endDate: string;
+  description: string;
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
   locale: string;
-  url: null;
+  techStack: ServiceItem[];
   company: Company;
 }

@@ -1,31 +1,32 @@
 import cn from '@/utils/cn';
-import { TitleShapeIcon } from './icons/title-shape';
 import { Education } from '@/types/education';
-
-const education: Education[] = [];
+import { DynamicZone } from '@/types/strapi/shared/dynamic-zone';
+import SectionHeading from './strapi/section-heading';
+import Link from 'next/link';
+import { LinkIcon } from './icons/link';
+import ExpandableDescription from './ui/expandable-description';
 
 const certifications: Education[] = [];
 
-export default function EducationCertifications() {
+export default function EducationCertifications({ data }: { data: DynamicZone | undefined }) {
+  if (!data) {
+    return null;
+  }
+
+  const { heading, educations } = data;
+
   return (
     <div className="rounded-4xl mx-2 my-32 max-w-6xl bg-gradient-to-tl from-violet-500 to-violet-900 p-8 sm:rounded-2xl lg:mx-auto lg:p-12">
-      <div className="flex items-center">
-        <TitleShapeIcon className="mr-2 h-6 w-6 text-violet-400" />
-        <h2 className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-lg font-semibold text-transparent">
-          Always Learning
-        </h2>
-      </div>
-      <p className="text-pretty mt-2 text-2xl font-semibold tracking-tight text-neutral-200 sm:text-5xl">
-        Degrees, courses, and skills that{' '}
-        <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-          fuel my work.
-        </span>
-      </p>
+      <SectionHeading
+        title={heading?.title || 'Services'}
+        description={heading?.description?.body}
+        isOposite
+      />
       <div className="mx-auto mt-10 grid w-full max-w-6xl grid-cols-1 max-md:gap-4 sm:mt-16 md:grid-cols-6">
         <div className='col-span-1 flex flex-col items-center gap-6 md:col-span-3'>
           <h3 className='w-fit text-xl text-violet-300'>Education</h3>
           <div className='flex flex-col max-md:w-full'>
-            {education.map((edu, idx) => (
+            {educations && educations.map((edu, idx) => (
               <div key={idx} className='flex gap-2 max-md:w-full'>
                 <div className={cn(
                   'mb-4 flex w-full md:max-w-xs flex-col border-4 border-transparent gap-2 rounded-2xl p-4',
@@ -43,27 +44,39 @@ export default function EducationCertifications() {
                   )}>
                     {edu.gradeTitle}
                   </p>
-                  <p className={cn(
-                    'text-sm font-bold',
-                    idx === 0 ? 'text-violet-200' : 'text-violet-300'
-                  )}>
-                    /{edu.company?.name}
-                  </p>
-                  <p className={cn(
-                    'text-sm',
-                    idx === 0 ? 'text-violet-200' : 'text-violet-300'
-                  )}>
+                  {edu.url ? (
+                    <Link href={edu.url} target='_blank' className={cn(
+                      'text-sm font-bold',
+                      idx === 0 ? 'text-violet-200' : 'text-violet-300'
+                    )}>
+                        /{edu.company?.name} <LinkIcon className='inline-block h-3.5 w-3.5' />
+                    </Link>
+                  ): (
+                    <p className={cn(
+                      'text-sm font-bold',
+                      idx === 0 ? 'text-violet-200' : 'text-violet-300'
+                    )}>
+                      /{edu.company?.name}
+                    </p>
+                  )}
+                  <ExpandableDescription
+                    className={cn(
+                      'text-sm',
+                      idx === 0 ? 'text-violet-200' : 'text-violet-300'
+                    )}
+                    buttonClassName='text-violet-300 hover:text-violet-200'
+                  >
                     {edu.description}
-                  </p>
+                  </ExpandableDescription>
                 </div>
                 <div className='min-w-8 relative flex flex-col items-center justify-center'>
                   <div className='min-h-5 min-w-5 h-5 w-5 rounded-full bg-violet-500' />
-                  {education.length > 1 && (
+                  {educations.length > 1 && (
                     <div className={cn(
-                      'min-h-1 absolute left-1/2 h-full w-1 -translate-x-1/2 bg-violet-500',
+                      'min-h-1 absolute left-1/2 h-1/2 w-1 -translate-x-1/2 bg-violet-500',
                       idx === 0
                         ? 'top-1/2 bottom-0'
-                        : idx === (education.length - 1)
+                        : idx === (educations.length - 1)
                           ? 'top-0 h-1/2!'
                           : 'top-1/2 -translate-y-1/2'
                     )} />
@@ -83,7 +96,7 @@ export default function EducationCertifications() {
                     <div className='min-h-5 min-w-5 h-5 w-5 rounded-full bg-violet-500' />
                     {certifications.length > 1 && (
                       <div className={cn(
-                        'min-h-1 absolute left-1/2 h-full w-1 -translate-x-1/2 bg-violet-500',
+                        'min-h-1 absolute left-1/2 h-1/2 w-1 -translate-x-1/2 bg-violet-500',
                         idx === 0
                           ? 'top-1/2 bottom-0'
                           : idx === (certifications.length - 1)
@@ -108,14 +121,23 @@ export default function EducationCertifications() {
                     )}>
                       {cert.gradeTitle}
                     </p>
+                    {cert.url ? (
+                      <Link href={cert.url} target='_blank' className={cn(
+                        'text-sm font-bold',
+                        idx === 0 ? 'text-fuchsia-200' : 'text-violet-300'
+                      )}>
+                        /{cert.company?.name} <LinkIcon className='inline-block h-4 w-4' />
+                      </Link>
+                    ): (
+                      <p className={cn(
+                        'text-sm font-bold',
+                        idx === 0 ? 'text-fuchsia-200' : 'text-violet-300'
+                      )}>
+                      /{cert.company?.name}
+                      </p>
+                    )}
                     <p className={cn(
-                      'text-sm font-bold',
-                      idx === 0 ? 'text-fuchsia-200' : 'text-violet-300'
-                    )}>
-                    /{cert.company?.name}
-                    </p>
-                    <p className={cn(
-                      'text-sm',
+                      'text-sm line-clamp-4',
                       idx === 0 ? 'text-fuchsia-200' : 'text-violet-300'
                     )}>
                       {cert.description}

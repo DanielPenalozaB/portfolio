@@ -6,6 +6,7 @@ import { Skill } from '@/types/skill';
 import { Button } from './button';
 import { Heading, SubHeading } from './heading';
 import { SocialLink } from './social-links';
+import { Experience } from '@/types/experience';
 
 export interface DynamicZone {
   __component: string;
@@ -17,7 +18,7 @@ export interface DynamicZone {
   projects?: Project[];
   skills?: Skill[];
   services?: Service[];
-  experiences?: Education[];
+  experiences?: Experience[];
   educations?: Education[];
   clients?: Client[];
   email?: string;

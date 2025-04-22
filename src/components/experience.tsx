@@ -4,6 +4,7 @@ import SPAIcon from './icons/spa';
 import Link from 'next/link';
 import { DynamicZone } from '@/types/strapi/shared/dynamic-zone';
 import SectionHeading from './strapi/section-heading';
+import ExpandableDescription from './ui/expandable-description';
 
 // Icon mapping to select the correct icon component based on the string name
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,7 +76,11 @@ export default function Experience({ data }: { data: DynamicZone | undefined }) 
                     <p className='text-neutral-600'>{exp.company?.name}</p>
                   </Link>
                 </div>
-                <p className='line-clamp-4 text-neutral-600'>{exp.description}</p>
+                <ExpandableDescription
+                  className='text-neutral-600'
+                >
+                  {exp.description}
+                </ExpandableDescription>
                 {exp.techStack && (
                   <div className="mb-4">
                     <h4 className="mb-2 font-medium text-neutral-600">Technologies:</h4>
