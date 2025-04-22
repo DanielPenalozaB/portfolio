@@ -83,7 +83,7 @@ export default function Experience({ data }: { data: DynamicZone | undefined }) 
                 </ExpandableDescription>
                 {exp.techStack && (
                   <div className="mb-4">
-                    <h4 className="mb-2 font-medium text-neutral-600">Technologies:</h4>
+                    <h4 className="mb-2 font-medium text-neutral-600">{exp.locale === 'en' ? 'Tech Stack:' : 'Tecnologías:'}</h4>
                     <div className="flex flex-wrap gap-2">
                       {exp.techStack.map((tech) => (
                         <div

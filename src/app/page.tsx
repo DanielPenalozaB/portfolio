@@ -34,10 +34,10 @@ export default async function Home() {
       <Navbar data={navbar} />
       <Hero data={hero} />
       <Projects data={projects} />
-      <Skills data={skills} />
+      <Skills data={skills} locale={defaultLocale} />
       <Services data={services} />
       <Experience data={experience} />
-      <EducationCertifications data={education} />
+      <EducationCertifications data={education} locale={defaultLocale} />
       <Testimonials />
       <LetsWorkTogether />
       <Footer data={footer} locale={defaultLocale} />

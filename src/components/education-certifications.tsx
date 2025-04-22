@@ -5,10 +5,11 @@ import SectionHeading from './strapi/section-heading';
 import Link from 'next/link';
 import { LinkIcon } from './icons/link';
 import ExpandableDescription from './ui/expandable-description';
+import { Locale } from '@/i18n/locales';
 
 const certifications: Education[] = [];
 
-export default function EducationCertifications({ data }: { data: DynamicZone | undefined }) {
+export default function EducationCertifications({ data, locale }: { data: DynamicZone | undefined, locale: Locale }) {
   if (!data) {
     return null;
   }
@@ -24,7 +25,7 @@ export default function EducationCertifications({ data }: { data: DynamicZone | 
       />
       <div className="mx-auto mt-10 grid w-full max-w-6xl grid-cols-1 max-md:gap-4 sm:mt-16 md:grid-cols-6">
         <div className='col-span-1 flex flex-col items-center gap-6 md:col-span-3'>
-          <h3 className='w-fit text-xl text-violet-300'>Education</h3>
+          <h3 className='w-fit text-xl text-violet-300'>{locale === 'en' ? 'Education' : 'Educación'}</h3>
           <div className='flex flex-col max-md:w-full'>
             {educations && educations.map((edu, idx) => (
               <div key={idx} className='flex gap-2 max-md:w-full'>
@@ -87,7 +88,7 @@ export default function EducationCertifications({ data }: { data: DynamicZone | 
           </div>
         </div>
         <div className='col-span-1 flex flex-col items-center gap-6 md:col-span-3'>
-          <h3 className='w-fit text-xl text-violet-300'>Certifications</h3>
+          <h3 className='w-fit text-xl text-violet-300'>{locale === 'en' ? 'Certifications' : 'Certificaciones'}</h3>
           <div className='flex flex-col max-md:w-full'>
             {certifications.length > 0
               ? certifications.map((cert, idx) => (
@@ -145,7 +146,7 @@ export default function EducationCertifications({ data }: { data: DynamicZone | 
                   </div>
                 </div>
               )) : (
-                <p className='text-violet-300'>No certifications yet.</p>
+                <p className='text-violet-300'>{locale === 'en' ? 'No certifications found' : 'No hay certificaciones'}</p>
               )}
           </div>
         </div>

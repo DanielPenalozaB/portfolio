@@ -126,10 +126,10 @@ export default async function LocaleHome({ params }: PageProps) {
       <Navbar data={navbar} />
       <Hero data={hero} />
       <Projects data={projects} />
-      <Skills data={skills} />
+      <Skills data={skills} locale={locale} />
       <Services data={services} />
       <Experience data={experience} />
-      <EducationCertifications data={education} />
+      <EducationCertifications data={education} locale={locale} />
       <Testimonials />
       <LetsWorkTogether />
       <Footer data={footer} locale={locale} />

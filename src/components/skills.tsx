@@ -23,6 +23,7 @@ import VueIcon from './icons/vue';
 import ZustandIcon from './icons/zustand';
 import SectionHeading from './strapi/section-heading';
 import Link from 'next/link';
+import { Locale } from '@/i18n/locales';
 
 // Icon mapping to select the correct icon component based on the string name
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,7 +52,7 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   Zustand: ZustandIcon
 };
 
-export default function Skills({ data }: { data: DynamicZone | undefined }) {
+export default function Skills({ data, locale }: { data: DynamicZone | undefined, locale: Locale }) {
   if (!data) {
     return null;
   }
@@ -68,14 +69,14 @@ export default function Skills({ data }: { data: DynamicZone | undefined }) {
     const totalMonths = diffYears * 12 + diffMonths;
 
     if (totalMonths < 12) {
-      return '<1 year';
+      return `<1 ${locale === 'en' ? 'year' : 'año'}`;
     } else if (totalMonths < 24) {
-      return '1+ years';
+      return `1+ ${locale === 'en' ? 'year' : 'año'}`;
     } else if (totalMonths < 36) {
-      return '2+ years';
+      return `2+ ${locale === 'en' ? 'years' : 'años'}`;
     }
 
-    return `${Math.floor(totalMonths / 12)}+ years`;
+    return `${Math.floor(totalMonths / 12)}+ ${locale === 'en' ? 'years' : 'años'}`;
   };
 
   return (
@@ -102,7 +103,7 @@ export default function Skills({ data }: { data: DynamicZone | undefined }) {
                 <div className='flex items-center justify-center gap-2 text-sm sm:text-xs'>
                   <p className="text-neutral-600">{skill.years || (skill.startDate ? getExperienceString(skill.startDate) : '')}</p>
                   {skill.projects && (
-                    <p className="text-neutral-600">{skill.projects} projects</p>
+                    <p className="text-neutral-600">{skill.projects} {locale === 'en' ? 'projects' : 'proyectos'}</p>
                   )}
                 </div>
               </Link>
@@ -120,7 +121,7 @@ export default function Skills({ data }: { data: DynamicZone | undefined }) {
               <div className='flex items-center justify-center gap-2 text-sm sm:text-xs'>
                 <p className="text-neutral-600">{skill.years || (skill.startDate ? getExperienceString(skill.startDate) : '')}</p>
                 {skill.projects && (
-                  <p className="text-neutral-600">{skill.projects} projects</p>
+                  <p className="text-neutral-600">{skill.projects} {locale === 'en' ? 'projects' : 'proyectos'}</p>
                 )}
               </div>
             </div>
