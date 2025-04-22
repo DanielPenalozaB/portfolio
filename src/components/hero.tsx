@@ -40,6 +40,7 @@ export default function Hero({ data }: { data: DynamicZone | undefined }) {
             {buttons?.[1] && (
               <Button
                 href={buttons?.[1].href}
+                useLocaleForHref={false}
                 size='lg'
                 variant='outline'
                 className='hover:bg-violet-100! border-violet-300! text-violet-400! max-sm:px-4'
