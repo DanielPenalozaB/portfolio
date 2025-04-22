@@ -25,6 +25,7 @@ export default async function Home() {
   const hero = getComponentFromZone(content, 'sections.hero');
   const projects = getComponentFromZone(content, 'sections.projects');
   const skills = getComponentFromZone(content, 'sections.skills');
+  const services = getComponentFromZone(content, 'sections.services');
 
   return (
     <>
@@ -32,7 +33,7 @@ export default async function Home() {
       <Hero data={hero} />
       <Projects data={projects} />
       <Skills data={skills} />
-      <Services />
+      <Services data={services} />
       <Experience />
       <EducationCertifications />
       <Testimonials />

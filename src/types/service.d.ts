@@ -10,4 +10,10 @@ export interface Service {
   updatedAt: Date;
   publishedAt: Date;
   locale: Locale;
+  items: ServiceItem[];
+}
+
+export interface ServiceItem {
+  id:    number;
+  label: string;
 }
