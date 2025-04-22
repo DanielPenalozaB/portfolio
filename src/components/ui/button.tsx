@@ -1,10 +1,10 @@
 'use client';
 
-import Link from 'next/link';
-import { ButtonHTMLAttributes, DetailedHTMLProps } from 'react';
+import { ButtonHTMLAttributes, DetailedHTMLProps, HTMLAttributeAnchorTarget } from 'react';
 import { LoaderIcon } from '../icons/loader';
 import { Locale } from '@/i18n/locales';
 import { useLanguageStore } from '@/i18n/store';
+import Link from 'next/link';
 
 export const variantStyles = {
   fill: 'bg-violet-500 text-white hover:bg-violet-400 focus:bg-violet-600 disabled:bg-neutral-300 disabled:text-neutral-500',
@@ -32,6 +32,8 @@ export interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTML
 	rightIcon?: React.ReactNode;
 	href?: string;
   locale?: Locale;
+  target?: HTMLAttributeAnchorTarget | undefined;
+  useLocaleForHref?: boolean;
 }
 
 export default function Button({
@@ -44,6 +46,8 @@ export default function Button({
   rightIcon,
   href,
   locale,
+  target,
+  useLocaleForHref = true,
   ...props
 }: ButtonProps) {
   const { currentLocale, getLocalizedPath } = useLanguageStore();
@@ -60,10 +64,10 @@ export default function Button({
   if (href) {
     return (
       <Link
-        href={localizedHref}
+        href={useLocaleForHref ? localizedHref : href}
         className={`${className} ${variantStyles[variant]} ${sizeStyles[size]} ${restProps.className}`}
         title={restProps.title}
-        rel="noopener noreferrer"
+        target={target}
       >
         {isLoading && (
           <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />

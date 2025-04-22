@@ -19,6 +19,7 @@ export interface Project {
   tags: Tag[];
   category: Company;
   localizations: Localization[];
+  slug: string;
 }
 
 export enum Size {

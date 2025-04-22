@@ -23,12 +23,13 @@ export default async function Home() {
   const { content } = homeData;
 
   const hero = getComponentFromZone(content, 'sections.hero');
+  const projects = getComponentFromZone(content, 'sections.projects');
 
   return (
     <>
       <Navbar data={navbar} />
       <Hero data={hero} />
-      <Projects />
+      <Projects data={projects} />
       <Skills />
       <Services />
       <Experience />
