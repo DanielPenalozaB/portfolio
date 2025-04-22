@@ -10,8 +10,10 @@ import Footer from '@/components/ui/footer';
 import Navbar from '@/components/ui/navbar';
 import { defaultLocale, Locale, locales } from '@/i18n/locales';
 import { isValidLocale } from '@/i18n/utils';
-import { fetchGlobalData } from '@/lib/api/global';
+import { fetchGlobalData } from '@/api/global';
 import { notFound } from 'next/navigation';
+import { fetchHomeData } from '@/api/home';
+import { getComponentFromZone } from '@/utils/get-component-from-zone';
 
 // Generate static params for all supported locales
 export function generateStaticParams() {
@@ -98,6 +100,8 @@ export const viewport = {
   initialScale: 1
 };
 
+const homeId = process.env.NEXT_PUBLIC_STRAPI_HOME_PAGE_ID || '';
+
 export default async function LocaleHome({ params }: PageProps) {
   const awaitedParams = await params;
   const locale = awaitedParams.lang ?? defaultLocale;
@@ -107,10 +111,15 @@ export default async function LocaleHome({ params }: PageProps) {
   const { data } = await fetchGlobalData(locale);
   const { navbar, footer } = data;
 
+  const { data: homeData } = await fetchHomeData(homeId, locale);
+  const { content } = homeData;
+
+  const hero = getComponentFromZone(content, 'sections.hero');
+
   return (
     <>
       <Navbar data={navbar} />
-      <Hero />
+      <Hero data={hero} />
       <Projects />
       <Skills />
       <Services />

@@ -1,32 +1,10 @@
 import cn from '@/utils/cn';
 import { TitleShapeIcon } from './icons/title-shape';
-import { EducationCertification } from '@/types/education-certifications';
+import { Education } from '@/types/education';
 
-const education: EducationCertification[] = [
-  {
-    educationTitle: 'Systems engineering',
-    description: 'Software development, systems architecture, and project management.',
-    institution: 'UNIAJC',
-    startDate: 'January 2023',
-    endDate: 'January 2026'
-  }, {
-    educationTitle: 'TADSI',
-    description: 'Practical training in software development and database design.',
-    institution: 'SENA',
-    startDate: 'April 2020',
-    endDate: 'March 2022'
-  }
-];
+const education: Education[] = [];
 
-const certifications: EducationCertification[] = [
-  {
-    educationTitle: 'Systems engineering',
-    description: 'Software development, systems architecture, and project management.',
-    institution: 'UNIAJC',
-    startDate: 'January 2023',
-    endDate: 'January 2026'
-  }
-];
+const certifications: Education[] = [];
 
 export default function EducationCertifications() {
   return (
@@ -63,13 +41,13 @@ export default function EducationCertifications() {
                     'text-lg font-bold',
                     idx === 0 ? 'text-white' : 'text-violet-200'
                   )}>
-                    {edu.educationTitle}
+                    {edu.gradeTitle}
                   </p>
                   <p className={cn(
                     'text-sm font-bold',
                     idx === 0 ? 'text-violet-200' : 'text-violet-300'
                   )}>
-                    /{edu.institution}
+                    /{edu.company?.name}
                   </p>
                   <p className={cn(
                     'text-sm',
@@ -128,13 +106,13 @@ export default function EducationCertifications() {
                       'text-lg font-bold',
                       idx === 0 ? 'text-white' : 'text-violet-200'
                     )}>
-                      {cert.educationTitle}
+                      {cert.gradeTitle}
                     </p>
                     <p className={cn(
                       'text-sm font-bold',
                       idx === 0 ? 'text-fuchsia-200' : 'text-violet-300'
                     )}>
-                    /{cert.institution}
+                    /{cert.company?.name}
                     </p>
                     <p className={cn(
                       'text-sm',

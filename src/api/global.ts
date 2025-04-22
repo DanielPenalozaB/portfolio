@@ -1,5 +1,5 @@
 import { fetchAPI } from '@/lib/api-client';
-import { GlobalResponse } from '@/types/global';
+import { GlobalResponse } from '@/types/strapi/global';
 
 /**
  * Fetches global data from the Strapi API

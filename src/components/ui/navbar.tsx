@@ -1,13 +1,13 @@
 'use client';
 
+import { Navbar as NavbarType } from '@/types/strapi/shared/navbar';
+import cn from '@/utils/cn';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Bars3Icon } from '../icons/bars3';
 import { SunIcon } from '../icons/sun';
 import { XMarkIcon } from '../icons/xmark';
 import Button from './button';
-import cn from '@/utils/cn';
-import { Navbar as NavbarType } from '@/types/global';
 import LanguageSwitcher from './language-switcher';
 
 interface NavbarProps {

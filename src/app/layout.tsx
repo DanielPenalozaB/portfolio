@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Syne, Inter } from 'next/font/google';
 import './globals.css';
-import { fetchGlobalData } from '@/lib/api/global';
+import { fetchGlobalData } from '@/api/global';
 import LanguageHandler from '@/i18n/language-handler';
 import { defaultLocale } from '@/i18n/locales';
 

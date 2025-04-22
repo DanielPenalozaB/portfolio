@@ -1,3 +1,5 @@
+import { fetchGlobalData } from '@/api/global';
+import { fetchHomeData } from '@/api/home';
 import EducationCertifications from '@/components/education-certifications';
 import Experience from '@/components/experience';
 import Hero from '@/components/hero';
@@ -9,16 +11,23 @@ import Testimonials from '@/components/testimonials';
 import Footer from '@/components/ui/footer';
 import Navbar from '@/components/ui/navbar';
 import { defaultLocale } from '@/i18n/locales';
-import { fetchGlobalData } from '@/lib/api/global';
+import { getComponentFromZone } from '@/utils/get-component-from-zone';
+
+const homeId = process.env.NEXT_PUBLIC_STRAPI_HOME_PAGE_ID || '';
 
 export default async function Home() {
   const { data } = await fetchGlobalData(defaultLocale);
   const { navbar, footer } = data;
 
+  const { data: homeData } = await fetchHomeData(homeId, defaultLocale);
+  const { content } = homeData;
+
+  const hero = getComponentFromZone(content, 'sections.hero');
+
   return (
     <>
       <Navbar data={navbar} />
-      <Hero />
+      <Hero data={hero} />
       <Projects />
       <Skills />
       <Services />

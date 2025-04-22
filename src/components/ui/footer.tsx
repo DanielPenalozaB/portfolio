@@ -3,7 +3,7 @@ import { GithubIcon } from '../icons/github';
 import { LinkedInIcon } from '../icons/linkedin';
 import { EnvelopeIcon } from '../icons/envelope';
 import FiverrIcon from '../icons/fiverr';
-import { Footer as FooterType } from '@/types/global';
+import { Footer as FooterType } from '@/types/strapi/global';
 
 interface FooterProps {
   data: FooterType;
