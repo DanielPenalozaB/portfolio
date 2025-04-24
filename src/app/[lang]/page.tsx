@@ -120,6 +120,8 @@ export default async function LocaleHome({ params }: PageProps) {
   const services = getComponentFromZone(content, 'sections.services');
   const experience = getComponentFromZone(content, 'sections.experience');
   const education = getComponentFromZone(content, 'sections.education');
+  const testimonials = getComponentFromZone(content, 'sections.testimonials');
+  const contact = getComponentFromZone(content, 'sections.contact');
 
   return (
     <>
@@ -130,8 +132,8 @@ export default async function LocaleHome({ params }: PageProps) {
       <Services data={services} />
       <Experience data={experience} />
       <EducationCertifications data={education} locale={locale} />
-      <Testimonials />
-      <LetsWorkTogether />
+      <Testimonials data={testimonials} />
+      <LetsWorkTogether data={contact} locale={locale} />
       <Footer data={footer} locale={locale} />
     </>
   );

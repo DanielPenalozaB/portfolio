@@ -1,4 +1,5 @@
 import { Locale } from '@/i18n/locales';
+import { Company } from './company';
 
 export interface Client {
   id: number;
@@ -11,4 +12,5 @@ export interface Client {
   publishedAt: Date;
   locale: Locale;
   email: string;
+  company: Company | null
 }

@@ -28,6 +28,8 @@ export default async function Home() {
   const services = getComponentFromZone(content, 'sections.services');
   const experience = getComponentFromZone(content, 'sections.experience');
   const education = getComponentFromZone(content, 'sections.education');
+  const testimonials = getComponentFromZone(content, 'sections.testimonials');
+  const contact = getComponentFromZone(content, 'sections.contact');
 
   return (
     <>
@@ -38,8 +40,8 @@ export default async function Home() {
       <Services data={services} />
       <Experience data={experience} />
       <EducationCertifications data={education} locale={defaultLocale} />
-      <Testimonials />
-      <LetsWorkTogether />
+      <Testimonials data={testimonials} />
+      <LetsWorkTogether data={contact} locale={defaultLocale} />
       <Footer data={footer} locale={defaultLocale} />
     </>
   );
