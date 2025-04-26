@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import QuoteMarkIcon from './icons/quote-mark';
-import Button from './ui/button';
-import { ChevronIcon } from './icons/chevron';
+import QuoteMarkIcon from '../icons/quote-mark';
+import Button from '../ui/button';
+import { ChevronIcon } from '../icons/chevron';
 import { DynamicZone } from '@/types/strapi/shared/dynamic-zone';
-import SectionHeading from './strapi/section-heading';
+import SectionHeading from '../strapi/section-heading';
 
 export default function Testimonials({ data }: { data: DynamicZone | undefined }) {
   const [ currentIndex, setCurrentIndex ] = useState(0);

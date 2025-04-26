@@ -1,13 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { GithubIcon } from './icons/github';
-import Button from './ui/button';
-import { ArrowTopRightOnSquareIcon } from './icons/arrow-top-right-on-square';
+import { GithubIcon } from '../icons/github';
+import Button from '../ui/button';
+import { ArrowTopRightOnSquareIcon } from '../icons/arrow-top-right-on-square';
 import useScreenDimensions from '@/hooks/useScreenDimensions';
 import cn from '@/utils/cn';
 import { DynamicZone } from '@/types/strapi/shared/dynamic-zone';
-import SectionHeading from './strapi/section-heading';
+import SectionHeading from '../strapi/section-heading';
 
 const API_URL = process.env.NEXT_PUBLIC_STRAPI_BASE_URL || 'http://localhost:1337';
 

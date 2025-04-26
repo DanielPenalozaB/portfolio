@@ -1,8 +1,8 @@
 import cn from '@/utils/cn';
-import { CheckBadgeIcon } from './icons/check-badge';
-import Button from './ui/button';
+import { CheckBadgeIcon } from '../icons/check-badge';
+import Button from '../ui/button';
 import { DynamicZone } from '@/types/strapi/shared/dynamic-zone';
-import SectionHeading from './strapi/section-heading';
+import SectionHeading from '../strapi/section-heading';
 
 export default function Services({ data }: { data: DynamicZone | undefined }) {
   if (!data) {

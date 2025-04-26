@@ -49,7 +49,7 @@ export default function SectionHeading({ title, description, isOposite = false }
       {description && (
         <p className={cn(
           'text-pretty mt-2 max-w-lg text-2xl font-semibold tracking-tight sm:text-5xl',
-          isOposite ? 'text-neutral-200' : 'ttext-neutral-700'
+          isOposite ? 'text-neutral-200' : 'text-neutral-700'
         )}>
           {renderDescription(description)}
         </p>

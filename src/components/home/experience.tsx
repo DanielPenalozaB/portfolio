@@ -1,10 +1,10 @@
 import cn from '@/utils/cn';
-import RootstackIcon from './icons/rootstack';
-import SPAIcon from './icons/spa';
+import RootstackIcon from '../icons/rootstack';
+import SPAIcon from '../icons/spa';
 import Link from 'next/link';
 import { DynamicZone } from '@/types/strapi/shared/dynamic-zone';
-import SectionHeading from './strapi/section-heading';
-import ExpandableDescription from './ui/expandable-description';
+import SectionHeading from '../strapi/section-heading';
+import ExpandableDescription from '../ui/expandable-description';
 
 // Icon mapping to select the correct icon component based on the string name
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -6,14 +6,14 @@ export const NumberUtils = {
    * Format a number as currency.
    * @param value - The numeric value to format.
    * @param currency - The currency code (e.g., 'USD', 'EUR').
-   * @param locale - The locale to use for formatting (e.g., 'en-US').
+   * @param locale - The locale to use for formatting (e.g., 'en').
    * @returns The formatted currency string.
    */
   formatCurrency: (value: number, currency: string = 'USD', locale?: string): string => {
     // Map currency codes to their respective locales
     const currencyToLocaleMap: Record<string, string> = {
-      USD: 'en-US', // US Dollar
-      EUR: 'en-US', // Euro (can also use 'de-DE' for Germany)
+      USD: 'en', // US Dollar
+      EUR: 'en', // Euro (can also use 'de-DE' for Germany)
       COP: 'es-CO', // Colombian Peso
       MXN: 'es-MX', // Mexican Peso
       GBP: 'en-GB', // British Pound
@@ -21,7 +21,7 @@ export const NumberUtils = {
     };
 
     // Use the provided locale or infer it from the currency
-    const inferredLocale = locale || currencyToLocaleMap[currency] || 'en-US';
+    const inferredLocale = locale || currencyToLocaleMap[currency] || 'en';
 
     return new Intl.NumberFormat(inferredLocale, {
       style: 'currency',
@@ -32,10 +32,10 @@ export const NumberUtils = {
   /**
    * Format a number with commas as thousand separators.
    * @param value - The numeric value to format.
-   * @param locale - The locale to use for formatting (e.g., 'en-US').
+   * @param locale - The locale to use for formatting (e.g., 'en').
    * @returns The formatted number string.
    */
-  formatWithCommas: (value: number, locale: string = 'en-US'): string => new Intl.NumberFormat(locale).format(value),
+  formatWithCommas: (value: number, locale: string = 'en'): string => new Intl.NumberFormat(locale).format(value),
 
   /**
    * Round a number to a specified number of decimal places.

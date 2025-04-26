@@ -1,14 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { EnvelopeIcon } from './icons/envelope';
-import { LinkedInIcon } from './icons/linkedin';
-import FiverrIcon from './icons/fiverr';
-import { MapPinIcon } from './icons/map-pin';
-import { GithubIcon } from './icons/github';
-import Button from './ui/button';
+import { EnvelopeIcon } from '../icons/envelope';
+import { LinkedInIcon } from '../icons/linkedin';
+import FiverrIcon from '../icons/fiverr';
+import { MapPinIcon } from '../icons/map-pin';
+import { GithubIcon } from '../icons/github';
+import Button from '../ui/button';
 import { DynamicZone } from '@/types/strapi/shared/dynamic-zone';
-import SectionHeading from './strapi/section-heading';
+import SectionHeading from '../strapi/section-heading';
 import { Locale } from '@/i18n/locales';
 
 export default function LetsWorkTogether({ data, locale }: { data: DynamicZone | undefined, locale: Locale }) {

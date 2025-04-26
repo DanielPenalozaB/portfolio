@@ -1,10 +1,10 @@
 import cn from '@/utils/cn';
 import { Education } from '@/types/education';
 import { DynamicZone } from '@/types/strapi/shared/dynamic-zone';
-import SectionHeading from './strapi/section-heading';
+import SectionHeading from '../strapi/section-heading';
 import Link from 'next/link';
-import { LinkIcon } from './icons/link';
-import ExpandableDescription from './ui/expandable-description';
+import { LinkIcon } from '../icons/link';
+import ExpandableDescription from '../ui/expandable-description';
 import { Locale } from '@/i18n/locales';
 
 const certifications: Education[] = [];

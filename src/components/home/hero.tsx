@@ -1,13 +1,13 @@
 'use client';
 
-import { ArrowDownTrayIcon } from './icons/arrow-down-tray';
-import { ArrowRightIcon } from './icons/arrow-right';
-import { HeroDoodle } from './icons/hero-doodle';
-import Button from './ui/button';
+import { ArrowDownTrayIcon } from '../icons/arrow-down-tray';
+import { ArrowRightIcon } from '../icons/arrow-right';
+import { HeroDoodle } from '../icons/hero-doodle';
+import Button from '../ui/button';
 import { DynamicZone } from '@/types/strapi/shared/dynamic-zone';
-import SocialLinks from './strapi/social-links';
-import HeroHeading from './strapi/hero-heading';
-import HeroSubHeading from './strapi/hero-subheading';
+import SocialLinks from '../strapi/social-links';
+import HeroHeading from '../strapi/hero-heading';
+import HeroSubHeading from '../strapi/hero-subheading';
 
 export default function Hero({ data }: { data: DynamicZone | undefined }) {
   if (!data) {

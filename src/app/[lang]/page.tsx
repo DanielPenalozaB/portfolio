@@ -1,11 +1,11 @@
-import EducationCertifications from '@/components/education-certifications';
-import Experience from '@/components/experience';
-import Hero from '@/components/hero';
-import LetsWorkTogether from '@/components/lets-work-together';
-import Projects from '@/components/projects';
-import Services from '@/components/services';
-import Skills from '@/components/skills';
-import Testimonials from '@/components/testimonials';
+import EducationCertifications from '@/components/home/education-certifications';
+import Experience from '@/components/home/experience';
+import Hero from '@/components/home/hero';
+import LetsWorkTogether from '@/components/home/lets-work-together';
+import Projects from '@/components/home/projects';
+import Services from '@/components/home/services';
+import Skills from '@/components/home/skills';
+import Testimonials from '@/components/home/testimonials';
 import Footer from '@/components/ui/footer';
 import Navbar from '@/components/ui/navbar';
 import { defaultLocale, Locale, locales } from '@/i18n/locales';
@@ -25,7 +25,7 @@ const getFallbackMetadata = () => ({
   description: 'Full Stack Developer & UX/UI Designer'
 });
 
-interface PageProps {
+export interface PageProps {
   params: Promise<{ lang: string }>;
 }
 
