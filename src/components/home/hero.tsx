@@ -19,17 +19,17 @@ export default function Hero({ data }: { data: DynamicZone | undefined }) {
 
   return (
     <section className="relative -mt-20 overflow-hidden pb-24 pt-52">
-      <HeroDoodle className="min-w-7xl absolute inset-0 right-1/2 -z-10 w-screen rotate-180 animate-pulse" />
+      <HeroDoodle className="min-w-7xl absolute inset-0 right-1/2 -z-10 w-screen rotate-180" />
       <Image
         src="/patternBg.webp"
-        alt="pattern"
-        width="1440"
-        height="697"
+        alt="Hero background pattern"
+        width={1440}
+        height={697}
         priority
-        className="z-0h-full absolute left-0 top-0 w-[168%] animate-pulse select-none object-cover opacity-70"
+        quality={85}
+        className="absolute left-0 top-0 z-0 h-full w-full select-none object-cover opacity-70"
       />
-      <div className='absolute inset-0 z-0 bg-gradient-to-t from-neutral-50 to-transparent to-45%' />
-      <div className='absolute inset-0 -z-10 backdrop-blur-2xl' />
+      <div className='absolute inset-0 -z-10 bg-[linear-gradient(0deg,transparent_45%,#fafafa_100%)] backdrop-blur-2xl' />
       <div className="container relative z-10 mx-auto">
         <div className="flex flex-col items-center justify-center">
           <HeroHeading body={heading?.body || ''} />

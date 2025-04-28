@@ -25,6 +25,21 @@ export const viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang={defaultLocale} className={`${syne.variable} ${inter.variable}`}>
+      <head>
+        <link
+          rel="preload"
+          href="/patternBg.webp"
+          as="image"
+          imageSrcSet="/patternBg.webp 1x, /patternBg.webp 2x"
+        />
+        <link
+          rel="preload"
+          href="/fonts/your-font.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="bg-neutral-800 font-sans antialiased">
         <LanguageHandler>
           {children}

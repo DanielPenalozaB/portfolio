@@ -44,7 +44,7 @@ export default function Experience({ data }: { data: DynamicZone | undefined }) 
                   idx === 0 ? 'bg-violet-400 max-w-8 min-h-8 min-w-8 h-8 max-h-8 w-8' : 'bg-neutral-200 max-w-6 min-h-6 min-w-6 h-6 max-h-6 w-6'
                 )}>
                   {idx === 0 && (
-                    <div className="max-w-8 min-h-8 min-w-8 absolute left-1/2 top-1/2 h-8 max-h-8 w-8 -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full bg-transparent outline-4 outline-offset-4 outline-violet-400" />
+                    <div className="max-w-8 min-h-8 min-w-8 absolute left-1/2 top-1/2 h-8 max-h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent outline-4 outline-offset-4 outline-violet-400" />
                   )}
                 </div>
                 <div className={cn(
