@@ -29,7 +29,8 @@ export default function Hero({ data }: { data: DynamicZone | undefined }) {
         quality={85}
         className="absolute left-0 top-0 z-0 h-full w-full select-none object-cover opacity-70"
       />
-      <div className='absolute inset-0 -z-10 bg-[linear-gradient(0deg,transparent_45%,#fafafa_100%)] backdrop-blur-2xl' />
+      <div className='absolute inset-0 z-0 bg-gradient-to-t from-neutral-50 to-transparent to-45%' />
+      <div className='absolute inset-0 -z-10 backdrop-blur-2xl' />
       <div className="container relative z-10 mx-auto">
         <div className="flex flex-col items-center justify-center">
           <HeroHeading body={heading?.body || ''} />
