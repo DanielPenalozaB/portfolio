@@ -8,8 +8,7 @@ export default function robots() {
       }
     ],
     sitemap: [
-      'https://danielpenalozab.com/sitemap.xml',
-      'https://danielpenalozab.com/sitemap-0.xml'
+      'https://danielpenalozab.com/sitemap.xml'
     ],
     host: 'https://danielpenalozab.com'
   };
