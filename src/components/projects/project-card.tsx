@@ -1,7 +1,6 @@
 'use client';
 
 import { Project } from '@/types/project';
-import { Locale } from '@/i18n/locales';
 import cn from '@/utils/cn';
 import Button from '../ui/button';
 import { GithubIcon } from '../icons/github';
@@ -12,7 +11,7 @@ import { useState } from 'react';
 
 const API_URL = process.env.NEXT_PUBLIC_STRAPI_BASE_URL || 'http://localhost:1337';
 
-export default function ProjectCard({ project, locale }: { project: Project, locale: Locale }) {
+export default function ProjectCard({ project, locale }: { project: Project, locale: string }) {
   const [ currentImageIndex, setCurrentImageIndex ] = useState(0);
   const [ images ] = useState(project.images);
 

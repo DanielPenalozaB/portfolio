@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import 'next/types';
+// types/next.d.ts
+import 'next';
 
 declare module 'next' {
-  interface PageProps {
-    params: any;
-  }
+  type PageProps<T = unknown, P = unknown> = {
+    params: T;
+    searchParams?: P;
+  };
 }

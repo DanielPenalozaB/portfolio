@@ -1,9 +1,8 @@
-import { Locale } from '@/i18n/locales';
 import { DynamicZone } from '@/types/strapi/shared/dynamic-zone';
 import cn from '@/utils/cn';
 import ProjectCard from './project-card';
 
-export default function ProjectsList({ data, locale }: { data: DynamicZone | undefined, locale: Locale }) {
+export default function ProjectsList({ data, locale }: { data: DynamicZone | undefined, locale: string }) {
   if (!data) {
     return null;
   }

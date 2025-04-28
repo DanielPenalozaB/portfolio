@@ -8,7 +8,7 @@ import Skills from '@/components/home/skills';
 import Testimonials from '@/components/home/testimonials';
 import Footer from '@/components/ui/footer';
 import Navbar from '@/components/ui/navbar';
-import { defaultLocale, Locale, locales } from '@/i18n/locales';
+import { defaultLocale, locales } from '@/i18n/locales';
 import { isValidLocale } from '@/i18n/utils';
 import { fetchGlobalData } from '@/api/global';
 import { notFound } from 'next/navigation';
@@ -25,7 +25,7 @@ const getFallbackMetadata = () => ({
   description: 'Full Stack Developer & UX/UI Designer'
 });
 
-export interface PageProps {
+interface PageProps {
   params: Promise<{ lang: string }>;
 }
 
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps) {
   if (!isValidLocale(locale)) return getFallbackMetadata();
 
   try {
-    const { data } = await fetchGlobalData(locale as Locale);
+    const { data } = await fetchGlobalData(locale);
     const { defaultSeo } = data;
     const API_URL = process.env.NEXT_PUBLIC_STRAPI_BASE_URL || 'http://localhost:1337';
 

@@ -6,13 +6,13 @@ import Navbar from '@/components/ui/navbar';
 import { defaultLocale } from '@/i18n/locales';
 import { isValidLocale } from '@/i18n/utils';
 import { getComponentFromZone } from '@/utils/get-component-from-zone';
-import { Metadata, PageProps } from 'next';
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 const homeId = process.env.NEXT_PUBLIC_STRAPI_PROJECTS_PAGE_ID || '';
 const API_URL = process.env.NEXT_PUBLIC_STRAPI_BASE_URL || 'http://localhost:1337';
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ lang: string; }> }): Promise<Metadata> {
   const awaitedParams = await params;
   const locale = awaitedParams.lang ?? defaultLocale;
 
@@ -79,7 +79,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function LocaleProjects({ params }: PageProps) {
+export default async function LocaleProjects({ params }: { params: Promise<{ lang: string; }> }) {
   const awaitedParams = await params;
   const locale = awaitedParams.lang ?? defaultLocale;
 

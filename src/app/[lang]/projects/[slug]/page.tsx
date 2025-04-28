@@ -1,25 +1,24 @@
 import { fetchGlobalData } from '@/api/global';
-import { fetchProjectsData } from '@/api/projects';
 import { fetchProjectsDetailsData } from '@/api/projects-details';
 import Footer from '@/components/ui/footer';
 import Navbar from '@/components/ui/navbar';
-import { defaultLocale } from '@/i18n/locales';
 import { isValidLocale } from '@/i18n/utils';
-import { Metadata, PageProps } from 'next';
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-const homeId = process.env.NEXT_PUBLIC_STRAPI_PROJECTS_PAGE_ID || '';
 const API_URL = process.env.NEXT_PUBLIC_STRAPI_BASE_URL || 'http://localhost:1337';
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const awaitedParams = await params;
-  const locale = awaitedParams.lang ?? defaultLocale;
-
-  if (!isValidLocale(locale)) notFound();
-
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ lang: string; slug: string; }>
+}): Promise<Metadata> {
   try {
-    const { data } = await fetchProjectsData(homeId, locale);
-    const { seo } = data;
+    const { lang, slug } = await params;
+
+    if (!isValidLocale(lang)) notFound();
+    const { data } = await fetchProjectsDetailsData(slug, lang);
+    const { seo } = data[0];
 
     return {
       title: seo.metaTitle,
@@ -43,7 +42,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title: seo?.metaSocial?.[0].title,
         description: seo?.metaSocial?.[0].description,
         siteName: seo.structuredData.name,
-        locale: data.locale,
+        locale: data[0].locale,
         images: [
           {
             url: API_URL + seo?.metaImage?.url,
@@ -52,7 +51,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             alt: seo.structuredData.name
           }
         ],
-        alternateLocale: data.localizations.map((localization) => localization.locale)
+        alternateLocale: data[0].localizations?.map((localization) => localization.locale)
       },
       authors: {
         name: seo.structuredData.name,
@@ -78,15 +77,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function ProjectDetails({ params }: PageProps) {
-  const awaitedParams = await params;
-  const locale = awaitedParams.lang ?? defaultLocale;
-  const slug = awaitedParams.slug ?? '';
+export default async function ProjectDetails({
+  params
+}: {
+  params: Promise<{ lang: string; slug: string; }>
+}) {
+  const { lang, slug } = await params;
 
-  const { data } = await fetchGlobalData(locale);
+  const { data } = await fetchGlobalData(lang);
   const { navbar, footer } = data;
 
-  const { data: projectData } = await fetchProjectsDetailsData(slug, locale);
+  const { data: projectData } = await fetchProjectsDetailsData(slug, lang);
   const details = projectData[0];
 
   const options: Intl.DateTimeFormatOptions = {
@@ -154,7 +155,7 @@ export default async function ProjectDetails({ params }: PageProps) {
           </article>
         </div>
       </main>
-      <Footer data={footer} locale={locale} />
+      <Footer data={footer} locale={lang} />
     </>
   );
 }
