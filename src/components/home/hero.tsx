@@ -23,10 +23,9 @@ export default function Hero({ data }: { data: DynamicZone | undefined }) {
       <Image
         src="/patternBg.webp"
         alt="pattern"
-        loading="lazy"
-        decoding="async"
         width="1440"
         height="697"
+        priority
         className="z-0h-full absolute left-0 top-0 w-[168%] animate-pulse select-none object-cover opacity-70"
       />
       <div className='absolute inset-0 z-0 bg-gradient-to-t from-neutral-50 to-transparent to-45%' />
