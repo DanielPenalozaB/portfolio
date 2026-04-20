@@ -1,4 +1,5 @@
 ---
+import { PROFILE_MARQUEES } from "../data/marquees";
 import { ORBIT_RINGS } from "../data/orbits";
 import { getLocaleFromUrl, useTranslations, type Locale } from "../i18n";
 
@@ -23,6 +24,36 @@ const t = useTranslations(locale);
     .rotate-y-180 {
       transform: rotateY(180deg);
     }
+    .marquee-container {
+      position: relative;
+    }
+    .marquee-track {
+      animation-duration: 20s;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    .marquee-left {
+      animation-name: marquee-left;
+    }
+    .marquee-right {
+      animation-name: marquee-right;
+    }
+    @keyframes marquee-left {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+    @keyframes marquee-right {
+      0% {
+        transform: translateX(-50%);
+      }
+      100% {
+        transform: translateX(0);
+      }
+    }
   </style>
 
   <div class="relative z-10 flex flex-col items-center gap-12">
@@ -33,7 +64,7 @@ const t = useTranslations(locale);
 
     <div
       id="profile-container"
-      class="perspective-1000 h-52 w-52 cursor-pointer"
+      class="perspective-1000 relative h-64 w-64 cursor-pointer"
     >
       <div id="profile-flipper" class="preserve-3d relative h-full w-full">
         <!-- Front Side (Image) -->
@@ -43,37 +74,50 @@ const t = useTranslations(locale);
             alt="Profile"
             class="h-full w-full rounded-4xl! object-cover"
           />
+          <!-- Click indicator -->
+          <div
+            class="absolute -right-2 -bottom-2 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#6C969D"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M15 15l6 6m-6-6v4.8m0-4.8h4.8"></path>
+              <path
+                d="M9 19.8V14H4.2M9 9l-6-6m6 6V4.2M9 9H4.2M15 4.2V9m0 0h4.8M15 9l6-6"
+              ></path>
+            </svg>
+          </div>
         </div>
 
-        <!-- Back Side (Text) -->
+        <!-- Back Side (Infinite sliders) -->
         <div
-          class="absolute inset-0 flex rotate-y-180 items-center justify-center rounded-4xl bg-white text-center backface-hidden"
+          class="absolute inset-0 flex rotate-y-180 flex-col justify-between gap-6 overflow-hidden rounded-4xl border-4 border-slate-700 bg-white py-6 backface-hidden"
         >
-          <svg
-            viewBox="0 0 200 200"
-            class="h-full w-full animate-[spin_20s_linear_infinite] p-2"
-          >
-            <path
-              id="circlePath"
-              d="M 100, 100 m -70, 0 a 70,70 0 1,1 140,0 a 70,70 0 1,1 -140,0"
-              fill="none"></path>
-            <text
-              class="dm-serif-display fill-stone-800 text-[11.5px] font-semibold tracking-widest uppercase"
-            >
-              <textPath
-                href="#circlePath"
-                startOffset="50%"
-                text-anchor="middle"
-              >
-                {t("hero.roles")}
-              </textPath>
-            </text>
-          </svg>
-          <div
-            class="pointer-events-none absolute inset-0 flex items-center justify-center"
-          >
-            <span class="text-2xl">🚀</span>
-          </div>
+          {
+            PROFILE_MARQUEES.map((slider) => (
+              <div class="marquee-container overflow-hidden border-y-4 border-stone-700 py-2">
+                <div
+                  class={`marquee-track marquee-${slider.direction} flex w-max gap-6`}
+                >
+                  {[...slider.words, ...slider.words].map((word) => (
+                    <span class="whitespace-nowrap text-lg font-medium uppercase text-stone-700">
+                      {word}
+                    </span>
+                  ))}
+                </div>
+                <span class="absolute top-0 left-0 rounded-sm rounded-l-none bg-[#6C969D] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white">
+                  {slider.label}
+                </span>
+              </div>
+            ))
+          }
         </div>
       </div>
     </div>
@@ -115,18 +159,14 @@ const t = useTranslations(locale);
     class="pointer-events-auto absolute inset-0 flex items-center justify-center overflow-visible"
   >
     <!-- Visual Rings -->
-    <div
-      class="absolute h-[706px] w-[706px] rounded-full border-4 border-stone-200/50!"
-    >
-    </div>
-    <div
-      class="absolute h-[956px] w-[956px] rounded-full border-4 border-stone-200/50!"
-    >
-    </div>
-    <div
-      class="absolute h-[1216px] w-[1216px] rounded-full border-4 border-stone-200/50!"
-    >
-    </div>
+    {
+      ORBIT_RINGS.map((orbit) => (
+        <div
+          class="absolute rounded-full border-4 border-stone-200/50!"
+          style={{ width: `${orbit.radius * 2}px`, height: `${orbit.radius * 2}px` }}
+        />
+      ))
+    }
 
     <!-- Orbit Arms -->
     {
@@ -268,17 +308,18 @@ const t = useTranslations(locale);
     }
   }
 
-  // Profile card: 3D tilt + flip on hover
+  // Profile card: click to flip + 3D tilt on hover
   const profileContainer = document.getElementById("profile-container");
   const profileFlipper = document.getElementById("profile-flipper");
 
   if (profileContainer && profileFlipper) {
     let isFlipped = false;
 
-    profileContainer.addEventListener("mouseenter", () => {
-      isFlipped = true;
+    profileContainer.addEventListener("click", () => {
+      isFlipped = !isFlipped;
       gsap.to(profileFlipper, {
-        rotationY: 180,
+        rotationY: isFlipped ? 180 : 0,
+        rotateX: 0,
         duration: 0.6,
         ease: "power2.inOut",
       });
@@ -302,9 +343,9 @@ const t = useTranslations(locale);
     });
 
     profileContainer.addEventListener("mouseleave", () => {
-      isFlipped = false;
+      const baseY = isFlipped ? 180 : 0;
       gsap.to(profileFlipper, {
-        rotationY: 0,
+        rotationY: baseY,
         rotateX: 0,
         duration: 0.6,
         ease: "power2.inOut",
