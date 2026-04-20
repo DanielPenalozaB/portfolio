@@ -1,0 +1,16 @@
+---
+import OrbitalHero from "../components/OrbitalHero.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+  <OrbitalHero />
+  <main>
+    <section>
+      <p class="mt-8 text-center text-gray-500 italic">
+        Scroll down for more...
+      </p>
+    </section>
+  </main>
+</Layout>

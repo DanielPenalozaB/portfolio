@@ -1,0 +1,52 @@
+---
+import { NAV_LINKS } from "../consts";
+import {
+  getLocaleFromUrl,
+  getLocalizedPath,
+  useTranslations,
+  type Locale,
+} from "../i18n";
+
+const locale: Locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const altLocale: Locale = locale === "en" ? "es" : "en";
+---
+
+<header
+  class="sticky top-0 z-10 flex w-full justify-center bg-stone-100/50 backdrop-blur-sm"
+>
+  <nav class="flex w-full max-w-5xl justify-between gap-8 p-8">
+    <h2>
+      <a
+        href={getLocalizedPath("/", locale)}
+        class="h-10 w-10 rounded-full outline outline-[#6C969D]"
+      >
+        <img
+          src="/images/profile.png"
+          alt="Logo"
+          class="h-10 w-10 rounded-full!"
+        />
+      </a>
+    </h2>
+    <div class="flex items-center justify-center gap-4">
+      {
+        NAV_LINKS.map((link) => (
+          <a
+            href={getLocalizedPath(link.href, locale)}
+            title={t(link.labelKey)}
+            class="px-3.5 py-2.5 text-base! text-stone-700! hover:text-stone-500!"
+          >
+            {t(link.labelKey)}
+          </a>
+        ))
+      }
+      <a
+        href={getLocalizedPath(Astro.url.pathname, altLocale)}
+        class="rounded-full border border-stone-300 px-2.5 py-1 text-sm! text-stone-600! hover:bg-stone-200"
+        title={altLocale === "en" ? "English" : "Español"}
+      >
+        {altLocale.toUpperCase()}
+      </a>
+    </div>
+  </nav>
+</header>
