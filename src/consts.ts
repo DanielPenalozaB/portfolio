@@ -1,9 +1,5 @@
 import type { TranslationKey } from "./i18n";
 
-export const SITE_TITLE = "Daniel Peñaloza";
-export const SITE_DESCRIPTION =
-  "SSR Web Developer, DevOps Enthusiast & Design Engineer";
-
 interface NavLink {
   href: string;
   labelKey: TranslationKey;

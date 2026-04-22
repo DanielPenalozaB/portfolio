@@ -3,16 +3,22 @@ import type { ImageMetadata } from "astro";
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
-import { getLocaleFromUrl, type Locale } from "../i18n";
+import { getLocaleFromUrl, useTranslations, type Locale } from "../i18n";
 
 interface Props {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   image?: ImageMetadata;
 }
 
-const { title, description, image } = Astro.props;
 const locale: Locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const {
+  title = t("site.title"),
+  description = t("site.description"),
+  image,
+} = Astro.props;
 ---
 
 <!doctype html>

@@ -1,12 +1,19 @@
 ---
+import type { CollectionEntry } from "astro:content";
 import type { Project } from "../data/projects";
 
 interface Props {
-  project: Project;
+  project?: Project;
+  data?: CollectionEntry<"projects">["data"];
   class?: string;
 }
 
-const { project, class: className } = Astro.props;
+const { project: oldProject, data: newData, class: className } = Astro.props;
+const project = newData || oldProject;
+
+if (!project) {
+  throw new Error("ProjectCard requires either a 'project' or 'data' prop");
+}
 ---
 
 <article
@@ -26,14 +33,17 @@ const { project, class: className } = Astro.props;
       class="aspect-video h-full w-full rounded-2xl! object-cover"
     />
   </a>
-  <div class="flex items-center gap-4">
-    <h3 class="text-3xl font-light text-stone-300!">{project.title}</h3>
+  <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+    <h3 class="truncate text-3xl font-medium whitespace-nowrap text-stone-300!">
+      {project.title}
+    </h3>
     <svg
       width="16"
       height="16"
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      class="hidden sm:block"
     >
       <g clip-path="url(#clip0_47_323)">
         <path
@@ -51,7 +61,7 @@ const { project, class: className } = Astro.props;
         project.tags
           .slice(0, 3)
           .map((tag) => (
-            <span class="rounded-md bg-stone-700 px-2 py-1 text-sm text-stone-300">
+            <span class="rounded-md bg-stone-700 px-2 py-1 text-sm text-stone-100">
               {tag}
             </span>
           ))

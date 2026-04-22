@@ -1,20 +1,23 @@
 ---
+import { getCollection } from "astro:content";
 import OrbitalHero from "../../components/OrbitalHero.astro";
 import ProjectCard from "../../components/ProjectCard.astro";
 import ProjectsSection from "../../components/ProjectsSection.astro";
-import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
-import { PROJECTS } from "../../data/projects";
 import Layout from "../../layouts/Layout.astro";
+
+const projects = await getCollection("projects", ({ id }) => {
+  return id.startsWith("es/");
+});
 ---
 
-<Layout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<Layout>
   <OrbitalHero />
   <ProjectsSection>
     {
-      PROJECTS.map((project, index) => (
+      projects.map((project, index) => (
         <ProjectCard
-          project={project}
-          class={index < 2 ? "sm:col-span-2" : ""}
+          data={project.data}
+          class={index < 2 ? "lg:col-span-2" : ""}
         />
       ))
     }

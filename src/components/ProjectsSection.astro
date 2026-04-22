@@ -61,12 +61,12 @@ const rays = [
     </div>
   </div>
 
-  <div class="relative z-10 flex max-w-5xl flex-col items-center gap-16">
+  <div class="relative flex max-w-5xl flex-col items-center gap-16">
     <h2 class="dm-serif-display text-5xl font-bold text-stone-200!">
       {t("nav.projects")}
     </h2>
 
-    <div class="grid gap-8 sm:grid-cols-2">
+    <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
       <slot />
     </div>
   </div>
@@ -92,8 +92,8 @@ const rays = [
   const rays = document.querySelectorAll<HTMLElement>(".light-ray");
 
   rays.forEach((ray, i) => {
-    const duration = 4 + Math.random() * 3;
-    const delay = i * 0.4;
+    const duration = 1.5 + Math.random() * 1.5;
+    const delay = i * 0.2;
 
     gsap.to(ray, {
       opacity: `+=${0.08 + Math.random() * 0.06}`,
