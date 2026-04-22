@@ -98,11 +98,14 @@ const t = useTranslations(locale);
 
         <!-- Back Side (Infinite sliders) -->
         <div
-          class="absolute inset-0 flex rotate-y-180 flex-col justify-between gap-6 overflow-hidden rounded-4xl border-4 border-slate-700 bg-white py-6 backface-hidden"
+          class="absolute inset-0 flex rotate-y-180 rounded-4xl border-4 border-slate-700 bg-white p-6 backface-hidden"
+        >
+        <div
+          class="flex flex-col justify-between overflow-hidden rounded-lg border-4 border-slate-700"
         >
           {
             PROFILE_MARQUEES.map((slider) => (
-              <div class="marquee-container overflow-hidden border-y-4 border-stone-700 py-2">
+              <div class="marquee-container overflow-hidden first:border-t-0 last:border-b-0 border-y-4 border-stone-700 py-2">
                 <div
                   class={`marquee-track marquee-${slider.direction} flex w-max gap-6`}
                 >
@@ -118,6 +121,7 @@ const t = useTranslations(locale);
               </div>
             ))
           }
+        </div>
         </div>
       </div>
     </div>

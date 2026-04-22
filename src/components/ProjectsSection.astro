@@ -1,0 +1,117 @@
+---
+import { getLocaleFromUrl, useTranslations, type Locale } from "../i18n";
+
+const locale: Locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const rays = [
+  { angle: 50, width: 220, opacity: 0.12 },
+  { angle: 62, width: 140, opacity: 0.09 },
+  { angle: 72, width: 260, opacity: 0.1 },
+  { angle: 80, width: 100, opacity: 0.07 },
+  { angle: 90, width: 300, opacity: 0.08 },
+  { angle: 56, width: 180, opacity: 0.06 },
+  { angle: 68, width: 200, opacity: 0.11 },
+];
+---
+
+<section
+  id="projects"
+  class="relative flex min-h-screen flex-col items-center justify-center overflow-hidden rounded-[48px] bg-linear-to-br from-[#44403C] from-20% to-[#1C1917] to-60% px-10 py-40"
+>
+  <!-- Light rays from top-left -->
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    <div class="absolute -top-10 -left-10">
+      {
+        rays.map((ray) => (
+          <div
+            class="light-ray absolute top-0 left-0"
+            style={{
+              width: "150vw",
+              height: `${ray.width}px`,
+              opacity: ray.opacity,
+              transform: `rotate(${ray.angle}deg)`,
+              transformOrigin: "0 0",
+            }}
+          >
+            <div class="ray-inner h-full w-full" />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    <div class="absolute -top-10 left-52">
+      {
+        rays.map((ray) => (
+          <div
+            class="light-ray absolute top-0 left-0"
+            style={{
+              width: "100vw",
+              height: `${ray.width}px`,
+              opacity: ray.opacity,
+              transform: `rotate(${ray.angle + 10}deg)`,
+              transformOrigin: "0 0",
+            }}
+          >
+            <div class="ray-inner h-full w-full" />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="relative z-10 flex max-w-5xl flex-col items-center gap-16">
+    <h2 class="dm-serif-display text-5xl font-bold text-stone-200!">
+      {t("nav.projects")}
+    </h2>
+
+    <div class="grid gap-8 sm:grid-cols-2">
+      <slot />
+    </div>
+  </div>
+
+  <style>
+    .light-ray {
+      filter: blur(30px);
+    }
+    .ray-inner {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.1) 40%,
+        rgba(255, 255, 255, 0) 70%
+      );
+    }
+  </style>
+</section>
+
+<script>
+  import gsap from "gsap";
+
+  const rays = document.querySelectorAll<HTMLElement>(".light-ray");
+
+  rays.forEach((ray, i) => {
+    const duration = 4 + Math.random() * 3;
+    const delay = i * 0.4;
+
+    gsap.to(ray, {
+      opacity: `+=${0.08 + Math.random() * 0.06}`,
+      scaleY: 1.3 + Math.random() * 0.5,
+      duration,
+      delay,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    });
+
+    gsap.to(ray, {
+      rotation: `+=${2 + Math.random() * 3}`,
+      duration: duration * 1.5,
+      delay,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    });
+  });
+</script>

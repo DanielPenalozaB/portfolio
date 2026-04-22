@@ -42,7 +42,7 @@ const altLocale: Locale = locale === "en" ? "es" : "en";
       }
       <a
         href={getLocalizedPath(Astro.url.pathname, altLocale)}
-        class="rounded-full border border-stone-300 px-2.5 py-1 text-sm! text-stone-600! hover:bg-stone-200"
+        class="cursor-pointer rounded-full border border-stone-300 bg-stone-300/50 px-2.5 py-1 text-sm! text-stone-600! hover:bg-stone-200"
         title={altLocale === "en" ? "English" : "Español"}
       >
         {altLocale.toUpperCase()}
