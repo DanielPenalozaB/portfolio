@@ -12,89 +12,91 @@ const t = useTranslations(locale);
 const altLocale: Locale = locale === "en" ? "es" : "en";
 ---
 
-<header
-  class="sticky top-0 z-50 flex w-full justify-center bg-stone-100/80 backdrop-blur-md border-b border-stone-200/50"
->
-  <nav class="flex w-full max-w-5xl items-center justify-between p-4 md:p-8">
-    <!-- Logo -->
-    <a
-      href={getLocalizedPath("/", locale)}
-      class="h-10 w-10 shrink-0 rounded-full outline outline-[#6C969D]"
-    >
-      <img
-        src="/images/profile.png"
-        alt="Logo"
-        class="h-10 w-10 rounded-full!"
-      />
-    </a>
-
-    <!-- Desktop Navigation -->
-    <div class="hidden items-center gap-2 md:flex">
-      {
-        NAV_LINKS.map((link) => (
-          <a
-            href={getLocalizedPath(link.href, locale)}
-            title={t(link.labelKey)}
-            class="px-3.5 py-2 text-base font-medium text-stone-700 transition-colors hover:text-[#6C969D]"
-          >
-            {t(link.labelKey)}
-          </a>
-        ))
-      }
+<header class="sticky top-0 z-50">
+  <nav
+    class="flex w-full justify-center border-b border-stone-200/50 bg-stone-100/80 backdrop-blur-md"
+  >
+    <div class="flex w-full max-w-5xl items-center justify-between p-4 md:p-8">
+      <!-- Logo -->
       <a
-        href={getLocalizedPath(Astro.url.pathname, altLocale)}
-        class="ml-2 cursor-pointer rounded-full border border-stone-300 bg-stone-200/50 px-3 py-1 text-sm font-bold text-stone-600 transition-all hover:bg-stone-200"
-        title={altLocale === "en" ? "English" : "Español"}
+        href={getLocalizedPath("/", locale)}
+        class="h-10 w-10 shrink-0 rounded-full outline outline-[#6C969D]"
       >
-        {altLocale.toUpperCase()}
+        <img
+          src="/images/profile.png"
+          alt="Logo"
+          class="h-10 w-10 rounded-full!"
+        />
       </a>
-    </div>
 
-    <!-- Mobile Hamburger Button -->
-    <button
-      id="menu-toggle"
-      class="flex h-10 w-10 items-center justify-center rounded-lg text-stone-700 hover:bg-stone-200 md:hidden"
-      aria-label="Toggle Menu"
-    >
-      <svg
-        id="menu-icon"
-        class="h-6 w-6"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
+      <!-- Desktop Navigation -->
+      <div class="hidden items-center gap-2 md:flex">
+        {
+          NAV_LINKS.map((link) => (
+            <a
+              href={getLocalizedPath(link.href, locale)}
+              title={t(link.labelKey)}
+              class="px-3.5 py-2 text-base font-medium text-stone-700! transition-colors hover:text-[#6C969D]"
+            >
+              {t(link.labelKey)}
+            </a>
+          ))
+        }
+        <a
+          href={getLocalizedPath(Astro.url.pathname, altLocale)}
+          class="ml-2 cursor-pointer rounded-full border border-stone-300 bg-stone-200/50 px-3 py-1 text-sm font-bold text-stone-600! transition-all hover:bg-stone-200"
+          title={altLocale === "en" ? "English" : "Español"}
+        >
+          {altLocale.toUpperCase()}
+        </a>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button
+        id="menu-toggle"
+        class="flex h-10 w-10 items-center justify-center rounded-lg text-stone-700! hover:bg-stone-200 md:hidden"
+        aria-label="Toggle Menu"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M4 6h16M4 12h16m-7 6h7"></path>
-      </svg>
-      <svg
-        id="close-icon"
-        class="hidden h-6 w-6"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M6 18L18 6M6 6l12 12"></path>
-      </svg>
-    </button>
+        <svg
+          id="menu-icon"
+          class="h-6 w-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+        <svg
+          id="close-icon"
+          class="hidden h-6 w-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
   </nav>
 
   <!-- Mobile Menu Dropdown -->
   <div
     id="mobile-menu"
-    class="absolute top-full left-0 hidden w-full origin-top flex-col gap-2 border-b border-stone-200 bg-stone-100 p-6 shadow-xl transition-all duration-300 md:hidden"
+    class="pointer-events-none absolute top-full left-0 isolate flex w-full origin-top -translate-y-2 flex-col gap-2 border-b border-stone-200 bg-stone-100/70 p-6 opacity-0 shadow-xl backdrop-blur-md transition-all duration-300 ease-out md:hidden"
   >
     {
       NAV_LINKS.map((link) => (
         <a
           href={getLocalizedPath(link.href, locale)}
-          class="rounded-lg px-4 py-3 text-lg font-medium text-stone-700 hover:bg-stone-200"
+          class="rounded-lg px-4 py-3 text-lg font-medium text-stone-700! hover:bg-stone-500/10"
         >
           {t(link.labelKey)}
         </a>
@@ -103,10 +105,12 @@ const altLocale: Locale = locale === "en" ? "es" : "en";
     <div class="mt-4 border-t border-stone-200 pt-4">
       <a
         href={getLocalizedPath(Astro.url.pathname, altLocale)}
-        class="flex items-center justify-between rounded-lg px-4 py-3 text-lg font-bold text-[#6C969D] hover:bg-stone-200"
+        class="flex items-center justify-between rounded-lg px-4 py-3 text-lg font-bold text-stone-700! hover:bg-stone-500/10"
       >
         <span>{altLocale === "en" ? "English" : "Español"}</span>
-        <span class="rounded-md border border-stone-300 px-2 py-0.5 text-xs text-stone-500">
+        <span
+          class="rounded-md border border-stone-300 px-2 py-0.5 text-xs text-stone-500!"
+        >
           {altLocale.toUpperCase()}
         </span>
       </a>
@@ -121,31 +125,48 @@ const altLocale: Locale = locale === "en" ? "es" : "en";
   const closeIcon = document.getElementById("close-icon");
 
   if (menuToggle && mobileMenu && menuIcon && closeIcon) {
-    menuToggle.addEventListener("click", () => {
-      const isHidden = mobileMenu.classList.contains("hidden");
-
-      if (isHidden) {
-        mobileMenu.classList.remove("hidden");
-        mobileMenu.classList.add("flex");
+    const toggleMenu = (show: boolean) => {
+      if (show) {
+        mobileMenu.classList.remove(
+          "opacity-0",
+          "pointer-events-none",
+          "-translate-y-2",
+        );
+        mobileMenu.classList.add("opacity-100", "translate-y-0");
         menuIcon.classList.add("hidden");
         closeIcon.classList.remove("hidden");
-        // Add a small delay for animation if needed
       } else {
-        mobileMenu.classList.add("hidden");
-        mobileMenu.classList.remove("flex");
+        mobileMenu.classList.add(
+          "opacity-0",
+          "pointer-events-none",
+          "-translate-y-2",
+        );
+        mobileMenu.classList.remove("opacity-100", "translate-y-0");
         menuIcon.classList.remove("hidden");
         closeIcon.classList.add("hidden");
       }
+    };
+
+    menuToggle.addEventListener("click", () => {
+      const isOpen = mobileMenu.classList.contains("opacity-100");
+      toggleMenu(!isOpen);
     });
 
     // Close menu when clicking a link
     mobileMenu.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", () => {
-        mobileMenu.classList.add("hidden");
-        mobileMenu.classList.remove("flex");
-        menuIcon.classList.remove("hidden");
-        closeIcon.classList.add("hidden");
+        toggleMenu(false);
       });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener("click", (e) => {
+      if (
+        !menuToggle.contains(e.target as Node) &&
+        !mobileMenu.contains(e.target as Node)
+      ) {
+        toggleMenu(false);
+      }
     });
   }
 </script>
