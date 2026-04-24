@@ -31,6 +31,7 @@ const LANGUAGES: OrbitItem[] = [
   { label: "PHP", icon: "/icons/php.svg" },
   { label: "Jest", icon: "/icons/jest.svg" },
   { label: "Redux", icon: "/icons/redux.svg" },
+  { label: "Java", icon: "/icons/java.svg" },
 ];
 
 const DEVOPS: OrbitItem[] = [
