@@ -19,7 +19,6 @@ export const TOOLS: Tool[] = [
   { label: "Vite", icon: "/icons/vite.svg" },
   { label: "SvelteKit", icon: "/icons/svelte.svg" },
   { label: "AWS", icon: "/icons/aws.svg" },
-  { label: "Notion", icon: "/icons/notion.svg" },
   { label: "GitHub", icon: "/icons/github.svg" },
   { label: "Linux", icon: "/icons/linux.svg" },
   { label: "Jira", icon: "/icons/jira.svg" },
