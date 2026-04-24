@@ -27,6 +27,10 @@ const LANGUAGES: OrbitItem[] = [
   { label: "React Native", icon: "/icons/react.svg" },
   { label: "Flutter", icon: "/icons/flutter.svg" },
   { label: "Angular", icon: "/icons/angular.svg" },
+  { label: "Express.js", icon: "/icons/express.svg" },
+  { label: "PHP", icon: "/icons/php.svg" },
+  { label: "Jest", icon: "/icons/jest.svg" },
+  { label: "Redux", icon: "/icons/redux.svg" },
 ];
 
 const DEVOPS: OrbitItem[] = [
@@ -36,6 +40,7 @@ const DEVOPS: OrbitItem[] = [
   { label: "Node.js", icon: "/icons/nodejs.svg" },
   { label: "AWS", icon: "/icons/aws.svg" },
   { label: "GitHub", icon: "/icons/github.svg" },
+  { label: "PostgreSQL", icon: "/icons/postgresql.svg" },
 ];
 
 const APPS: OrbitItem[] = [
@@ -44,6 +49,7 @@ const APPS: OrbitItem[] = [
   { label: "Notion", icon: "/icons/notion.svg" },
   { label: "Jira", icon: "/icons/jira.svg" },
   { label: "Figma", icon: "/icons/figma.svg" },
+  { label: "Vite", icon: "/icons/vite.svg" },
 ];
 
 export const ORBIT_RINGS: OrbitRing[] = [
