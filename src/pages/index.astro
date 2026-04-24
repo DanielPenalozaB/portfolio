@@ -18,6 +18,7 @@ const projects = await getCollection("projects", ({ id }) => {
         <ProjectCard
           data={project.data}
           class={index < 2 ? "lg:col-span-2" : ""}
+          isFeatured={index < 2}
         />
       ))
     }

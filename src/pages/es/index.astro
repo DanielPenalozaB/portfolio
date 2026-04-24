@@ -17,6 +17,7 @@ const projects = await getCollection("projects", ({ id }) => {
       projects.map((project, index) => (
         <ProjectCard
           data={project.data}
+          isFeatured={index < 2}
           class={index < 2 ? "lg:col-span-2" : ""}
         />
       ))
