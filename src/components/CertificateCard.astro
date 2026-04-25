@@ -8,48 +8,68 @@ interface Props {
 const { certificate } = Astro.props;
 ---
 
-<a
-  href={certificate.url || "#"}
-  target={certificate.url && certificate.url !== "#" ? "_blank" : undefined}
-  rel={certificate.url && certificate.url !== "#"
-    ? "noopener noreferrer"
-    : undefined}
-  class="group flex w-56 flex-col overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm transition-all hover:shadow-lg sm:w-64"
+<div
+  class="group relative flex items-center justify-center rounded-4xl border-2 border-stone-300 bg-stone-200 p-4"
 >
-  {
-    certificate.image ? (
-      <div class="relative h-36 w-full overflow-hidden bg-stone-100 sm:h-44">
-        <img
-          src={certificate.image}
-          alt={certificate.name}
-          class="h-full w-full object-cover transition-transform group-hover:scale-105"
-          loading="lazy"
-        />
-      </div>
-    ) : (
-      <div class="h-36 w-full bg-stone-100 sm:h-44" />
-    )
-  }
-  <div class="flex items-center justify-between gap-2 p-4">
-    <div class="flex flex-col">
-      <span class="text-sm font-bold text-stone-800">{certificate.name}</span>
-      <span class="text-xs text-stone-400">{certificate.issuer}</span>
-    </div>
-    <div
-      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-stone-200 transition-colors group-hover:border-stone-400"
-    >
-      <svg
-        class="h-4 w-4 text-stone-500"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        stroke-width="2"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M7 17L17 7M17 7H7M17 7v10"></path>
-      </svg>
-    </div>
+  <div class="relative h-full w-full overflow-hidden rounded-2xl bg-stone-300">
+    <img
+      src={certificate.image}
+      alt={certificate.name}
+      class="h-[inherit]! object-cover transition-transform duration-500 ease-out group-hover:scale-125"
+      loading="lazy"
+    />
   </div>
-</a>
+  <svg
+    width="265"
+    height="80"
+    viewBox="0 0 284 80"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    class="absolute bottom-[13px] mx-auto"
+  >
+    <path
+      d="M179.5 0C188.337 0 195.5 7.16344 195.5 16V36C195.5 60.3005 215.199 80 239.5 80H0V0H179.5Z"
+      fill="#E7E5E4"></path>
+    <path
+      d="M283.5 80H239.5C263.801 80 283.5 60.3005 283.5 36V80Z"
+      fill="#E7E5E4"></path>
+  </svg>
+  <div
+    class="absolute bottom-4 left-4 flex h-[74px] w-[calc(265px-84px)] flex-col items-stretch justify-center p-2"
+  >
+    <span class="text-lg leading-7 font-semibold text-stone-800"
+      >{certificate.name}</span
+    >
+    <span class="text-lg leading-7 font-medium text-stone-500"
+      >{certificate.issuer}</span
+    >
+  </div>
+  <a
+    href={certificate.url || "#"}
+    target={certificate.url && certificate.url !== "#" ? "_blank" : undefined}
+    rel={certificate.url && certificate.url !== "#"
+      ? "noopener noreferrer"
+      : undefined}
+    class="group/link absolute right-6 bottom-6 flex h-[66px] w-[66px] items-center justify-center rounded-full border-2 border-stone-200 bg-stone-200 transition-colors duration-300 ease-in-out hover:bg-stone-800"
+  >
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      class="stroke-stone-800 transition-all duration-300 ease-in-out group-hover:rotate-360 group-hover/link:stroke-stone-200"
+    >
+      <path
+        d="M3.69232 4H28.3077V28.6154"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+      <path
+        d="M3.69232 28.6154L28.3077 4"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+    </svg>
+  </a>
+</div>

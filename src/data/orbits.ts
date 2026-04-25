@@ -20,7 +20,6 @@ const LANGUAGES: OrbitItem[] = [
   { label: "SvelteKit", icon: "/icons/svelte.svg" },
   { label: "Astro", icon: "/icons/astro.svg" },
   { label: "Spring Boot", icon: "/icons/spring.svg" },
-  { label: "TailwindCSS", icon: "/icons/tailwind.svg" },
   { label: "Go", icon: "/icons/go.svg" },
   { label: "Flask", icon: "/icons/flask.svg" },
   { label: "Django", icon: "/icons/django.svg" },
@@ -29,7 +28,6 @@ const LANGUAGES: OrbitItem[] = [
   { label: "Angular", icon: "/icons/angular.svg" },
   { label: "Express.js", icon: "/icons/express.svg" },
   { label: "PHP", icon: "/icons/php.svg" },
-  { label: "Jest", icon: "/icons/jest.svg" },
   { label: "Redux", icon: "/icons/redux.svg" },
   { label: "Java", icon: "/icons/java.svg" },
 ];
@@ -42,6 +40,8 @@ const DEVOPS: OrbitItem[] = [
   { label: "AWS", icon: "/icons/aws.svg" },
   { label: "GitHub", icon: "/icons/github.svg" },
   { label: "PostgreSQL", icon: "/icons/postgresql.svg" },
+  { label: "TailwindCSS", icon: "/icons/tailwind.svg" },
+  { label: "Jest", icon: "/icons/jest.svg" },
 ];
 
 const APPS: OrbitItem[] = [
