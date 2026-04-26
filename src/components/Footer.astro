@@ -11,15 +11,19 @@ const t = useTranslations(locale);
 const year = new Date().getFullYear();
 ---
 
-<footer class="bg-gradient-to-b from-stone-200 via-[#b0c4c8] to-[#8aabb2]">
-  <div class="mx-auto max-w-6xl px-6 pt-20 pb-8 sm:px-10">
+<footer
+  class="flex h-[625px] flex-col justify-end bg-linear-to-b from-stone-200/5 via-[#b0c4c8] to-[#8aabb2]"
+>
+  <div
+    class="mx-auto flex w-full max-w-5xl flex-col items-center px-6 pt-20 pb-8 sm:px-10"
+  >
     <!-- Main content -->
     <div
-      class="flex flex-col gap-12 pb-12 md:flex-row md:items-start md:justify-between"
+      class="flex w-fit flex-col gap-12 pb-12 md:w-full md:flex-row md:items-start md:justify-between"
     >
       <!-- Left: Made with + photo -->
       <div class="flex flex-col gap-5">
-        <p class="text-sm font-medium text-white">
+        <p class="text-sm font-medium text-white!">
           {t("footer.madeWith")} ❤️ {t("footer.andPassion")}
           <br />— Daniel Peñaloza
         </p>
@@ -33,29 +37,29 @@ const year = new Date().getFullYear();
       <!-- Right: Pages + Social columns -->
       <div class="flex gap-16 sm:gap-24">
         <div class="flex flex-col gap-3">
-          <h3 class="text-sm font-bold text-white">{t("footer.pages")}</h3>
-          <nav class="flex flex-col gap-2 text-sm text-white/70">
+          <h3 class="text-sm font-bold text-white!">{t("footer.pages")}</h3>
+          <nav class="flex flex-col gap-2 text-sm text-white/70!">
             <a
               href={getLocalizedPath("/", locale)}
-              class="transition-colors hover:text-white"
+              class="text-white! transition-colors"
             >
               {t("footer.home")}
             </a>
             <a
               href={getLocalizedPath("/#projects", locale)}
-              class="transition-colors hover:text-white"
+              class="text-white! transition-colors"
             >
               {t("nav.projects")}
             </a>
             <a
               href={getLocalizedPath("/about", locale)}
-              class="transition-colors hover:text-white"
+              class="text-white! transition-colors"
             >
               {t("nav.about")}
             </a>
             <a
               href={getLocalizedPath("/#thoughts", locale)}
-              class="transition-colors hover:text-white"
+              class="text-white! transition-colors"
             >
               {t("nav.thoughts")}
             </a>
@@ -63,13 +67,13 @@ const year = new Date().getFullYear();
         </div>
 
         <div class="flex flex-col gap-3">
-          <h3 class="text-sm font-bold text-white">{t("footer.social")}</h3>
-          <nav class="flex flex-col gap-2 text-sm text-white/70">
+          <h3 class="text-sm font-bold text-white!">{t("footer.social")}</h3>
+          <nav class="flex flex-col gap-2 text-sm text-white/70!">
             <a
               href="https://linkedin.com/in/danielpenalozab"
               target="_blank"
               rel="noopener noreferrer"
-              class="transition-colors hover:text-white"
+              class="text-white! transition-colors"
             >
               LinkedIn
             </a>
@@ -77,7 +81,7 @@ const year = new Date().getFullYear();
               href="https://github.com/danielpenalozab"
               target="_blank"
               rel="noopener noreferrer"
-              class="transition-colors hover:text-white"
+              class="text-white! transition-colors"
             >
               Github
             </a>
@@ -88,7 +92,7 @@ const year = new Date().getFullYear();
 
     <!-- Bottom bar -->
     <div
-      class="flex flex-col items-center justify-between gap-2 border-t border-white/20 pt-6 text-xs text-white/50 sm:flex-row"
+      class="flex flex-col items-center justify-between gap-2 border-t border-white/20 pt-6 text-xs text-white/50 sm:flex-row md:w-full"
     >
       <span>&copy; {t("footer.copyright")} {year}</span>
       <span>{t("footer.rights")}</span>
