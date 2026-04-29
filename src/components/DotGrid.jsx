@@ -40,6 +40,10 @@ const DotGrid = ({
   const wrapperRef = useRef(null);
   const canvasRef = useRef(null);
   const dotsRef = useRef([]);
+  const isVisibleRef = useRef(true);
+  const prefersReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const pointerRef = useRef({
     x: 0,
     y: 0,
@@ -102,12 +106,30 @@ const DotGrid = ({
   }, [dotSize, gap]);
 
   useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(wrapper);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (!circlePath) return;
 
     let rafId;
     const proxSq = proximity * proximity;
 
     const draw = () => {
+      if (!isVisibleRef.current) {
+        rafId = requestAnimationFrame(draw);
+        return;
+      }
+
       const canvas = canvasRef.current;
       if (!canvas) return;
       const ctx = canvas.getContext("2d");
@@ -196,6 +218,8 @@ const DotGrid = ({
   );
 
   useEffect(() => {
+    if (prefersReducedMotion) return;
+
     const onMove = (e) => {
       const now = performance.now();
       const pr = pointerRef.current;

@@ -10,6 +10,9 @@ const { profileImage = "/images/profile.png" } = Astro.props;
 
 <div
   id="profile-container"
+  role="button"
+  tabindex="0"
+  aria-label="Flip profile card to see skills"
   class="perspective-1000 relative h-64 w-64 cursor-pointer"
 >
   <div id="profile-flipper" class="preserve-3d relative h-full w-full">
@@ -17,8 +20,9 @@ const { profileImage = "/images/profile.png" } = Astro.props;
     <div class="absolute inset-0 backface-hidden">
       <img
         src={profileImage}
-        alt="Profile"
+        alt="Daniel Peñaloza"
         class="h-full w-full rounded-4xl! object-cover"
+        fetchpriority="high"
       />
       <!-- Click indicator -->
       <div

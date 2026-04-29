@@ -30,6 +30,9 @@ const year = new Date().getFullYear();
         <img
           src="/images/profile.png"
           alt="Daniel Peñaloza"
+          width="96"
+          height="96"
+          loading="lazy"
           class="h-24 w-24 rounded-2xl object-cover shadow-md"
         />
       </div>
@@ -38,7 +41,10 @@ const year = new Date().getFullYear();
       <div class="flex gap-16 sm:gap-24">
         <div class="flex flex-col gap-3">
           <h3 class="text-sm font-bold text-white!">{t("footer.pages")}</h3>
-          <nav class="flex flex-col gap-2 text-sm text-white/70!">
+          <nav
+            aria-label={t("a11y.footerNav")}
+            class="flex flex-col gap-2 text-sm text-white/70!"
+          >
             <a
               href={getLocalizedPath("/", locale)}
               class="text-white! transition-colors"
@@ -68,7 +74,10 @@ const year = new Date().getFullYear();
 
         <div class="flex flex-col gap-3">
           <h3 class="text-sm font-bold text-white!">{t("footer.social")}</h3>
-          <nav class="flex flex-col gap-2 text-sm text-white/70!">
+          <nav
+            aria-label={t("a11y.socialNav")}
+            class="flex flex-col gap-2 text-sm text-white/70!"
+          >
             <a
               href="https://linkedin.com/in/danielpenalozab"
               target="_blank"

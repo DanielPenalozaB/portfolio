@@ -1,20 +1,32 @@
 ---
+import { CATEGORY_META, type ToolCategory } from "../data/tools";
+
 interface Props {
   label: string;
   icon: string;
+  category: ToolCategory;
 }
 
-const { label, icon } = Astro.props;
+const { label, icon, category } = Astro.props;
+const meta = CATEGORY_META[category];
 ---
 
-<div
-  class="flex min-h-[100px] min-w-[100px] items-center justify-center rounded-3xl bg-stone-200/25 p-4 transition-transform hover:scale-110 sm:h-20 sm:w-20"
-  title={label}
->
+<div class="tool-icon group relative z-10 flex min-h-[100px] min-w-[100px] cursor-pointer items-center justify-center rounded-3xl bg-stone-200/25 p-4 transition-all duration-200 hover:z-40 hover:scale-110 sm:h-20 sm:w-20">
   <img
     src={icon}
     alt={label}
     class="h-full! max-h-16! w-full! max-w-16! rounded-none! object-contain"
-    loading="eager"
+    loading="lazy"
   />
+  <div class="pointer-events-none absolute -bottom-14 left-1/2 z-30 flex -translate-x-1/2 flex-col items-center gap-1 opacity-0 transition-all duration-200 group-hover:opacity-100">
+    <span class="whitespace-nowrap rounded-md bg-stone-800 px-2 py-0.5 text-xs font-medium text-white shadow-lg">
+      {label}
+    </span>
+    <span
+      class="whitespace-nowrap rounded-full px-1.5 py-0.5 text-[10px] font-semibold text-white"
+      style={`background-color: ${meta.color}`}
+    >
+      {meta.label}
+    </span>
+  </div>
 </div>

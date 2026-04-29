@@ -44,4 +44,10 @@ export default {
   "about.description": "Conoce más sobre Daniel Peñaloza",
   "about.bio":
     "Hola! Soy Daniel, un desarrollador apasionado por crear experiencias web increíbles. Me especializo en tecnologías modernas y siempre busco aprender algo nuevo.",
+  "a11y.skipToContent": "Saltar al contenido",
+  "a11y.mainNav": "Navegación principal",
+  "a11y.footerNav": "Navegación del pie de página",
+  "a11y.socialNav": "Enlaces sociales",
+  "a11y.toggleMenu": "Alternar menú de navegación",
+  "a11y.viewCertificate": "Ver certificado",
 } as const;

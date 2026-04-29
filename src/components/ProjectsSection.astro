@@ -8,6 +8,7 @@ const t = useTranslations(locale);
 
 <section
   id="projects"
+  aria-labelledby="projects-heading"
   class="relative flex min-h-screen flex-col items-center justify-center overflow-hidden rounded-4xl bg-linear-to-br from-[#44403C] from-20% to-[#1C1917] to-60% px-10 py-20 sm:py-40"
 >
   <LightRays
@@ -28,11 +29,14 @@ const t = useTranslations(locale);
   />
 
   <div class="relative z-10 flex max-w-5xl flex-col items-center gap-16">
-    <h2 class="dm-serif-display text-5xl font-bold text-stone-200!">
+    <h2
+      id="projects-heading"
+      class="reveal dm-serif-display text-5xl font-bold text-stone-200!"
+    >
       {t("nav.projects")}
     </h2>
 
-    <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
+    <div class="reveal reveal-delay-1 grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
       <slot />
     </div>
   </div>

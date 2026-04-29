@@ -9,26 +9,62 @@ const t = useTranslations(locale);
 
 <section
   id="tnt"
+  aria-labelledby="tnt-heading"
   class="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-10 py-40"
 >
   <div
-    class="pointer-events-none absolute top-10 right-20 h-[420px] w-[500px] rounded-full bg-stone-300 blur-3xl"
+    class="pointer-events-none absolute top-10 right-20 h-72 w-56 rounded-full bg-stone-300 blur-3xl max-sm:left-1/2 max-sm:-translate-x-1/2 md:h-[420px] md:w-[500px]"
   >
   </div>
   <div
-    class="relative z-10 grid max-w-5xl grid-cols-[repeat(3,100px)] grid-rows-[repeat(5,100px)] gap-4 transition-all duration-500 ease-in-out md:grid-cols-[repeat(5,100px)] md:gap-8 xl:grid-cols-[repeat(8,100px)]"
+    class="tool-grid relative z-10 grid max-w-5xl grid-cols-[repeat(3,100px)] grid-rows-[repeat(5,100px)] gap-4 transition-all duration-500 ease-in-out min-[1100px]:grid-cols-[repeat(8,100px)]! md:grid-cols-[repeat(5,100px)] md:gap-8"
   >
     <div class="col-span-3 row-span-3 flex flex-col justify-center gap-4">
-      <h2 class="dm-serif-display max-h-32 text-4xl font-bold sm:text-5xl">
+      <h2
+        id="tnt-heading"
+        class="reveal dm-serif-display max-h-32 text-4xl font-bold sm:text-5xl"
+      >
         <span class="text-stone-800">Tools</span><br />
         <span class="text-nowrap text-[#6C969D]">
           <span class="font-light">&amp;</span> Technologies
         </span>
       </h2>
-      <p class="text-2xl leading-tight font-light text-stone-600">
+      <p
+        class="reveal reveal-delay-1 text-2xl leading-tight font-light text-stone-600"
+      >
         {t("tnt.subtitle")}
       </p>
     </div>
-    {TOOLS.map((tool) => <ToolIcon label={tool.label} icon={tool.icon} />)}
+    {TOOLS.map((tool) => <ToolIcon label={tool.label} icon={tool.icon} category={tool.category} />)}
   </div>
 </section>
+
+<script>
+  const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+  if (isTouchDevice) {
+    const icons = document.querySelectorAll<HTMLElement>(".tool-icon");
+    let activeIcon: HTMLElement | null = null;
+
+    icons.forEach((icon) => {
+      icon.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (activeIcon === icon) {
+          icon.classList.remove("tool-active");
+          activeIcon = null;
+        } else {
+          if (activeIcon) activeIcon.classList.remove("tool-active");
+          icon.classList.add("tool-active");
+          activeIcon = icon;
+        }
+      });
+    });
+
+    document.addEventListener("click", () => {
+      if (activeIcon) {
+        activeIcon.classList.remove("tool-active");
+        activeIcon = null;
+      }
+    });
+  }
+</script>

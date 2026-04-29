@@ -49,6 +49,10 @@ const LightRays = ({
   distortion = 0.0,
   className = "",
 }) => {
+  const prefersReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   const containerRef = useRef(null);
   const uniformsRef = useRef(null);
   const rendererRef = useRef(null);
@@ -59,6 +63,10 @@ const LightRays = ({
   const cleanupFunctionRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
   const observerRef = useRef(null);
+
+  if (prefersReducedMotion) {
+    return <div ref={containerRef} className={`light-rays-container ${className}`.trim()} style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden", zIndex: 1 }} />;
+  }
 
   useEffect(() => {
     if (!containerRef.current) return;

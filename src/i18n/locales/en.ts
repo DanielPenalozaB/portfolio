@@ -42,4 +42,10 @@ export default {
   "about.description": "Learn more about Daniel Peñaloza",
   "about.bio":
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam adipiscing.",
+  "a11y.skipToContent": "Skip to content",
+  "a11y.mainNav": "Main navigation",
+  "a11y.footerNav": "Footer navigation",
+  "a11y.socialNav": "Social links",
+  "a11y.toggleMenu": "Toggle navigation menu",
+  "a11y.viewCertificate": "View certificate",
 } as const;

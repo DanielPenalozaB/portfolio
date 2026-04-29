@@ -23,6 +23,12 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: "DM Serif Display", serif;
+  src: url("/fonts/DMSerifDisplay-Italic.ttf") format("truetype");
+  font-style: italic;
+  font-display: swap;
+}
 html {
   overflow-x: clip;
 }
@@ -44,7 +50,7 @@ body {
   font-family: "DM Serif Display", serif;
   font-style: italic;
 }
-main {
+main.prose-content {
   width: 720px;
   max-width: calc(100% - 2em);
   margin: auto;
@@ -144,12 +150,63 @@ hr {
   height: 1px;
   width: 1px;
   overflow: hidden;
-  /* IE6, IE7 - a 0 height clip, off to the bottom right of the visible 1px box */
   clip: rect(1px 1px 1px 1px);
-  /* maybe deprecated but we need to support legacy browsers */
   clip: rect(1px, 1px, 1px, 1px);
-  /* modern browsers, clip-path works inwards from each corner */
   clip-path: inset(50%);
-  /* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
   white-space: nowrap;
+}
+
+/* Reveal animations — SEO-safe: text stays in DOM, only visual transform */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 {
+  transition-delay: 0.1s;
+}
+.reveal-delay-2 {
+  transition-delay: 0.2s;
+}
+.reveal-delay-3 {
+  transition-delay: 0.3s;
+}
+
+/* Tool grid: dim siblings on hover */
+.tool-grid:hover .tool-icon {
+  opacity: 0.4;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+.tool-grid:hover .tool-icon:hover,
+.tool-grid .tool-icon.tool-active {
+  opacity: 1;
+}
+
+/* Mobile tap-to-reveal for tool icons */
+.tool-active {
+  transform: scale(1.1);
+  z-index: 40;
+}
+.tool-grid:has(.tool-active) .tool-icon:not(.tool-active) {
+  opacity: 0.4;
+}
+.tool-active > div:last-child {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

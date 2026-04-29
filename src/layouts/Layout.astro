@@ -3,7 +3,12 @@ import type { ImageMetadata } from "astro";
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
-import { getLocaleFromUrl, useTranslations, type Locale } from "../i18n";
+import {
+  getLocaleFromUrl,
+  getLocalizedPath,
+  useTranslations,
+  type Locale,
+} from "../i18n";
 
 interface Props {
   title?: string;
@@ -13,22 +18,80 @@ interface Props {
 
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
+const altLocale: Locale = locale === "en" ? "es" : "en";
 
 const {
   title = t("site.title"),
   description = t("site.description"),
   image,
 } = Astro.props;
+
+const canonicalPath = Astro.url.pathname;
+const altPath = getLocalizedPath(canonicalPath, altLocale);
 ---
 
 <!doctype html>
 <html lang={locale}>
   <head>
     <BaseHead title={title} description={description} image={image} />
+    <link
+      rel="alternate"
+      hreflang={locale}
+      href={new URL(canonicalPath, Astro.site)}
+    />
+    <link
+      rel="alternate"
+      hreflang={altLocale}
+      href={new URL(altPath, Astro.site)}
+    />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(canonicalPath.replace(/^\/(en|es)/, ""), Astro.site)}
+    />
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Person",
+        name: "Daniel Peñaloza",
+        url: Astro.site?.toString(),
+        jobTitle: "SSR Web Developer",
+        sameAs: [
+          "https://linkedin.com/in/danielpenalozab",
+          "https://github.com/danielpenalozab",
+        ],
+      })}
+    />
   </head>
   <body>
+    <a
+      href="#main-content"
+      class="fixed top-0 left-1/2 z-[100] -translate-x-1/2 -translate-y-full rounded-b-md bg-[#6C969D] px-4 py-2 text-sm font-medium text-white transition-transform focus:translate-y-0"
+    >
+      {t("a11y.skipToContent")}
+    </a>
     <Header />
-    <slot />
+    <main id="main-content">
+      <slot />
+    </main>
     <Footer />
+    <script>
+      const reveals = document.querySelectorAll(".reveal");
+      if (reveals.length > 0) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("revealed");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.15 },
+        );
+        reveals.forEach((el) => observer.observe(el));
+      }
+    </script>
   </body>
 </html>

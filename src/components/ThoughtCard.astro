@@ -26,21 +26,27 @@ const t = useTranslations(locale);
 
 <a
   href={getLocalizedPath(`/blog/${post.id}`, locale)}
-  class="flex w-full items-end justify-between p-6 transition-all duration-150 ease-out hover:bg-stone-50"
+  class="flex w-full flex-col items-start justify-between gap-2 p-4 transition-all duration-150 ease-out hover:bg-stone-50 sm:flex-row md:items-end md:p-6"
 >
-  <div class="flex items-center gap-8">
-    <div class="relative h-40 w-52 shrink-0 overflow-hidden rounded-2xl bg-stone-200">
-      {post.data.heroImage && (
-        <img
-          src={post.data.heroImage.src}
-          alt={post.data.title}
-          class="absolute inset-0 h-[inherit]! w-full object-cover"
-          loading="lazy"
-        />
-      )}
+  <div
+    class="flex flex-col items-start gap-2 max-md:w-full sm:flex-row sm:items-center sm:gap-8"
+  >
+    <div
+      class="relative h-40 w-full shrink-0 overflow-hidden rounded-2xl bg-stone-200 md:w-52"
+    >
+      {
+        post.data.heroImage && (
+          <img
+            src={post.data.heroImage.src}
+            alt={post.data.title}
+            class="absolute inset-0 h-[inherit]! w-full object-cover"
+            loading="lazy"
+          />
+        )
+      }
     </div>
     <div class="flex flex-col gap-2.5">
-      <h3 class="text-3xl! font-medium text-stone-600!">
+      <h3 class="text-2xl! font-medium text-stone-600! md:text-3xl!">
         {post.data.title}
       </h3>
       <p class="m-0! line-clamp-3 text-sm text-stone-500">

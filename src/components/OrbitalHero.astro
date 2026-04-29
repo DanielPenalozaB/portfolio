@@ -11,10 +11,11 @@ const t = useTranslations(locale);
 
 <section
   id="orbital-hero"
+  aria-labelledby="hero-heading"
   class="relative z-0 flex h-[800px] w-full items-center justify-center"
 >
   <div class="relative z-10 flex flex-col items-center gap-12">
-    <h1 class="! text-4xl! font-light sm:text-5xl!">
+    <h1 id="hero-heading" class="! text-4xl! font-light sm:text-5xl!">
       {t("hero.greeting")}{" "}
       <span class="dm-serif-display font-semibold">{t("hero.name")}</span>
     </h1>
@@ -23,6 +24,7 @@ const t = useTranslations(locale);
 
     <button
       type="button"
+      aria-label={`${t("hero.download")} - Daniel Peñaloza`}
       class="group flex cursor-pointer items-center gap-2 rounded-full bg-[#6C969D] p-1 pl-3.5 text-sm font-medium tracking-wider text-stone-100 hover:bg-[#97D0D9]"
     >
       <span>{t("hero.download")}</span>
@@ -35,6 +37,7 @@ const t = useTranslations(locale);
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
         >
           <path
             d="M12 5V19"
@@ -55,6 +58,7 @@ const t = useTranslations(locale);
 
   <div
     id="orbits-container"
+    aria-hidden="true"
     class="pointer-events-auto absolute inset-0 z-5 flex items-center justify-center overflow-visible"
   >
     <!-- Visual Rings -->
@@ -130,6 +134,10 @@ const t = useTranslations(locale);
 <script>
   import gsap from "gsap";
 
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
   // ORBITAL ANIMATIONS
   const arms = document.querySelectorAll<HTMLElement>(".orbit-arm");
   const orbitsContainer = document.getElementById("orbits-container");
@@ -155,6 +163,8 @@ const t = useTranslations(locale);
       if (rotator) {
         gsap.set(rotator, { rotation: -initialAngle });
       }
+
+      if (prefersReducedMotion) return;
 
       if (!orbitTimelines.has(radius)) {
         orbitTimelines.set(radius, gsap.timeline());
@@ -224,7 +234,7 @@ const t = useTranslations(locale);
   if (profileContainer && profileFlipper) {
     let isFlipped = false;
 
-    profileContainer.addEventListener("click", () => {
+    const flipCard = () => {
       isFlipped = !isFlipped;
       gsap.to(profileFlipper, {
         rotationY: isFlipped ? 180 : 0,
@@ -232,6 +242,14 @@ const t = useTranslations(locale);
         duration: 0.6,
         ease: "power2.inOut",
       });
+    };
+
+    profileContainer.addEventListener("click", flipCard);
+    profileContainer.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        flipCard();
+      }
     });
 
     profileContainer.addEventListener("mousemove", (e) => {
