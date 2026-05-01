@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useMemo } from "react";
+import { useRef, useEffect, useCallback, useMemo, useState } from "react";
 import { gsap } from "gsap";
 
 const throttle = (func, limit) => {
@@ -25,7 +25,8 @@ function hexToRgb(hex) {
 const DotGrid = ({
   dotSize = 16,
   gap = 32,
-  baseColor = "#5227FF",
+  baseColor: baseColorProp = "#5227FF",
+  darkBaseColor,
   activeColor = "#5227FF",
   proximity = 150,
   speedTrigger = 100,
@@ -37,6 +38,24 @@ const DotGrid = ({
   className = "",
   style = {},
 }) => {
+  const [isDark, setIsDark] = useState(
+    typeof document !== "undefined" &&
+      document.documentElement.classList.contains("dark"),
+  );
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const baseColor = isDark && darkBaseColor ? darkBaseColor : baseColorProp;
+
   const wrapperRef = useRef(null);
   const canvasRef = useRef(null);
   const dotsRef = useRef([]);

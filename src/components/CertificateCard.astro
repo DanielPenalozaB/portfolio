@@ -12,7 +12,7 @@ const t = useTranslations(locale);
 ---
 
 <div
-  class="group relative flex items-center justify-center rounded-4xl border-2 border-stone-300 bg-stone-200 p-4"
+  class="group relative flex items-center justify-center rounded-4xl border-2 border-stone-300 bg-stone-200 p-4 dark:border-stone-700 dark:bg-stone-800"
 >
   <div class="relative h-full w-full overflow-hidden rounded-2xl bg-stone-300">
     <img
@@ -28,19 +28,20 @@ const t = useTranslations(locale);
     viewBox="0 0 284 80"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    class="absolute bottom-[13px] mx-auto"
+    class="absolute bottom-[13px] mx-auto text-stone-200 dark:text-stone-800"
   >
     <path
       d="M179.5 0C188.337 0 195.5 7.16344 195.5 16V36C195.5 60.3005 215.199 80 239.5 80H0V0H179.5Z"
-      fill="#E7E5E4"></path>
+      fill="currentColor"></path>
     <path
       d="M283.5 80H239.5C263.801 80 283.5 60.3005 283.5 36V80Z"
-      fill="#E7E5E4"></path>
+      fill="currentColor"></path>
   </svg>
   <div
     class="absolute bottom-4 left-4 flex h-[74px] w-[calc(265px-84px)] flex-col items-stretch justify-center p-2"
   >
-    <span class="text-lg leading-7 font-semibold text-stone-800"
+    <span
+      class="text-lg leading-7 font-semibold text-stone-800 dark:text-stone-200"
       >{certificate.name}</span
     >
     <span class="text-lg leading-7 font-medium text-stone-500"
@@ -54,7 +55,7 @@ const t = useTranslations(locale);
       ? "noopener noreferrer"
       : undefined}
     aria-label={`${t("a11y.viewCertificate")}: ${certificate.name}`}
-    class="group/link absolute right-6 bottom-6 flex h-[66px] w-[66px] items-center justify-center rounded-full border-2 border-stone-200 bg-stone-200 transition-colors duration-300 ease-in-out hover:bg-stone-800"
+    class="group/link absolute right-6 bottom-6 flex h-[66px] w-[66px] items-center justify-center rounded-full border-2 border-stone-200 bg-stone-200 transition-colors duration-300 ease-in-out hover:bg-stone-800 dark:border-stone-800 dark:bg-stone-800 hover:dark:bg-stone-200"
   >
     <svg
       width="32"
@@ -62,7 +63,7 @@ const t = useTranslations(locale);
       viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      class="stroke-stone-800 transition-all duration-300 ease-in-out group-hover:rotate-360 group-hover/link:stroke-stone-200"
+      class="stroke-stone-800 transition-all duration-300 ease-in-out group-hover:rotate-360 group-hover/link:stroke-stone-200 dark:stroke-stone-200 dark:group-hover/link:stroke-stone-800"
     >
       <path
         d="M3.69232 4H28.3077V28.6154"

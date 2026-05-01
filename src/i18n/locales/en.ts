@@ -42,6 +42,9 @@ export default {
   "about.description": "Learn more about Daniel Peñaloza",
   "about.bio":
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam adipiscing.",
+  "projects.title": "All Projects",
+  "projects.description": "A collection of all my projects and work.",
+  "projects.viewAll": "View all projects",
   "a11y.skipToContent": "Skip to content",
   "a11y.mainNav": "Main navigation",
   "a11y.footerNav": "Footer navigation",

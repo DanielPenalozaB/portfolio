@@ -1,5 +1,10 @@
 ---
-import { getLocaleFromUrl, useTranslations, type Locale } from "../i18n";
+import {
+  getLocaleFromUrl,
+  getLocalizedPath,
+  useTranslations,
+  type Locale,
+} from "../i18n";
 import LightRays from "./LightRays.jsx";
 
 const locale: Locale = getLocaleFromUrl(Astro.url);
@@ -36,8 +41,17 @@ const t = useTranslations(locale);
       {t("nav.projects")}
     </h2>
 
-    <div class="reveal reveal-delay-1 grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
+    <div
+      class="reveal reveal-delay-1 grid w-full grid-cols-1 gap-8 lg:grid-cols-2"
+    >
       <slot />
     </div>
+
+    <a
+      href={getLocalizedPath("/projects", locale)}
+      class="reveal reveal-delay-2 text-sm font-medium text-stone-400! transition-colors hover:text-[#6C969D]!"
+    >
+      {t("projects.viewAll")} &rarr;
+    </a>
   </div>
 </section>

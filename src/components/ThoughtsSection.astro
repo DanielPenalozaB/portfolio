@@ -26,17 +26,19 @@ const posts = (await getCollection("blog"))
     <div class="flex max-w-5xl flex-col items-center gap-4 text-center">
       <h2
         id="thoughts-heading"
-        class="reveal dm-serif-display text-4xl font-bold text-stone-800! sm:text-5xl"
+        class="reveal dm-serif-display text-4xl font-bold text-stone-800! sm:text-5xl dark:text-stone-100!"
       >
         {t("thoughts.title")}
       </h2>
     </div>
-    <div class="reveal reveal-delay-1 flex w-full flex-col divide-y-2 divide-stone-300">
+    <div
+      class="reveal reveal-delay-1 flex w-full flex-col divide-y-2 divide-stone-300 dark:divide-stone-700"
+    >
       {posts.map((post) => <ThoughtCard post={post} />)}
     </div>
     <a
       href={getLocalizedPath("/blog", locale)}
-      class="self-end text-sm font-medium text-stone-600! hover:text-[#6C969D]"
+      class="reveal reveal-delay-2 self-end text-xs font-medium text-stone-400! transition-colors hover:text-[#6C969D]!"
     >
       {t("thoughts.viewAll")}
     </a>

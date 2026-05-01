@@ -5,6 +5,8 @@
  */
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --accent: #2337ff;
   --accent-dark: #000d8a;
@@ -16,6 +18,14 @@
   --box-shadow:
     0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
     0 16px 32px rgba(var(--gray), 33%);
+}
+.dark {
+  --gray-light: 40, 40, 50;
+  --gray-dark: 220, 220, 230;
+  --gray-gradient: rgba(var(--gray-light), 50%), #1c1917;
+  --box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5),
+    0 16px 32px rgba(0, 0, 0, 0.5);
 }
 @font-face {
   font-family: "DM Sans", sans-serif;
@@ -45,6 +55,13 @@ body {
   color: rgb(var(--gray-dark));
   font-size: 20px;
   line-height: 1.7;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+.dark body {
+  background-color: #1c1917;
+  color: #e7e5e4;
 }
 .dm-serif-display {
   font-family: "DM Serif Display", serif;
@@ -62,7 +79,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: rgb(var(--color-stone-800));
+  color: rgb(var(--gray-dark));
   line-height: 1.2;
 }
 h1 {
