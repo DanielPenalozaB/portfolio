@@ -45,6 +45,8 @@ export default {
   "projects.title": "All Projects",
   "projects.description": "A collection of all my projects and work.",
   "projects.viewAll": "View all projects",
+  "projects.backToAll": "All projects",
+  "projects.viewRepo": "View repository",
   "a11y.skipToContent": "Skip to content",
   "a11y.mainNav": "Main navigation",
   "a11y.footerNav": "Footer navigation",
