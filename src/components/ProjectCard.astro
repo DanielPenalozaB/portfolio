@@ -23,6 +23,7 @@ if (!project) {
   throw new Error("ProjectCard requires either a 'project' or 'data' prop");
 }
 
+const slug = project.url?.split("/").pop() || "";
 const titleColor = darkStandalone
   ? "text-stone-700! dark:text-stone-300!"
   : "text-stone-300!";
@@ -50,6 +51,7 @@ const tagBg = darkStandalone
       src={project.image}
       alt={project.title}
       class="aspect-video h-full w-full rounded-2xl! object-cover sm:aspect-21/9"
+      transition:name={`project-img-${slug}`}
     />
   </a>
   <div
@@ -61,6 +63,7 @@ const tagBg = darkStandalone
         titleColor,
       ]}
       title={project.title}
+      transition:name={`project-title-${slug}`}
     >
       {project.title}
     </h3>

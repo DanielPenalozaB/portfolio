@@ -77,21 +77,25 @@ const altPath = getLocalizedPath(canonicalPath, altLocale);
     </main>
     <Footer />
     <script>
-      const reveals = document.querySelectorAll(".reveal");
-      if (reveals.length > 0) {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add("revealed");
-                observer.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.15 },
-        );
-        reveals.forEach((el) => observer.observe(el));
+      function initReveals() {
+        const reveals = document.querySelectorAll(".reveal:not(.revealed)");
+        if (reveals.length > 0) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("revealed");
+                  observer.unobserve(entry.target);
+                }
+              });
+            },
+            { threshold: 0.15 },
+          );
+          reveals.forEach((el) => observer.observe(el));
+        }
       }
+      initReveals();
+      document.addEventListener("astro:page-load", initReveals);
     </script>
   </body>
 </html>

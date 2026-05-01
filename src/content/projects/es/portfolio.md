@@ -1,7 +1,7 @@
 ---
 title: "Portafolio"
 description: "Portafolio personal diseñado en Figma y construido con Astro, con animaciones orbitales, soporte i18n, modo oscuro, grilla de puntos interactiva y transiciones con GSAP."
-image: "https://placehold.co/900x500"
+image: "/images/projects/portfolio/front.png"
 tags: ["Astro", "TailwindCSS", "GSAP", "Figma"]
 repo: "https://github.com/danielpenalozab/portfolio"
 url: "/es/projects/portfolio"
@@ -34,14 +34,14 @@ La mayoría de portafolios de desarrolladores caen en dos campos: o son SPAs de 
 
 ## Stack Tecnológico
 
-| Tecnología | Rol |
-| ---------- | --- |
-| **Astro** | Framework de sitio estático con arquitectura de islas |
+| Tecnología         | Rol                                                             |
+| ------------------ | --------------------------------------------------------------- |
+| **Astro**          | Framework de sitio estático con arquitectura de islas           |
 | **TailwindCSS v4** | Estilos utility-first con variante personalizada de modo oscuro |
-| **GSAP** | Animaciones imperativas para movimiento orbital y reveals |
-| **React** | Islas interactivas (DotGrid canvas, efectos WebGL) |
-| **TypeScript** | Seguridad de tipos en componentes y sistema i18n |
-| **Figma** | Sistema de diseño completo y prototipado |
+| **GSAP**           | Animaciones imperativas para movimiento orbital y reveals       |
+| **React**          | Islas interactivas (DotGrid canvas, efectos WebGL)              |
+| **TypeScript**     | Seguridad de tipos en componentes y sistema i18n                |
+| **Figma**          | Sistema de diseño completo y prototipado                        |
 
 ---
 
@@ -109,12 +109,12 @@ Las animaciones orbitales de GSAP y el renderizado de canvas pueden exigir mucho
 
 ## Rendimiento
 
-| Métrica | Puntuación |
-| ------- | ---------- |
-| Performance | 98 |
-| Accesibilidad | 100 |
-| Mejores Prácticas | 100 |
-| SEO | 100 |
+| Métrica           | Puntuación |
+| ----------------- | ---------- |
+| Performance       | 98         |
+| Accesibilidad     | 100        |
+| Mejores Prácticas | 100        |
+| SEO               | 100        |
 
 ---
 

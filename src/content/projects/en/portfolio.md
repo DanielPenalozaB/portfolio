@@ -1,7 +1,7 @@
 ---
 title: "Portfolio"
 description: "Personal portfolio designed in Figma and built with Astro, featuring orbital skill animations, i18n support, dark mode, interactive dot grid, and GSAP-powered transitions."
-image: "https://placehold.co/900x500"
+image: "/images/projects/portfolio/front.png"
 tags: ["Astro", "TailwindCSS", "GSAP", "Figma"]
 repo: "https://github.com/danielpenalozab/portfolio"
 url: "/projects/portfolio"
@@ -34,14 +34,14 @@ Most developer portfolios fall into two camps: either they're over-engineered Re
 
 ## Tech Stack
 
-| Technology | Role |
-| ---------- | ---- |
-| **Astro** | Static site framework with island architecture |
-| **TailwindCSS v4** | Utility-first styling with custom dark mode variant |
-| **GSAP** | Imperative animations for orbital motion and reveals |
-| **React** | Interactive islands (DotGrid canvas, WebGL effects) |
-| **TypeScript** | Type safety across components and i18n system |
-| **Figma** | Full design system and prototyping |
+| Technology         | Role                                                 |
+| ------------------ | ---------------------------------------------------- |
+| **Astro**          | Static site framework with island architecture       |
+| **TailwindCSS v4** | Utility-first styling with custom dark mode variant  |
+| **GSAP**           | Imperative animations for orbital motion and reveals |
+| **React**          | Interactive islands (DotGrid canvas, WebGL effects)  |
+| **TypeScript**     | Type safety across components and i18n system        |
+| **Figma**          | Full design system and prototyping                   |
 
 ---
 
@@ -109,12 +109,12 @@ GSAP orbital animations and canvas rendering can strain lower-end devices. The s
 
 ## Performance
 
-| Metric | Score |
-| ------ | ----- |
-| Performance | 98 |
-| Accessibility | 100 |
-| Best Practices | 100 |
-| SEO | 100 |
+| Metric         | Score |
+| -------------- | ----- |
+| Performance    | 98    |
+| Accessibility  | 100   |
+| Best Practices | 100   |
+| SEO            | 100   |
 
 ---
 

@@ -12,6 +12,7 @@ const { title, description, image, tags, repo } = project.data;
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const backUrl = locale === "es" ? "/es/projects" : "/projects";
+const slug = project.id.split("/").pop() || "";
 ---
 
 <Layout title={title} description={description}>
@@ -47,12 +48,14 @@ const backUrl = locale === "es" ? "/es/projects" : "/projects";
             src={image}
             alt={title}
             class="aspect-video w-full object-cover"
+            transition:name={`project-img-${slug}`}
           />
         </div>
 
         <div class="flex flex-col gap-4">
           <h1
             class="dm-serif-display text-4xl font-bold text-stone-800 sm:text-5xl dark:text-stone-100"
+            transition:name={`project-title-${slug}`}
           >
             {title}
           </h1>
