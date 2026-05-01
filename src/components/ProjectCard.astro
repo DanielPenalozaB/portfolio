@@ -58,10 +58,7 @@ const tagBg = darkStandalone
     class="flex w-full flex-col items-start gap-4 sm:flex-row sm:items-center"
   >
     <h3
-      class:list={[
-        "min-w-0 shrink truncate text-3xl font-medium",
-        titleColor,
-      ]}
+      class:list={["min-w-0 shrink truncate text-3xl font-medium", titleColor]}
       title={project.title}
       transition:name={`project-title-${slug}`}
     >
@@ -76,7 +73,7 @@ const tagBg = darkStandalone
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
-        class="hidden shrink-0 sm:block"
+        class="hidden shrink-0 animate-spin sm:block"
       >
         <g clip-path="url(#clip0_47_323)">
           <path
@@ -91,7 +88,12 @@ const tagBg = darkStandalone
       </svg>
       {
         project.tags.length > 0 && (
-          <span class:list={["shrink-0 rounded-md px-2 py-1 text-sm whitespace-nowrap", tagBg]}>
+          <span
+            class:list={[
+              "shrink-0 rounded-md px-2 py-1 text-sm whitespace-nowrap",
+              tagBg,
+            ]}
+          >
             {project.tags[0]}
           </span>
         )
@@ -108,7 +110,12 @@ const tagBg = darkStandalone
         project.tags
           .slice(1, 3)
           .map((tag) => (
-            <span class:list={["rounded-md px-2 py-1 text-sm whitespace-nowrap", tagBg]}>
+            <span
+              class:list={[
+                "rounded-md px-2 py-1 text-sm whitespace-nowrap",
+                tagBg,
+              ]}
+            >
               {tag}
             </span>
           ))

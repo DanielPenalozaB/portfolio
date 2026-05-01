@@ -188,16 +188,14 @@ hr {
   transition-delay: 0.3s;
 }
 
-/* Tool grid: dim siblings on hover */
-.tool-grid:hover .tool-icon {
-  opacity: 0.4;
+/* Tool grid: blur siblings when one is hovered */
+.tool-icon {
   transition:
-    opacity 0.2s,
+    filter 0.2s,
     transform 0.2s;
 }
-.tool-grid:hover .tool-icon:hover,
-.tool-grid .tool-icon.tool-active {
-  opacity: 1;
+.tool-grid:has(.tool-icon:hover) .tool-icon:not(:hover) {
+  filter: blur(2px);
 }
 
 /* Mobile tap-to-reveal for tool icons */
@@ -206,7 +204,7 @@ hr {
   z-index: 40;
 }
 .tool-grid:has(.tool-active) .tool-icon:not(.tool-active) {
-  opacity: 0.4;
+  filter: blur(2px);
 }
 .tool-active > div:last-child {
   opacity: 1;

@@ -1,24 +1,19 @@
 ---
+/**
+ * TODO: About page
+ * Future structure:
+ * - Hero with profile photo and short intro
+ * - Personal bio / story section
+ * - Professional timeline (education, career milestones)
+ * - Interests & hobbies
+ * - Contact form (serverless backend)
+ */
+
 import { languages } from "../../i18n";
-import BlogPost from "../../layouts/BlogPost.astro";
-import AboutHeroImage from "../../assets/blog-placeholder-about.jpg";
-import { useTranslations } from "../../i18n";
 
 export function getStaticPaths() {
   return Object.keys(languages).map((lang) => ({ params: { lang } }));
 }
 
-const { lang } = Astro.params;
-const t = useTranslations(lang as any);
+return Astro.redirect("/");
 ---
-
-<BlogPost
-  title={t("about.title")}
-  description={t("about.description")}
-  pubDate={new Date("August 08 2021")}
-  heroImage={AboutHeroImage}
->
-  <p>
-    {t("about.bio")}
-  </p>
-</BlogPost>
