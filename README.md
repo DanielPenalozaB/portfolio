@@ -1,62 +1,82 @@
-# Astro Starter Kit: Blog
+# Daniel Penaloza — Portfolio
 
-```sh
-yarn create astro@latest -- --template blog
+Personal portfolio designed in Figma and built with Astro. Features orbital skill animations, bilingual content (EN/ES), dark mode, interactive dot grid, GSAP-powered transitions, View Transitions API, and project case studies.
+
+**Live:** [danielpenalozab.com](https://danielpenalozab.com)
+
+## Tech Stack
+
+- **Astro** — Static site generation with island architecture
+- **React** — Interactive islands (canvas dot grid, WebGL light rays)
+- **TailwindCSS v4** — Utility-first styling with custom dark mode variant
+- **GSAP** — Orbital animations, profile card tilt, scroll reveals
+- **TypeScript** — Type safety across components and i18n
+- **Nginx** — Production server with gzip and immutable asset caching
+- **Docker** — Multi-stage build for deployment via Coolify
+
+## Features
+
+- Orbital skill animation with per-ring hover deceleration
+- Interactive dot grid canvas with cursor proximity reactions
+- Class-based dark mode with FOUC prevention and React bridge via MutationObserver
+- Full i18n (English/Spanish) with type-safe translation keys
+- Content collections for projects and blog posts with Zod schema validation
+- View Transitions API with morph animations between project cards and detail pages
+- Scroll-triggered reveal animations with `prefers-reduced-motion` respect
+- Tool & technology grid with blur-on-hover sibling effect
+- Project detail pages with rich markdown case studies
+- Responsive design with mobile navigation and touch interactions
+- SEO optimized with OpenGraph, JSON-LD, canonical URLs, sitemap, and RSS
+
+## Project Structure
+
+```
+src/
+├── components/      # Astro + React interactive islands
+├── content/
+│   ├── blog/        # Blog posts (Markdown)
+│   └── projects/
+│       ├── en/      # English project content
+│       └── es/      # Spanish project content
+├── data/            # Typed constants (tools, orbits, nav links)
+├── i18n/
+│   ├── locales/     # en.ts, es.ts translation files
+│   └── index.ts     # getLocaleFromUrl, useTranslations, getLocalizedPath
+├── layouts/         # Layout, BlogPost, ProjectDetail
+├── pages/           # File-based routing with locale prefixes
+└── styles/          # Global CSS with Tailwind directives
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Getting Started
 
-Features:
-
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-├── public/
-├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+```bash
+npm install
+npm run dev
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Open [localhost:4321](http://localhost:4321).
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Commands
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+| Command | Action |
+| --- | --- |
+| `npm install` | Install dependencies |
+| `npm run dev` | Start dev server at `localhost:4321` |
+| `npm run build` | Build production site to `./dist/` |
+| `npm run preview` | Preview production build locally |
+| `npx astro check` | Run type checking |
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Deployment
 
-## 🧞 Commands
+The site deploys as a Docker container via Coolify.
 
-All commands are run from the root of the project, from a terminal:
+```bash
+docker build -t portfolio .
+docker run -p 8080:8080 portfolio
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `yarn install`             | Installs dependencies                            |
-| `yarn dev`             | Starts local dev server at `localhost:4321`      |
-| `yarn build`           | Build your production site to `./dist/`          |
-| `yarn preview`         | Preview your build locally, before deploying     |
-| `yarn astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `yarn astro -- --help` | Get help using the Astro CLI                     |
+The multi-stage Dockerfile builds with Node 22 and serves with Nginx Alpine. Static assets under `/_astro/` are cached with immutable headers for 1 year.
 
-## 👀 Want to learn more?
+## License
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+MIT
