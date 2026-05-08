@@ -271,5 +271,14 @@ const altLocale: Locale = locale === "en" ? "es" : "en";
       ?.addEventListener("click", toggleTheme);
   }
 
-  document.addEventListener("astro:page-load", initHeader);
+  initHeader();
+
+  let isFirstLoad = true;
+  document.addEventListener("astro:page-load", () => {
+    if (isFirstLoad) {
+      isFirstLoad = false;
+      return;
+    }
+    initHeader();
+  });
 </script>
