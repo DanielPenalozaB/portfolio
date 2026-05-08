@@ -94,7 +94,6 @@ const altPath = getLocalizedPath(canonicalPath, altLocale);
           reveals.forEach((el) => observer.observe(el));
         }
       }
-      initReveals();
       document.addEventListener("astro:page-load", initReveals);
     </script>
   </body>
