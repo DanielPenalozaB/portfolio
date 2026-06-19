@@ -26,8 +26,10 @@ const { entry } = Astro.props;
       <img
         src={entry.logo}
         alt={entry.company}
+        width="24"
+        height="24"
         class="h-full max-h-4 w-full max-w-4 md:max-h-6 md:max-w-6"
-        loading="eager"
+        loading="lazy"
       />
       <p
         class="m-0! text-lg leading-8 font-medium text-nowrap text-stone-600 group-hover:text-[#6C969D] group-hover:underline dark:text-stone-300 md:text-2xl"

@@ -101,7 +101,7 @@ const t = useTranslations(locale);
   </div>
 
   <DotGrid
-    client:visible
+    client:idle
     dotSize={5}
     gap={15}
     baseColor="#F1F0F0"
@@ -286,6 +286,6 @@ const t = useTranslations(locale);
     }
   }
 
-  initOrbitalHero();
-  document.addEventListener("astro:page-load", initOrbitalHero);
+  requestAnimationFrame(initOrbitalHero);
+  document.addEventListener("astro:page-load", () => requestAnimationFrame(initOrbitalHero));
 </script>

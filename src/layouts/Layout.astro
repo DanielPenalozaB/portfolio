@@ -14,6 +14,7 @@ interface Props {
   title?: string;
   description?: string;
   image?: ImageMetadata;
+  preloadLCP?: boolean;
 }
 
 const locale: Locale = getLocaleFromUrl(Astro.url);
@@ -24,6 +25,7 @@ const {
   title = t("site.title"),
   description = t("site.description"),
   image,
+  preloadLCP = false,
 } = Astro.props;
 
 const canonicalPath = Astro.url.pathname;
@@ -33,7 +35,7 @@ const altPath = getLocalizedPath(canonicalPath, altLocale);
 <!doctype html>
 <html lang={locale}>
   <head>
-    <BaseHead title={title} description={description} image={image} />
+    <BaseHead title={title} description={description} image={image} preloadLCP={preloadLCP} />
     <link
       rel="alternate"
       hreflang={locale}

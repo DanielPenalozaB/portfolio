@@ -1,14 +1,17 @@
 ---
+import { Image } from "astro:assets";
 import {
   getLocaleFromUrl,
   getLocalizedPath,
   useTranslations,
   type Locale,
 } from "../i18n";
+import { getProfileImage } from "../utils/images";
 
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const year = new Date().getFullYear();
+const optimizedProfile = await getProfileImage();
 ---
 
 <footer
@@ -27,14 +30,27 @@ const year = new Date().getFullYear();
           {t("footer.madeWith")} ❤️ {t("footer.andPassion")}
           <br />— Daniel Peñaloza
         </p>
-        <img
-          src="/images/profile.png"
-          alt="Daniel Peñaloza"
-          width="96"
-          height="96"
-          loading="lazy"
-          class="h-24 w-24 rounded-2xl object-cover shadow-md"
-        />
+        {optimizedProfile ? (
+          <Image
+            src={optimizedProfile}
+            alt="Daniel Peñaloza"
+            width={96}
+            height={96}
+            format="webp"
+            quality={80}
+            loading="lazy"
+            class="h-24 w-24 rounded-2xl object-cover shadow-md"
+          />
+        ) : (
+          <img
+            src="/images/profile.png"
+            alt="Daniel Peñaloza"
+            width="96"
+            height="96"
+            loading="lazy"
+            class="h-24 w-24 rounded-2xl object-cover shadow-md"
+          />
+        )}
       </div>
 
       <!-- Right: Pages + Social columns -->
