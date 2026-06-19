@@ -1,6 +1,8 @@
 ---
+import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import type { Project } from "../data/projects";
+import { getProjectImage } from "../utils/images";
 
 interface Props {
   project?: Project;
@@ -24,6 +26,7 @@ if (!project) {
 }
 
 const slug = project.url?.split("/").pop() || "";
+const optimizedImage = await getProjectImage(project.image);
 const titleColor = darkStandalone
   ? "text-stone-700! dark:text-stone-300!"
   : "text-stone-300!";
@@ -47,12 +50,29 @@ const tagBg = darkStandalone
         : "bg-stone-400/15",
     ]}
   >
-    <img
-      src={project.image}
-      alt={project.title}
-      class="aspect-video h-full w-full rounded-2xl! object-cover sm:aspect-21/9"
-      transition:name={`project-img-${slug}`}
-    />
+    {optimizedImage ? (
+      <Image
+        src={optimizedImage}
+        alt={project.title}
+        widths={[400, 800, 1200]}
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
+        format="webp"
+        quality={80}
+        class="aspect-video h-full w-full rounded-2xl! object-cover sm:aspect-21/9"
+        loading="lazy"
+        transition:name={`project-img-${slug}`}
+      />
+    ) : (
+      <img
+        src={project.image}
+        alt={project.title}
+        width="800"
+        height="450"
+        class="aspect-video h-full w-full rounded-2xl! object-cover sm:aspect-21/9"
+        loading="lazy"
+        transition:name={`project-img-${slug}`}
+      />
+    )}
   </a>
   <div
     class="flex w-full flex-col items-start gap-4 sm:flex-row sm:items-center"

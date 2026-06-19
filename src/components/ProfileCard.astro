@@ -1,11 +1,14 @@
 ---
+import { Image } from "astro:assets";
 import { PROFILE_MARQUEES } from "../data/marquees";
+import { getProfileImage } from "../utils/images";
 
 interface Props {
   profileImage?: string;
 }
 
 const { profileImage = "/images/profile.png" } = Astro.props;
+const optimizedProfile = await getProfileImage();
 ---
 
 <div
@@ -18,12 +21,27 @@ const { profileImage = "/images/profile.png" } = Astro.props;
   <div id="profile-flipper" class="preserve-3d relative h-full w-full">
     <!-- Front Side (Image) -->
     <div class="absolute inset-0 backface-hidden">
-      <img
-        src={profileImage}
-        alt="Daniel Peñaloza"
-        class="h-full w-full rounded-4xl! object-cover"
-        fetchpriority="high"
-      />
+      {optimizedProfile ? (
+        <Image
+          src={optimizedProfile}
+          alt="Daniel Peñaloza"
+          width={256}
+          height={256}
+          format="webp"
+          quality={80}
+          class="h-full w-full rounded-4xl! object-cover"
+          fetchpriority="high"
+        />
+      ) : (
+        <img
+          src={profileImage}
+          alt="Daniel Peñaloza"
+          width="256"
+          height="256"
+          class="h-full w-full rounded-4xl! object-cover"
+          fetchpriority="high"
+        />
+      )}
       <!-- Click indicator -->
       <div
         class="absolute -right-2 -bottom-2 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md"

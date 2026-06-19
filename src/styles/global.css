@@ -28,13 +28,13 @@
 }
 @font-face {
   font-family: "DM Sans", sans-serif;
-  src: url("/fonts/DMSans-VariableFont_opsz,wght.ttf") format("truetype");
+  src: url("/fonts/DMSans-VariableFont_opsz,wght.woff2") format("woff2");
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "DM Serif Display", serif;
-  src: url("/fonts/DMSerifDisplay-Italic.ttf") format("truetype");
+  src: url("/fonts/DMSerifDisplay-Italic.woff2") format("woff2");
   font-style: italic;
   font-display: swap;
 }

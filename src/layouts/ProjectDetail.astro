@@ -1,6 +1,8 @@
 ---
+import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import { getLocaleFromUrl, useTranslations, type Locale } from "../i18n";
+import { getProjectImage } from "../utils/images";
 import Layout from "./Layout.astro";
 
 interface Props {
@@ -13,6 +15,7 @@ const locale: Locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const backUrl = locale === "es" ? "/es/projects" : "/projects";
 const slug = project.id.split("/").pop() || "";
+const optimizedImage = await getProjectImage(image);
 ---
 
 <Layout title={title} description={description}>
@@ -44,12 +47,27 @@ const slug = project.id.split("/").pop() || "";
 
       <header class="reveal reveal-delay-1 flex flex-col gap-6">
         <div class="overflow-hidden rounded-3xl">
-          <img
-            src={image}
-            alt={title}
-            class="aspect-video w-full object-cover"
-            transition:name={`project-img-${slug}`}
-          />
+          {optimizedImage ? (
+            <Image
+              src={optimizedImage}
+              alt={title}
+              widths={[400, 800, 1200]}
+              sizes="(max-width: 768px) 100vw, 768px"
+              format="webp"
+              quality={80}
+              class="aspect-video w-full object-cover"
+              transition:name={`project-img-${slug}`}
+            />
+          ) : (
+            <img
+              src={image}
+              alt={title}
+              width="800"
+              height="450"
+              class="aspect-video w-full object-cover"
+              transition:name={`project-img-${slug}`}
+            />
+          )}
         </div>
 
         <div class="flex flex-col gap-4">

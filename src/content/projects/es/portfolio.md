@@ -25,7 +25,7 @@ La mayoría de portafolios de desarrolladores caen en dos campos: o son SPAs de 
 
 Todo comenzó en Figma — desde la grilla de layout y la paleta de colores hasta el concepto de animación orbital y el desglose de componentes. Tener un sistema de diseño completo antes de escribir código mantuvo el desarrollo enfocado y rápido.
 
-![Archivos de diseño en Figma del portafolio](/images/projects/portfolio/portfolio-figma-design.png)
+![Archivos de diseño en Figma del portafolio](/images/projects/portfolio/portfolio-figma-design.webp)
 
 ---
 

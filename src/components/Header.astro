@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import { NAV_LINKS } from "../consts";
 import {
   getLocaleFromUrl,
@@ -6,10 +7,12 @@ import {
   useTranslations,
   type Locale,
 } from "../i18n";
+import { getProfileImage } from "../utils/images";
 
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const altLocale: Locale = locale === "en" ? "es" : "en";
+const optimizedProfile = await getProfileImage();
 ---
 
 <header class="sticky top-0 z-50">
@@ -23,13 +26,25 @@ const altLocale: Locale = locale === "en" ? "es" : "en";
         href={getLocalizedPath("/", locale)}
         class="h-10 w-10 shrink-0 rounded-full outline outline-[#6C969D]"
       >
-        <img
-          src="/images/profile.png"
-          alt="Daniel Peñaloza - Home"
-          width="40"
-          height="40"
-          class="h-10 w-10 rounded-full!"
-        />
+        {optimizedProfile ? (
+          <Image
+            src={optimizedProfile}
+            alt="Daniel Peñaloza - Home"
+            width={40}
+            height={40}
+            format="webp"
+            quality={80}
+            class="h-10 w-10 rounded-full!"
+          />
+        ) : (
+          <img
+            src="/images/profile.png"
+            alt="Daniel Peñaloza - Home"
+            width="40"
+            height="40"
+            class="h-10 w-10 rounded-full!"
+          />
+        )}
       </a>
 
       <!-- Desktop Navigation -->

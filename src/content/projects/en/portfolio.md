@@ -25,7 +25,7 @@ Most developer portfolios fall into two camps: either they're over-engineered Re
 
 Everything started in Figma — from the layout grid and color palette to the orbital animation concept and component breakdowns. Having a complete design system before writing any code kept development focused and fast.
 
-![Figma design files for the portfolio](/images/projects/portfolio/portfolio-figma-design.png)
+![Figma design files for the portfolio](/images/projects/portfolio/portfolio-figma-design.webp)
 
 ---
 
