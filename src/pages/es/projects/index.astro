@@ -1,14 +1,12 @@
 ---
-import { getCollection } from "astro:content";
+import { getProjects } from "../../../utils/projects";
 import Layout from "../../../layouts/Layout.astro";
 import ProjectCard from "../../../components/ProjectCard.astro";
 import { useTranslations } from "../../../i18n";
 
 const t = useTranslations("es");
 
-const projects = await getCollection("projects", ({ id }) => {
-  return id.startsWith("es/");
-});
+const projects = await getProjects("es");
 ---
 
 <Layout title={t("projects.title")} description={t("projects.description")}>

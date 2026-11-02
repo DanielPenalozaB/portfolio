@@ -3,6 +3,7 @@ title: "Portfolio"
 description: "Personal portfolio designed in Figma and built with Astro, featuring orbital skill animations, i18n support, dark mode, interactive dot grid, and GSAP-powered transitions."
 image: "/images/projects/portfolio/front.png"
 tags: ["Astro", "TailwindCSS", "GSAP", "Figma"]
+order: 1
 repo: "https://github.com/danielpenalozab/portfolio"
 url: "/projects/portfolio"
 ---

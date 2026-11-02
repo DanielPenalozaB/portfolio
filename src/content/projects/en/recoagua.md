@@ -3,6 +3,7 @@ title: "RecoAgua"
 description: "An educational platform for responsible water usage in Cali, Colombia. Features interactive guides, gamification with badges and challenges, a water consumption calculator, an interactive city map with zone indicators, and a full admin panel."
 image: "/images/projects/recoagua/front.png"
 tags: ["Next.js", "NestJS", "PostgreSQL", "Gamification"]
+order: 2
 url: "/projects/recoagua"
 repo: "https://github.com/DanielPenalozaB/recoagua-fe"
 ---

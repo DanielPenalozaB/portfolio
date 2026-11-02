@@ -3,6 +3,7 @@ title: "SaveSphere"
 description: "A personal finances and budget tracker app with account management, categorized transactions, AI-powered financial advice, and insightful analytics to improve spending habits."
 image: "/images/projects/savesphere/front.png"
 tags: ["SvelteKit", "Go", "Chi", "AI"]
+order: 3
 url: "/projects/savesphere"
 repo: "https://github.com/DanielPenalozaB/savesphere"
 ---

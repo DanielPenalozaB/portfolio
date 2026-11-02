@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getProjects } from "../utils/projects";
 import CertificatesSection from "../components/CertificatesSection.astro";
 import ExperienceSection from "../components/ExperienceSection.astro";
 import OrbitalHero from "../components/OrbitalHero.astro";
@@ -9,9 +9,7 @@ import ThoughtsSection from "../components/ThoughtsSection.astro";
 import ToolsSection from "../components/ToolsSection.astro";
 import Layout from "../layouts/Layout.astro";
 
-const projects = await getCollection("projects", ({ id }) => {
-  return id.startsWith("en/");
-});
+const projects = await getProjects("en");
 ---
 
 <Layout preloadLCP>
