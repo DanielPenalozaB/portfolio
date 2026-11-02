@@ -206,14 +206,12 @@ PageSpeed Insights on the homepage, November 2, 2026 (Lighthouse 13.6, lab data)
 
 | Metric | Mobile | Desktop |
 | ------ | ------ | ------- |
-| Performance | 96 | 99 |
+| Performance | 97 | 100 |
 | Accessibility | 96 | 96 |
 | Best Practices | 96 | 100 |
 | SEO | 100 | 100 |
-| First Contentful Paint | 1.6 s | 0.4 s |
-| Largest Contentful Paint | 2.0 s | 0.7 s |
-| Total Blocking Time | 0 ms | — |
-| Cumulative Layout Shift | 0 | — |
+| First Contentful Paint | 1.1 s | 0.3 s |
+| Largest Contentful Paint | 1.8 s | 0.6 s |
 
 Mobile runs on an emulated Moto G Power with slow 4G throttling. The homepage ships about 110 KB of gzipped JavaScript, and a production build of all 16 pages takes around 2 seconds.
 
