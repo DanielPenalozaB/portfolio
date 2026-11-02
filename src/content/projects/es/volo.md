@@ -10,37 +10,29 @@ repo: ""
 
 ## Resumen
 
-Volo es una app móvil companion de gimnasio diseñada para eliminar la improvisación del entrenamiento. Ayuda a los usuarios a **construir rutinas estructuradas**, seguir tutoriales de ejercicios con targeting de grupos musculares, rastrear ingesta nutricional y visualizar su progreso de peso a lo largo del tiempo — todo en una app simplificada.
+Volo es una aplicación móvil de acompañamiento para el gimnasio que quita las dudas del entrenamiento. En una sola app puedes armar rutinas estructuradas, seguir tutoriales que muestran qué músculos trabaja cada ejercicio, registrar lo que comes y ver la evolución de tu peso. La idea es que no necesites un entrenador personal para saber qué hacer en el gimnasio.
 
-> El gimnasio no debería requerir un entrenador personal para navegarlo. Volo pone la construcción de rutinas a nivel experto en el bolsillo de todos.
+## El problema
 
----
+La mayoría de quienes van al gimnasio se topan con las mismas frustraciones:
 
-## El Problema
+- Sin un plan, los entrenamientos terminan siendo improvisados y no dan resultados
+- Hay cientos de ejercicios y es difícil saber cuáles trabajan lo que necesitas
+- Las rutinas, la nutrición y el progreso suelen estar en aplicaciones distintas
+- Sin registrar tu peso a lo largo del tiempo, no puedes saber si estás mejorando
 
-La mayoría de personas que van al gimnasio enfrentan un conjunto común de frustraciones:
-
-- **Sin estructura** — Entrar al gimnasio sin plan lleva a entrenamientos aleatorios e inefectivos
-- **Sobrecarga de información** — Existen cientos de ejercicios, pero ¿cuáles trabajan lo que necesitas?
-- **Herramientas fragmentadas** — Apps separadas para rutinas, nutrición y seguimiento de progreso generan fricción
-- **Sin progresión** — Sin rastrear peso a lo largo del tiempo, es imposible saber si estás mejorando
-
-Quería una sola app que aborde los cuatro problemas con una experiencia móvil limpia y libre de distracciones.
-
----
+Quería una sola aplicación que resolviera los cuatro problemas, con una interfaz móvil limpia y sin distracciones.
 
 ## Objetivos
 
-- Construir una app móvil multiplataforma con Flutter para iOS y Android
-- Diseñar un constructor de rutinas organizado por secciones corporales (empuje, tirón, piernas, etc.)
-- Incluir tutoriales de ejercicios con resaltado animado de grupos musculares
-- Implementar un tracker nutricional con desglose de macros
-- Crear un registro de progreso de peso con gráficos de tendencia visual
-- Entregar una experiencia rápida y capaz de funcionar offline para ambientes de gimnasio
+- Construir una aplicación móvil multiplataforma con Flutter para iOS y Android
+- Organizar el creador de rutinas por sección del cuerpo (empuje, tirón, piernas, etc.)
+- Mostrar tutoriales de ejercicios con resaltado animado de los músculos involucrados
+- Registrar la nutrición con el desglose de macros
+- Registrar el peso y mostrar su tendencia en gráficos
+- Mantener la aplicación rápida y usable sin conexión, porque en los gimnasios la señal suele ser mala
 
----
-
-## Stack Tecnológico
+## Stack tecnológico
 
 | Tecnología | Rol |
 | ---------- | --- |
@@ -50,8 +42,6 @@ Quería una sola app que aborde los cuatro problemas con una experiencia móvil 
 | **PostgreSQL** | Base de datos para usuarios, rutinas y biblioteca de ejercicios |
 | **SQLite** | Almacenamiento local del dispositivo para soporte offline |
 | **Matplotlib** | Generación de gráficos de progreso del lado del servidor |
-
----
 
 ## Arquitectura
 
@@ -68,15 +58,13 @@ Quería una sola app que aborde los cuatro problemas con una experiencia móvil 
 └──────────────────┘
 ```
 
-La app sigue una estrategia **offline-first** — las rutinas y datos de ejercicios se sincronizan a SQLite local en la primera carga. Los usuarios pueden completar entrenamientos completos sin conectividad; los datos se sincronizan cuando la conexión se restablece.
+La aplicación está pensada primero para funcionar sin conexión. En la primera carga, las rutinas y los datos de ejercicios se copian a una base de datos SQLite local, así los usuarios pueden terminar un entrenamiento completo sin conexión, y sus datos se sincronizan cuando vuelven a tener internet.
 
----
+## Funcionalidades
 
-## Características Principales
+### Rutinas por sección del cuerpo
 
-### Constructor de Rutinas por Sección Corporal
-
-Los usuarios crean rutinas organizadas por targeting de grupo muscular:
+Los usuarios arman rutinas según los grupos musculares que quieren trabajar:
 
 | Sección | Ejercicios Ejemplo |
 | ------- | ------------------ |
@@ -86,44 +74,45 @@ Los usuarios crean rutinas organizadas por targeting de grupo muscular:
 | **Core** | Planchas, crunch en polea, elevación de piernas colgando |
 | **Brazos** | Curl de bíceps, rompecráneos, curl martillo |
 
-Cada rutina soporta:
-- Orden personalizado de ejercicios
-- Configuración de series/repeticiones/peso por ejercicio
-- Temporizador de descanso entre series
-- Notas por ejercicio
+Cada rutina permite:
 
-### Biblioteca de Ejercicios con Tutoriales
+- Ordenar los ejercicios como quieras
+- Definir series, repeticiones y peso para cada ejercicio
+- Usar un temporizador de descanso entre series
+- Agregar notas a cada ejercicio
 
-Una base de datos completa de 200+ ejercicios, cada uno con:
+### Biblioteca de ejercicios con tutoriales
 
-- Instrucciones paso a paso en texto
-- Diagramas animados de grupos musculares mostrando músculos primarios y secundarios
-- Errores comunes a evitar
-- Alternativas sugeridas para limitaciones de equipo
+La biblioteca tiene más de 200 ejercicios, y cada uno incluye:
 
-### Tracker Nutricional
+- Instrucciones escritas paso a paso
+- Diagramas animados de los músculos principales y secundarios que trabaja
+- Errores comunes que conviene evitar
+- Alternativas para cuando no tienes el equipo indicado
 
-Registro diario de alimentos con:
+### Registro de nutrición
 
-- Desglose de macros (proteína, carbohidratos, grasas)
-- Seguimiento calórico contra objetivos diarios
-- Categorización de comidas (desayuno, almuerzo, cena, snacks)
-- Adición rápida para alimentos registrados frecuentemente
-- Resúmenes de nutrición semanal/mensual
+El registro diario de comidas incluye:
 
-### Seguimiento de Progreso de Peso
+- El desglose de proteínas, carbohidratos y grasas
+- Las calorías comparadas con tu meta diaria
+- Las comidas agrupadas en desayuno, almuerzo, cena y snacks
+- Agregado rápido de los alimentos que registras seguido
+- Resúmenes de nutrición semanales y mensuales
 
-Una sección dedicada para registrar peso corporal a lo largo del tiempo:
+### Seguimiento del peso
 
-- Registro diario de pesaje
-- Gráfico de línea de tendencia suavizando fluctuaciones diarias
-- Definición de metas con timeline proyectado
-- Promedios semanales para reducir ruido de retención de agua
-- Timeline de fotos de progreso (opcional)
+Una sección aparte registra tu peso corporal a lo largo del tiempo:
 
-### Modo de Entrenamiento Activo
+- Registros diarios de peso
+- Una línea de tendencia que suaviza las variaciones diarias
+- Metas con una fecha estimada
+- Promedios semanales, que reducen el ruido del peso por retención de agua
+- Una línea de tiempo opcional con fotos de progreso
 
-Cuando se inicia una rutina, la app entra en un modo de entrenamiento enfocado:
+### Modo entrenamiento
+
+Al iniciar una rutina, la aplicación pasa a una pantalla de entrenamiento enfocada:
 
 ```
 ┌─────────────────────────────┐
@@ -139,37 +128,25 @@ Cuando se inicia una rutina, la app entra en un modo de entrenamiento enfocado:
 └─────────────────────────────┘
 ```
 
----
+## Problemas que tuve que resolver
 
-## Desafíos y Soluciones
+### Sincronizar datos registrados sin conexión
 
-### Desafío: Sincronización de Datos Offline-First
+Los gimnasios son conocidos por su mala señal, así que la aplicación tenía que funcionar por completo sin conexión y luego sincronizar sin perder datos ni generar conflictos. La sincronización usa la estrategia de "la última escritura gana" y resuelve los conflictos por marca de tiempo. SQLite guarda localmente todos los datos de entrenamiento con un indicador `synced`, y un isolate en segundo plano intenta sincronizar cada 30 segundos cuando hay conexión. Las acciones importantes, como crear rutinas y registrar series, nunca dependen de la red.
 
-Los ambientes de gimnasio tienen conectividad notoriamente pobre. La app necesitaba funcionar completamente offline, luego sincronizar sin pérdida de datos ni conflictos.
+### Mostrar qué músculos trabaja un ejercicio
 
-**Solución:** Implementé una estrategia de sincronización **last-write-wins** con resolución de conflictos basada en timestamps. SQLite local almacena todos los datos de entrenamiento con un flag `synced`. Un isolate en segundo plano intenta sincronizar cada 30 segundos cuando hay conectividad disponible. Las operaciones críticas (crear rutinas, registrar series) nunca dependen de la red.
+Esto requería ilustraciones anatómicas claras y consistentes que cambiaran según el ejercicio seleccionado. Hice un conjunto de mapas corporales en SVG donde cada grupo muscular se puede manejar por separado. Cada ejercicio apunta a los IDs de sus músculos principales (resaltados) y secundarios (atenuados), y el renderizado de SVG de Flutter pinta los grupos correspondientes, así no hicieron falta decenas de ilustraciones distintas.
 
-### Desafío: Visualización de Grupos Musculares
+### Manejar el estado de Flutter a medida que crecía la app
 
-Mostrar qué músculos trabaja un ejercicio requería ilustraciones anatómicas claras y consistentes que respondieran al ejercicio seleccionado.
+Cuando ya estaban las rutinas, la nutrición, el progreso y el modo entrenamiento, el manejo del estado en toda la aplicación se complicó. Pasé a Riverpod para la inyección de dependencias y el manejo de estado, con providers propios para cada funcionalidad y límites claros entre ellos. El estado del entrenamiento activo vive en un `StateNotifier` que se guarda en el almacenamiento local, así un entrenamiento sobrevive aunque el sistema cierre la aplicación a la mitad.
 
-**Solución:** Creé un conjunto de **mapas corporales SVG** con grupos musculares direccionables individualmente. Cada ejercicio mapea a IDs de músculos primarios (resaltados) y secundarios (atenuados). El renderizado SVG de Flutter pinta los grupos relevantes, produciendo un visual claro sin requerir docenas de ilustraciones individuales.
+### Un temporizador de descanso confiable
 
-### Desafío: Gestión de Estado en Flutter a Escala
+En un gimnasio real, un temporizador de descanso que se desfasa o se detiene cuando la aplicación pasa a segundo plano no sirve de nada. El temporizador corre en un `Isolate` de Flutter y usa notificaciones locales para avisar en segundo plano. Calcula el tiempo restante a partir de una marca de tiempo de inicio guardada en lugar de hacer una cuenta regresiva, así se mantiene preciso sin importar lo que el sistema operativo haga con la aplicación.
 
-A medida que las features crecían (rutinas + nutrición + progreso + modo entrenamiento), gestionar estado a través de la app se volvió complejo.
-
-**Solución:** Adopté **Riverpod** para inyección de dependencias y gestión de estado. Cada dominio de feature tiene sus propios providers con límites claros. El estado del entrenamiento activo usa un `StateNotifier` que persiste en almacenamiento local, sobreviviendo kills de la app a mitad de entrenamiento.
-
-### Desafío: Precisión del Temporizador de Descanso
-
-Un temporizador de descanso que se desfasa o se detiene cuando la app está en segundo plano es inútil en un escenario real de gimnasio.
-
-**Solución:** Usé `Isolate` de Flutter para el cómputo del timer y notificaciones locales para alertas en background. El timer calcula el tiempo restante desde un timestamp de inicio almacenado en lugar de contar hacia atrás, asegurando precisión independientemente de eventos del ciclo de vida de la app.
-
----
-
-## Modelo de Datos (Simplificado)
+## Modelo de datos (simplificado)
 
 ```python
 class Routine(BaseModel):
@@ -202,8 +179,6 @@ class SetLog(BaseModel):
     completed_at: datetime
 ```
 
----
-
 ## Rendimiento
 
 | Métrica | Objetivo | Logrado |
@@ -214,22 +189,18 @@ class SetLog(BaseModel):
 | Búsqueda de ejercicios | < 200ms | 90ms |
 | Frame rate (animaciones) | 60fps | 60fps |
 
----
+## Lo que aprendí
 
-## Lecciones Aprendidas
+1. Diseñar para el uso sin conexión desde el principio es mucho más fácil que agregarlo después, y obliga a separar con claridad el estado local de los datos del servidor.
+2. Flutter y FastAPI funcionan bien juntos. El hot reload de Flutter y la documentación OpenAPI que genera FastAPI hicieron que el ciclo de desarrollo fuera muy rápido.
+3. Una aplicación de gimnasio necesita botones grandes. Con las manos sudadas y miradas rápidas entre series, los botones tienen que ser grandes, el contraste alto y los errores fáciles de deshacer.
+4. Los mapas musculares en SVG escalan bien. Un solo conjunto de recursos vectoriales funciona en cualquier tamaño y densidad de pantalla, y colorearlos desde el código reemplazó decenas de imágenes estáticas.
+5. Los temporizadores de descanso son más difíciles de lo que parecen. Correr en segundo plano, los permisos de notificaciones y mantener la precisión durante los eventos del ciclo de vida del sistema operativo exigieron más trabajo del que esperaba.
 
-1. **Offline-first cambia todo** — Diseñar para offline desde el día uno es inmensamente más fácil que retrofitear. Fuerza una separación limpia entre estado local y verdad remota.
-2. **Flutter + FastAPI es una gran combinación** — La velocidad de hot reload de Flutter y los docs OpenAPI auto-generados de FastAPI hacen el loop de desarrollo extremadamente rápido.
-3. **La UX de gimnasio necesita targets de toque grandes** — Manos sudorosas y miradas rápidas entre series significan que los botones necesitan ser grandes, el contraste alto y las interacciones tolerantes.
-4. **Los mapas musculares SVG escalan hermosamente** — Un conjunto de assets vectoriales funciona en todos los tamaños y densidades de pantalla, con coloreo programático reemplazando docenas de imágenes estáticas.
-5. **Los temporizadores de descanso son deceptivamente complejos** — La ejecución en background, permisos de notificación y precisión del timer a través de eventos del ciclo de vida del OS requirieron más ingeniería de la esperada.
+## Próximos pasos
 
----
-
-## Próximos Pasos
-
-- [ ] Features sociales (compartir rutinas, seguir progreso de amigos)
-- [ ] Sugerencias de rutinas con IA basadas en metas e historial
-- [ ] Companion para Apple Watch / Wear OS para tracking de entrenamiento activo
-- [ ] Chequeo de forma de ejercicio vía cámara del dispositivo y estimación de pose
-- [ ] Integración con básculas inteligentes para registro automático de peso
+- [ ] Funciones sociales: compartir rutinas y seguir el progreso de tus amigos
+- [ ] Rutinas sugeridas por IA según tus metas e historial
+- [ ] Una app complementaria para Apple Watch y Wear OS que registre el entrenamiento activo
+- [ ] Revisión de la técnica de los ejercicios con la cámara, usando estimación de pose
+- [ ] Registro automático del peso desde básculas inteligentes

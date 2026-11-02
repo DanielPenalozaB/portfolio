@@ -6,17 +6,13 @@ updatedDate: 'Nov 02 2026'
 heroImage: '../../assets/blog/why-i-chose-astro-cover.png'
 ---
 
-When I started planning my portfolio, I had a clear goal: ship something fast, visually polished, and technically interesting — without drowning in framework complexity. After evaluating Next.js, SvelteKit, and even plain HTML with a build tool, I landed on **Astro**. A couple of weeks in, it already felt like one of the best technical decisions I'd made, and that hasn't changed.
+When I started planning my portfolio, I wanted something fast and polished that was also interesting to build, without fighting a framework the whole way. I looked at Next.js, SvelteKit, and plain HTML with a build tool, and picked Astro. A couple of weeks in, it already felt like one of the best technical decisions I'd made, and I still think so.
 
-This post is a walkthrough of my experience — the good parts, the tricky parts, and why Astro's philosophy keeps winning me over.
+## Shipping less JavaScript
 
----
+Astro renders every page to static HTML at build time, and a component that doesn't need interactivity ships no JavaScript at all.
 
-## The Core Idea: Ship Less JavaScript
-
-Astro's pitch is deceptively simple: **zero JavaScript by default**. Every page renders to static HTML at build time. If a component doesn't need interactivity, it ships no JS. Period.
-
-This sounds like an obvious thing, but coming from Next.js where even a static page carries a hydration cost, the difference is dramatic. My portfolio's homepage ships about 110 KB of gzipped JS, and nearly all of it is the React runtime and WebGL code behind two interactive islands. The static content around them ships none.
+Coming from Next.js, where even a static page pays a hydration cost, that difference is big. My homepage ships about 110 KB of gzipped JS, and nearly all of it is the React runtime and WebGL code behind two interactive islands. The static content around them ships none.
 
 ```astro
 ---
@@ -28,36 +24,28 @@ const greeting = "Hi, I'm Daniel";
 <h1>{greeting}</h1>
 ```
 
-Compare that to a React component that does the same thing — the text is static, but React still ships its runtime to hydrate it. Astro just... doesn't.
+A React component that rendered the same static text would still send the React runtime to hydrate it. Astro doesn't.
 
----
+## Islands
 
-## Islands Architecture: Use What You Need
+The feature I lean on most is islands: you can mix frameworks on one page, and each interactive component hydrates on its own. My portfolio uses Astro components for everything static (header, footer, layout, sections), React for the DotGrid canvas and the WebGL light rays, and plain `<script>` tags for the GSAP animations and the dark mode toggle.
 
-The killer feature is **islands**. You can mix frameworks within a single page, and each interactive component hydrates independently. My portfolio uses:
-
-- **Astro components** for everything static (header, footer, layout, sections)
-- **React** for the DotGrid canvas and WebGL light rays
-- **Pure JS** via `<script>` tags for GSAP animations and the dark mode toggle
-
-Each React island loads only when needed:
+Each React island loads only when it's needed:
 
 ```astro
 <!-- Only hydrates when the component scrolls into view -->
 <DotGrid client:visible baseColor="#F1F0F0" darkBaseColor="#1e1b18" />
 ```
 
-The `client:visible` directive means the DotGrid doesn't even start loading until the user scrolls to it. On pages where it doesn't exist (like blog posts), zero React is shipped. This granularity is something monolithic frameworks simply can't match.
+With `client:visible`, the DotGrid doesn't start loading until the user scrolls to it, and pages without it, like blog posts, ship no React at all. Frameworks that hydrate the whole page don't give you that kind of control.
 
----
+## Working with my other libraries
 
-## Playing Nice with Others
+I was worried Astro wouldn't get along with the libraries I rely on. It does.
 
-One of my concerns going in was whether Astro would play well with the libraries I rely on. Short answer: it does.
+### Tailwind CSS v4
 
-### TailwindCSS v4
-
-Tailwind integrates seamlessly. I'm using v4 with the Vite plugin, and the developer experience is identical to what you'd get in any other framework. The custom variant system works perfectly for class-based dark mode:
+I use Tailwind v4 through its Vite plugin, and it works the same way it would in any other framework. Its custom variant system handles class-based dark mode:
 
 ```css
 @import "tailwindcss";
@@ -67,7 +55,7 @@ Tailwind integrates seamlessly. I'm using v4 with the Vite plugin, and the devel
 
 ### GSAP
 
-GSAP works beautifully in Astro's `<script>` tags. Since these are standard ES modules that Astro bundles, you get full tree-shaking and can import only what you need. The orbital animations on my hero section are pure GSAP — no React wrapper needed:
+GSAP runs fine inside Astro's `<script>` tags. Astro bundles them as standard ES modules, so tree-shaking works and you only import what you use. The orbital animations in my hero are plain GSAP with no React wrapper:
 
 ```astro
 <script>
@@ -85,11 +73,11 @@ GSAP works beautifully in Astro's `<script>` tags. Since these are standard ES m
 </script>
 ```
 
-### React (When You Actually Need It)
+### React, when I need it
 
-For genuinely interactive components — the canvas-based dot grid, the WebGL effects — React slots in perfectly as an island. The mental model is clear: Astro handles the page, React handles the widget.
+For the parts that really are interactive, the canvas dot grid and the WebGL effects, React works well as an island. Astro handles the page and React handles the widget.
 
-The only challenge was bridging Astro's theme state to React islands. Since they hydrate independently, React components don't automatically know when dark mode toggles. I solved it with a `MutationObserver` watching the `<html>` class:
+My one problem was getting the theme into the React islands. They hydrate independently, so they don't know when dark mode toggles. I solved it with a `MutationObserver` that watches the class on `<html>`:
 
 ```jsx
 useEffect(() => {
@@ -104,13 +92,11 @@ useEffect(() => {
 }, []);
 ```
 
-Not the prettiest pattern, but it's reliable and framework-agnostic.
+It isn't pretty, but it's reliable and doesn't depend on any framework.
 
----
+## Content collections
 
-## Content Collections: Type-Safe Markdown
-
-Astro's content collections are genuinely excellent. You define a schema, and every markdown file gets validated and typed at build time:
+Content collections are one of my favorite parts of Astro. You define a schema, and Astro validates and types every Markdown file at build time:
 
 ```typescript
 const projects = defineCollection({
@@ -126,13 +112,11 @@ const projects = defineCollection({
 });
 ```
 
-If a frontmatter field is missing or the wrong type, the build fails with a clear error — not a runtime crash. This is especially valuable for my bilingual setup where content exists in `en/` and `es/` directories. I can trust that both language versions conform to the same shape.
+If a frontmatter field is missing or has the wrong type, the build fails with a clear error instead of crashing at runtime. That matters for my bilingual setup, where content lives in `en/` and `es/` directories and both versions have to match the same schema.
 
----
+## Translations
 
-## The i18n Story
-
-Astro doesn't ship a built-in i18n solution, which initially felt like a gap. But it turned out to be a feature. I built a lightweight typed system in about 50 lines:
+Astro handles locale routing in its config, but it has nothing built in for translating interface strings. That looked like a gap at first. In practice I liked writing my own: a small typed system of about 50 lines.
 
 ```typescript
 export type TranslationKey = keyof typeof en;
@@ -144,21 +128,19 @@ export function useTranslations(locale: Locale) {
 }
 ```
 
-The English locale defines the `TranslationKey` type. If I add a key to `en.ts` and forget to add it to `es.ts`, TypeScript won't complain — but the fallback chain handles it gracefully. If I typo a key in a component, the build fails. Best of both worlds.
+The English locale defines the `TranslationKey` type. If I add a key to `en.ts` and forget it in `es.ts`, TypeScript won't complain, but the fallback chain shows the English string instead. If I mistype a key in a component, the build fails.
 
-File-based routing with locale prefixes (`/projects/portfolio` vs `/es/projects/portfolio`) just works with Astro's page structure. No router configuration, no middleware.
+The locale-prefixed routes (`/projects/portfolio` and `/es/projects/portfolio`) come straight from Astro's file-based pages plus one `i18n` block in the config, with no middleware.
 
----
+## View transitions
 
-## View Transitions
-
-Astro's built-in View Transitions API support is remarkably easy to enable. One component in the head:
+Turning on Astro's View Transitions support takes one component in the head:
 
 ```astro
 <ClientRouter />
 ```
 
-And suddenly you have SPA-like navigation with smooth page transitions. Adding morph animations between pages is just a `transition:name` attribute:
+That gives you SPA-style navigation with animated page changes. To morph an element from one page into another, give it the same `transition:name` on both:
 
 ```astro
 <!-- In the project card -->
@@ -168,9 +150,9 @@ And suddenly you have SPA-like navigation with smooth page transitions. Adding m
 <img transition:name={`project-img-${slug}`} ... />
 ```
 
-The project image smoothly scales and repositions from the card to the detail page. No animation library needed, no manual FLIP calculations.
+The project image scales and moves from the card to the detail page without an animation library or manual FLIP calculations.
 
-The main gotcha: module scripts only run once with view transitions. Any DOM setup needs to hook into `astro:page-load`:
+The catch is that module scripts only run once when view transitions are on, so any DOM setup has to hook into `astro:page-load`:
 
 ```javascript
 function initOrbitalHero() { /* ... */ }
@@ -178,29 +160,25 @@ initOrbitalHero();
 document.addEventListener("astro:page-load", initOrbitalHero);
 ```
 
-Once you internalize that pattern, everything works smoothly.
+Once I got used to that pattern, I stopped running into problems with it.
 
----
+## What tripped me up
 
-## The Tricky Parts
+A few things caught me off guard.
 
-It's not all sunshine. A few things caught me off guard:
+### Scoped styles
 
-### Scoped Styles Can Surprise You
+Astro scopes `<style>` blocks to their component by default, so global CSS you expect to cascade into child components won't. `is:global` gets around that, but you have to decide each time whether to use it or reach for Tailwind classes instead.
 
-Astro scopes `<style>` blocks to the component by default. If you write global CSS expecting it to cascade into child components, it won't. The `is:global` escape hatch works, but you need to be intentional about when to use it vs. Tailwind utility classes.
+### Isolated React islands
 
-### React Islands Are Isolated
+Islands don't share React context, because each one is its own small app. That's by design, and it means two islands that need shared state have to talk through DOM events or an observable instead. My DotGrid and WebGL effects are independent, so it didn't matter here, but it's worth knowing before you start.
 
-This is by design, but it means no shared React context between islands. Each one is its own mini-app. If two islands need to share state, you're reaching for DOM events, custom events, or observable patterns rather than React context. For my use case this was fine — the DotGrid and WebGL effects are independent — but it's worth knowing upfront.
+### Confusing build errors
 
-### Build Errors Can Be Cryptic
+When a content collection schema fails or an import path is wrong, the error sometimes points at generated files instead of your source. It has improved, but now and then you'll still dig through Vite's module graph to find the real problem.
 
-When a content collection schema fails or an import path is wrong, the error messages occasionally point to generated files rather than your source. It's gotten better over time, but occasionally you'll be hunting through Vite's module graph to figure out what went wrong.
-
----
-
-## The Numbers
+## The numbers
 
 PageSpeed Insights on the homepage, November 2, 2026 (Lighthouse 13.6, lab data):
 
@@ -215,24 +193,14 @@ PageSpeed Insights on the homepage, November 2, 2026 (Lighthouse 13.6, lab data)
 
 Mobile runs on an emulated Moto G Power with slow 4G throttling. The homepage ships about 110 KB of gzipped JavaScript, and a production build of all 16 pages takes around 2 seconds.
 
-For a site with GSAP animations, a React canvas, WebGL effects, dark mode, and full i18n, I'm happy with that. It wasn't free: I still had to preload the hero image, serve optimized WebP, switch the fonts to woff2, and fix a few contrast and alt-text issues before every category reached 100. But Astro's defaults meant I was tuning a fast site, not rescuing a slow one.
+For a site with GSAP animations, a React canvas, WebGL effects, dark mode, and two languages, I'm happy with that. It took some work: I preloaded the hero image, served optimized WebP, switched the fonts to woff2, and fixed a few contrast and alt-text issues before every category reached 100. The site was already fast on Astro's defaults, though, so all of that was tuning.
 
----
+## Would I use it for everything?
 
-## Would I Use It for Everything?
+No. Astro is at its best on content-driven sites, where most of the page is static and the interactive parts are small: portfolios, blogs, documentation, marketing and landing pages.
 
-No. Astro excels at **content-driven sites** where most of the page is static and interactivity is localized. Portfolios, blogs, documentation, marketing sites, landing pages — these are Astro's sweet spot.
+For a highly interactive app like SaveSphere, my finance tracker, I'd still use SvelteKit or Next.js. When every component needs state and the page is more app than document, islands add overhead without much benefit.
 
-For a highly interactive app like SaveSphere (my finance tracker), I'd still reach for SvelteKit or Next.js. When every component needs state and the page is more app than document, the islands model adds overhead without much benefit.
+For this portfolio it was the right call. The site is fast by default and has interactivity only where I put it. A lot of developer portfolios end up slow because of framework overhead, which is a little ironic for a page meant to show off what you can build.
 
-But for this portfolio? Astro was the right call. It let me ship a site that's fast by default, add interactivity exactly where I needed it, and avoid the framework tax that makes most developer portfolios ironically slow.
-
----
-
-## Final Thoughts
-
-Astro's philosophy — **ship less, use what you need, make the default path fast** — aligns perfectly with how I think about web development. It doesn't try to be everything. It's not replacing your favorite UI framework. It's giving you a better way to compose them.
-
-If you're building something where content comes first and interactivity comes second, give Astro a serious look. The developer experience is excellent, the output is lean, and the ecosystem is mature enough that you won't hit walls.
-
-The web already has too many slow sites. Astro makes it easy to not add to the pile.
+If you're building something that's mostly content with a bit of interactivity, try Astro. Shipping less and adding only what each page needs is how I already like to work, and Astro makes that the default. It's pleasant to work with, and the ecosystem is mature enough that I never got stuck.

@@ -10,34 +10,26 @@ repo: "https://github.com/DanielPenalozaB/savesphere"
 
 ## Overview
 
-SaveSphere is a personal finance application designed to give users complete visibility and control over their spending habits. It combines traditional budget tracking with **AI-powered insights** that provide actionable financial advice based on real transaction patterns.
+SaveSphere is a personal finance app that shows users exactly where their money goes and helps them control it. Alongside regular budget tracking, it gives AI-generated advice based on each user's real transactions.
 
-> The best budget app is the one you actually use. SaveSphere was built to make financial awareness effortless, not tedious.
+## The problem
 
----
+Existing finance apps are either overwhelming (YNAB, Quicken) or so simple they stop being useful. Most of them also describe your spending without telling you what to change. I wanted an app that would:
 
-## The Problem
-
-Existing finance apps either overwhelm users with complexity (YNAB, Quicken) or oversimplify to the point of uselessness. Most critically, they _describe_ your spending but rarely _prescribe_ what to change. I wanted an app that would:
-
-- Be fast and intuitive enough to log transactions in seconds
+- Let you log a transaction in a few seconds
 - Categorize spending automatically
-- Provide AI-generated insights that actually help improve habits
+- Give AI-generated advice that helps you change habits
 - Work across multiple accounts and currencies
-
----
 
 ## Goals
 
-- Build a performant full-stack application with SvelteKit and Go
-- Implement AI-assisted financial advice using transaction history analysis
-- Design an intuitive dashboard with meaningful analytics
+- Build a fast full-stack app with SvelteKit and Go
+- Give AI-assisted financial advice by analyzing transaction history
+- Design a clear dashboard with analytics that mean something
 - Support multiple accounts, categories, and recurring transactions
-- Deliver sub-100ms API response times for core operations
+- Keep API responses for core operations under 100ms
 
----
-
-## Tech Stack
+## Tech stack
 
 | Technology | Role |
 | ---------- | ---- |
@@ -48,11 +40,9 @@ Existing finance apps either overwhelm users with complexity (YNAB, Quicken) or 
 | **OpenAI API** | AI-powered financial insights and recommendations |
 | **TailwindCSS** | UI styling with custom design tokens |
 
----
-
 ## Architecture
 
-The application follows a clean separation between frontend and backend:
+The frontend and backend are fully separate:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌──────────────┐
@@ -67,66 +57,54 @@ The application follows a clean separation between frontend and backend:
                         └─────────────────┘
 ```
 
-The Go backend handles all business logic, authentication, and data persistence. The AI layer processes transaction history asynchronously to generate periodic insights without blocking the main user flow.
+The Go backend handles all business logic, authentication, and data storage. The AI layer processes transaction history in the background to generate periodic insights, so it never slows down the main flow of the app.
 
----
+## Features
 
-## Key Features
+### Multiple accounts
 
-### Multi-Account Management
+Users can track checking accounts, savings, credit cards, and cash, each with its own balance and transaction history. One dashboard adds up the totals across all of them.
 
-Users can track finances across checking accounts, savings, credit cards, and cash — each with its own balance and transaction history. A unified dashboard aggregates totals across all accounts.
+### Categorized transactions
 
-### Categorized Transactions
+Each transaction gets a category (food, transport, entertainment, and so on), either by hand or from a suggestion. Categories feed both the analytics and the AI recommendations.
 
-Every transaction is assigned a category (food, transport, entertainment, etc.) either manually or via smart suggestions. Categories power the analytics engine and AI recommendations.
+### AI financial advisor
 
-### AI Financial Advisor
+This is the main feature: an AI assistant that analyzes spending patterns and gives personalized advice you can act on. It picks up things like:
 
-The standout feature: an AI assistant that analyzes spending patterns and provides personalized, actionable advice. It identifies trends like:
-
-- Unusual spending spikes in specific categories
-- Opportunities to save based on recurring patterns
+- Unusual spikes in a particular category
+- Chances to save based on recurring patterns
 - Monthly budget recommendations based on income and goals
 
-### Analytics Dashboard
+### Analytics dashboard
 
-Visual breakdowns of spending by category, time period, and account. Includes:
+Charts break down spending by category, time period, and account:
 
 - Monthly spending trends (line charts)
-- Category distribution (donut charts)
-- Income vs. expenses comparison
-- Budget progress indicators
+- Spending by category (donut charts)
+- Income compared with expenses
+- Progress against each budget
 
-### Recurring Transactions
+### Recurring transactions
 
-Support for scheduled transactions (rent, subscriptions, salary) that auto-populate on their due dates, keeping the ledger accurate without manual entry.
+Scheduled transactions such as rent, subscriptions, and salary are added automatically on their due dates, so the ledger stays accurate without manual entry.
 
----
+## Problems I had to solve
 
-## Challenges & Solutions
+### Balances that update instantly
 
-### Challenge: Real-Time Balance Calculations
+With thousands of transactions across several accounts, balances had to be instant, and the naive approach of summing every transaction on each request slowed down quickly. Instead, each transaction stores the balance that results from it. Account balances are denormalized and updated inside the same database transaction, which keeps balance lookups O(1) and the data consistent.
 
-With thousands of transactions across multiple accounts, calculating balances needed to be instant. Naive approaches (summing all transactions per request) degraded quickly.
+### Useful AI advice
 
-**Solution:** Implemented a **running balance** strategy where each transaction stores the resulting balance. Account balances are denormalized and updated transactionally, ensuring O(1) balance lookups while maintaining consistency.
+Early versions of the AI feature gave generic advice like "spend less on dining out", and users needed something specific to them. I rewrote the prompts to include categorized monthly summaries, changes in spending, and the user's own goals. Now the insights look like this: "Your grocery spending increased 23% this month compared to your 3-month average. Consider meal planning on Sundays — users with similar profiles save ~$80/month this way."
 
-### Challenge: Meaningful AI Insights
+### Keeping Go and SvelteKit in sync
 
-Early iterations of the AI feature produced generic advice ("spend less on dining out"). Users needed specific, contextual recommendations.
+Keeping the Go API and the SvelteKit frontend type-safe took care, because request and response shapes could drift apart. The API contracts are defined once as OpenAPI specs: TypeScript types for the frontend are generated from them, and the Go handlers are validated against the same schema, so a contract change gets caught at build time.
 
-**Solution:** Engineered detailed prompts that include categorized monthly summaries, spending deltas, and user-defined goals. The AI now produces insights like: "Your grocery spending increased 23% this month compared to your 3-month average. Consider meal planning on Sundays — users with similar profiles save ~$80/month this way."
-
-### Challenge: Go + SvelteKit Communication
-
-Type safety between the Go API and SvelteKit frontend required careful coordination to prevent drift between request/response shapes.
-
-**Solution:** Defined shared API contracts using OpenAPI specs, generating TypeScript types for the frontend and validating Go handlers against the same schema. Any contract change is caught at build time.
-
----
-
-## Database Schema (Simplified)
+## Database schema (simplified)
 
 ```sql
 CREATE TABLE accounts (
@@ -150,8 +128,6 @@ CREATE TABLE transactions (
 );
 ```
 
----
-
 ## Performance
 
 | Metric | Target | Achieved |
@@ -161,21 +137,17 @@ CREATE TABLE transactions (
 | Transaction creation | < 200ms | 89ms |
 | AI insight generation | < 5s | ~3.2s |
 
----
+## What I learned
 
-## Lessons Learned
+1. Go works well for financial APIs. Its type system catches precision errors at compile time, and goroutines handle concurrent balance calculations cleanly.
+2. AI features need guardrails. Without structured prompts and output validation, LLM responses are too generic to be useful, and the context you give the model matters more than which model you pick.
+3. SvelteKit's reactivity suits dashboards. Derived stores and reactive declarations make charts update instantly without manual state management.
+4. Start with the data model. Getting the transaction and account schema right early saved me from expensive migrations later.
 
-1. **Go is excellent for financial APIs** — The type system catches precision errors at compile time, and goroutines handle concurrent balance calculations elegantly.
-2. **AI features need guardrails** — Without structured prompts and output validation, LLM responses are too generic to be useful. Context engineering matters more than model choice.
-3. **SvelteKit's reactivity shines for dashboards** — Derived stores and reactive declarations make chart updates feel instantaneous without manual state management.
-4. **Start with the data model** — Getting the transaction/account schema right early prevented costly migrations later.
+## What's next
 
----
-
-## What's Next
-
-- [ ] Bank account sync via Plaid integration
-- [ ] Budget goal setting with progress notifications
+- [ ] Bank account sync through Plaid
+- [ ] Budget goals with progress notifications
 - [ ] Shared household accounts
-- [ ] Mobile app with Flutter (shared backend)
-- [ ] Export to CSV/PDF for tax season
+- [ ] A Flutter mobile app on the same backend
+- [ ] CSV and PDF export for tax season

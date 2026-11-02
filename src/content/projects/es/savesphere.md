@@ -10,34 +10,26 @@ repo: "https://github.com/DanielPenalozaB/savesphere"
 
 ## Resumen
 
-SaveSphere es una aplicación de finanzas personales diseñada para dar a los usuarios visibilidad y control completo sobre sus hábitos de gasto. Combina el seguimiento tradicional de presupuesto con **insights impulsados por IA** que proporcionan consejos financieros accionables basados en patrones reales de transacciones.
+SaveSphere es una aplicación de finanzas personales que muestra con claridad en qué se va el dinero y ayuda a controlarlo. Además del seguimiento de presupuesto tradicional, da consejos generados con IA a partir de las transacciones reales de cada usuario.
 
-> La mejor app de presupuesto es la que realmente usas. SaveSphere fue construida para hacer la conciencia financiera algo sin esfuerzo, no tedioso.
+## El problema
 
----
+Las aplicaciones de finanzas que existen o abruman con su complejidad (YNAB, Quicken) o son tan simples que dejan de ser útiles. Además, la mayoría describe en qué gastas sin decirte qué cambiar. Yo quería una aplicación que:
 
-## El Problema
-
-Las apps de finanzas existentes o abruman a los usuarios con complejidad (YNAB, Quicken) o simplifican tanto que son inútiles. Lo más crítico: _describen_ tu gasto pero raramente _prescriben_ qué cambiar. Quería una app que:
-
-- Fuera rápida e intuitiva para registrar transacciones en segundos
-- Categorizara gastos automáticamente
-- Proporcionara insights generados por IA que realmente ayuden a mejorar hábitos
-- Funcionara con múltiples cuentas y monedas
-
----
+- Te permitiera registrar una transacción en pocos segundos
+- Categorizara los gastos automáticamente
+- Diera consejos generados con IA que ayuden a cambiar hábitos
+- Funcionara con varias cuentas y monedas
 
 ## Objetivos
 
-- Construir una aplicación full-stack performante con SvelteKit y Go
-- Implementar asistencia financiera con IA usando análisis de historial de transacciones
-- Diseñar un dashboard intuitivo con analíticas significativas
-- Soportar múltiples cuentas, categorías y transacciones recurrentes
-- Entregar tiempos de respuesta de API menores a 100ms para operaciones core
+- Construir una aplicación full-stack rápida con SvelteKit y Go
+- Dar consejos financieros asistidos por IA a partir del historial de transacciones
+- Diseñar un dashboard claro, con analítica que signifique algo
+- Soportar varias cuentas, categorías y transacciones recurrentes
+- Mantener por debajo de 100ms las respuestas de la API en las operaciones principales
 
----
-
-## Stack Tecnológico
+## Stack tecnológico
 
 | Tecnología | Rol |
 | ---------- | --- |
@@ -48,11 +40,9 @@ Las apps de finanzas existentes o abruman a los usuarios con complejidad (YNAB, 
 | **OpenAI API** | Insights y recomendaciones financieras con IA |
 | **TailwindCSS** | Estilos de UI con design tokens personalizados |
 
----
-
 ## Arquitectura
 
-La aplicación sigue una separación limpia entre frontend y backend:
+El frontend y el backend están completamente separados:
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌──────────────┐
@@ -67,66 +57,54 @@ La aplicación sigue una separación limpia entre frontend y backend:
                         └─────────────────┘
 ```
 
-El backend en Go maneja toda la lógica de negocio, autenticación y persistencia de datos. La capa de IA procesa el historial de transacciones de forma asíncrona para generar insights periódicos sin bloquear el flujo principal del usuario.
+El backend en Go maneja toda la lógica de negocio, la autenticación y el almacenamiento de datos. La capa de IA procesa el historial de transacciones en segundo plano para generar insights periódicos, así nunca vuelve lento el flujo principal de la aplicación.
 
----
+## Funcionalidades
 
-## Características Principales
+### Varias cuentas
 
-### Gestión Multi-Cuenta
+Los usuarios pueden llevar cuentas corrientes, ahorros, tarjetas de crédito y efectivo, cada uno con su propio saldo e historial de transacciones. Un solo dashboard suma los totales de todas.
 
-Los usuarios pueden rastrear finanzas en cuentas corrientes, ahorros, tarjetas de crédito y efectivo — cada una con su propio saldo e historial de transacciones. Un dashboard unificado agrega totales de todas las cuentas.
+### Transacciones categorizadas
 
-### Transacciones Categorizadas
+Cada transacción recibe una categoría (comida, transporte, entretenimiento, etc.), ya sea a mano o a partir de una sugerencia. Las categorías alimentan tanto la analítica como las recomendaciones de la IA.
 
-Cada transacción se asigna a una categoría (comida, transporte, entretenimiento, etc.) ya sea manualmente o mediante sugerencias inteligentes. Las categorías alimentan el motor de analíticas y las recomendaciones de IA.
+### Asesor financiero con IA
 
-### Asesor Financiero con IA
+Es la funcionalidad principal: un asistente de IA que analiza los patrones de gasto y da consejos personalizados que puedes aplicar. Detecta cosas como:
 
-La característica destacada: un asistente de IA que analiza patrones de gasto y proporciona consejos personalizados y accionables. Identifica tendencias como:
+- Picos de gasto inusuales en una categoría
+- Oportunidades de ahorro a partir de patrones recurrentes
+- Recomendaciones de presupuesto mensual según los ingresos y las metas
 
-- Picos inusuales de gasto en categorías específicas
-- Oportunidades de ahorro basadas en patrones recurrentes
-- Recomendaciones de presupuesto mensual basadas en ingresos y metas
+### Dashboard de analítica
 
-### Dashboard de Analíticas
+Los gráficos desglosan el gasto por categoría, periodo y cuenta:
 
-Desgloses visuales de gasto por categoría, período de tiempo y cuenta. Incluye:
+- Tendencias de gasto mensual (gráficos de líneas)
+- Gasto por categoría (gráficos de dona)
+- Ingresos comparados con gastos
+- Avance de cada presupuesto
 
-- Tendencias de gasto mensual (gráficos de línea)
-- Distribución por categoría (gráficos de dona)
-- Comparación de ingresos vs. gastos
-- Indicadores de progreso de presupuesto
+### Transacciones recurrentes
 
-### Transacciones Recurrentes
+Las transacciones programadas, como el arriendo, las suscripciones y el salario, se agregan solas en su fecha, así el registro se mantiene al día sin ingresarlas a mano.
 
-Soporte para transacciones programadas (arriendo, suscripciones, salario) que se auto-registran en sus fechas de vencimiento, manteniendo el libro mayor preciso sin entrada manual.
+## Problemas que tuve que resolver
 
----
+### Saldos que se actualizan al instante
 
-## Desafíos y Soluciones
+Con miles de transacciones en varias cuentas, los saldos tenían que ser instantáneos, y sumar todas las transacciones en cada petición se volvía lento muy rápido. En cambio, cada transacción guarda el saldo que resulta de ella. Los saldos de las cuentas están desnormalizados y se actualizan dentro de la misma transacción de base de datos, lo que mantiene las consultas de saldo en O(1) y los datos consistentes.
 
-### Desafío: Cálculos de Saldo en Tiempo Real
+### Consejos de IA que sirvan
 
-Con miles de transacciones en múltiples cuentas, calcular saldos necesitaba ser instantáneo. Los enfoques ingenuos (sumar todas las transacciones por request) degradaban rápidamente.
+Las primeras versiones de la funcionalidad de IA daban consejos genéricos como "gasta menos en restaurantes", y los usuarios necesitaban algo específico para ellos. Reescribí los prompts para incluir resúmenes mensuales por categoría, los cambios en el gasto y las metas del propio usuario. Ahora los insights se ven así: "Tu gasto en supermercado aumentó 23% este mes comparado con tu promedio de 3 meses. Considera planificar comidas los domingos — usuarios con perfiles similares ahorran ~$80.000/mes de esta forma."
 
-**Solución:** Implementé una estrategia de **saldo corrido** donde cada transacción almacena el saldo resultante. Los saldos de cuenta se desnormalizan y actualizan transaccionalmente, asegurando lookups de saldo O(1) mientras se mantiene la consistencia.
+### Mantener Go y SvelteKit sincronizados
 
-### Desafío: Insights de IA Significativos
+Mantener con tipos seguros la comunicación entre la API en Go y el frontend en SvelteKit requería cuidado, porque las formas de las peticiones y respuestas podían desalinearse. Los contratos de la API se definen una sola vez como especificaciones OpenAPI: de ellas se generan los tipos de TypeScript del frontend y contra ellas se validan los handlers de Go, así un cambio en el contrato se detecta en tiempo de compilación.
 
-Las primeras iteraciones de la función de IA producían consejos genéricos ("gasta menos en restaurantes"). Los usuarios necesitaban recomendaciones específicas y contextuales.
-
-**Solución:** Diseñé prompts detallados que incluyen resúmenes mensuales categorizados, deltas de gasto y metas definidas por el usuario. La IA ahora produce insights como: "Tu gasto en supermercado aumentó 23% este mes comparado con tu promedio de 3 meses. Considera planificar comidas los domingos — usuarios con perfiles similares ahorran ~$80.000/mes de esta forma."
-
-### Desafío: Comunicación Go + SvelteKit
-
-La seguridad de tipos entre la API en Go y el frontend en SvelteKit requería coordinación cuidadosa para prevenir divergencia entre las formas de request/response.
-
-**Solución:** Definí contratos de API compartidos usando specs OpenAPI, generando tipos TypeScript para el frontend y validando handlers de Go contra el mismo esquema. Cualquier cambio de contrato se detecta en tiempo de build.
-
----
-
-## Esquema de Base de Datos (Simplificado)
+## Esquema de base de datos (simplificado)
 
 ```sql
 CREATE TABLE accounts (
@@ -150,8 +128,6 @@ CREATE TABLE transactions (
 );
 ```
 
----
-
 ## Rendimiento
 
 | Métrica | Objetivo | Logrado |
@@ -161,21 +137,17 @@ CREATE TABLE transactions (
 | Creación de transacción | < 200ms | 89ms |
 | Generación de insight IA | < 5s | ~3.2s |
 
----
+## Lo que aprendí
 
-## Lecciones Aprendidas
+1. Go funciona bien para APIs financieras. Su sistema de tipos atrapa errores de precisión en tiempo de compilación, y las goroutines manejan los cálculos de saldo concurrentes con limpieza.
+2. Las funcionalidades de IA necesitan límites. Sin prompts estructurados y validación de la respuesta, lo que devuelve el LLM es demasiado genérico para ser útil, y el contexto que le das al modelo importa más que el modelo que elijas.
+3. La reactividad de SvelteKit encaja con los dashboards. Los stores derivados y las declaraciones reactivas hacen que los gráficos se actualicen al instante sin manejar el estado a mano.
+4. Hay que empezar por el modelo de datos. Definir bien desde temprano el esquema de transacciones y cuentas me ahorró migraciones costosas después.
 
-1. **Go es excelente para APIs financieras** — El sistema de tipos detecta errores de precisión en tiempo de compilación, y las goroutines manejan cálculos de saldo concurrentes elegantemente.
-2. **Las features de IA necesitan guardrails** — Sin prompts estructurados y validación de output, las respuestas de LLM son demasiado genéricas para ser útiles. La ingeniería de contexto importa más que la elección del modelo.
-3. **La reactividad de SvelteKit brilla para dashboards** — Los stores derivados y las declaraciones reactivas hacen que las actualizaciones de gráficos se sientan instantáneas sin gestión de estado manual.
-4. **Empezar por el modelo de datos** — Definir correctamente el esquema de transacciones/cuentas temprano previno migraciones costosas después.
+## Próximos pasos
 
----
-
-## Próximos Pasos
-
-- [ ] Sincronización de cuentas bancarias vía integración con Plaid
-- [ ] Definición de metas de presupuesto con notificaciones de progreso
-- [ ] Cuentas compartidas del hogar
-- [ ] App móvil con Flutter (backend compartido)
-- [ ] Exportación a CSV/PDF para temporada de impuestos
+- [ ] Sincronización de cuentas bancarias mediante Plaid
+- [ ] Metas de presupuesto con notificaciones de avance
+- [ ] Cuentas compartidas para el hogar
+- [ ] Una aplicación móvil en Flutter sobre el mismo backend
+- [ ] Exportación a CSV y PDF para la temporada de impuestos

@@ -10,38 +10,28 @@ url: "/es/projects/portfolio"
 
 ## Resumen
 
-Este portafolio es mi hogar digital — un espacio para mostrar no solo lo que construyo, sino _cómo_ lo construyo. Cada interacción, animación y decisión de diseño fue intencional, diseñada desde cero en Figma y llevada a la vida con la arquitectura de islas de Astro.
+Este portafolio muestra lo que construyo y cómo lo construyo. Lo diseñé desde cero en Figma y lo desarrollé con la arquitectura de islas de Astro. Si un sitio dice que le importan el rendimiento y el diseño, debería demostrarlo, así que le puse esa misma exigencia a este.
 
-> Un portafolio debe practicar lo que predica. Si dices que te importa el rendimiento y el diseño, tu propio sitio debe demostrarlo.
+## El problema
 
----
-
-## El Problema
-
-La mayoría de portafolios de desarrolladores caen en dos campos: o son SPAs de React sobre-ingeniadas que tardan segundos en cargar, o son plantillas estáticas sin personalidad. Quería algo intermedio — **ultra rápido**, visualmente distintivo y técnicamente interesante sin sacrificar accesibilidad ni rendimiento.
-
----
+La mayoría de los portafolios de desarrolladores caen en uno de dos grupos: aplicaciones de una sola página en React que tardan segundos en cargar, o plantillas estáticas sin personalidad. Yo quería algo intermedio: muy rápido y con identidad visual propia, interesante de construir y sin sacrificar la accesibilidad ni el rendimiento.
 
 ## Diseño
 
-Todo comenzó en Figma — desde la grilla de layout y la paleta de colores hasta el concepto de animación orbital y el desglose de componentes. Tener un sistema de diseño completo antes de escribir código mantuvo el desarrollo enfocado y rápido.
+Todo empezó en Figma, desde la retícula y la paleta de colores hasta la animación orbital y la división de la página en componentes. Tener el sistema de diseño completo antes de escribir código mantuvo el desarrollo enfocado y rápido.
 
 ![Archivos de diseño en Figma del portafolio](/images/projects/portfolio/portfolio-figma-design.webp)
 
----
-
 ## Objetivos
 
-- Diseñar una identidad visual única desde cero en Figma
-- Lograr puntuaciones casi perfectas en Lighthouse en todas las categorías
-- Soportar internacionalización completa (Inglés/Español)
-- Implementar animaciones fluidas y performantes que respeten `prefers-reduced-motion`
-- Construir con un stack moderno que mantenga el bundle mínimo
-- Asegurar cumplimiento total de accesibilidad (WCAG 2.1 AA)
+- Diseñar una identidad visual desde cero en Figma
+- Llegar a puntuaciones casi perfectas en Lighthouse en todas las categorías
+- Soportar inglés y español en todo el sitio
+- Mantener las animaciones fluidas y respetar `prefers-reduced-motion`
+- Mantener pequeño el bundle de JavaScript
+- Cumplir con la accesibilidad WCAG 2.1 AA
 
----
-
-## Stack Tecnológico
+## Stack tecnológico
 
 | Tecnología         | Rol                                                             |
 | ------------------ | --------------------------------------------------------------- |
@@ -52,11 +42,9 @@ Todo comenzó en Figma — desde la grilla de layout y la paleta de colores hast
 | **TypeScript**     | Seguridad de tipos en componentes y sistema i18n                |
 | **Figma**          | Sistema de diseño completo y prototipado                        |
 
----
-
 ## Arquitectura
 
-El sitio sigue el enfoque orientado a contenido de Astro con una capa i18n personalizada:
+El sitio sigue la estructura orientada a contenido de Astro, con una capa de i18n propia encima:
 
 ```
 src/
@@ -70,76 +58,59 @@ src/
 └── styles/         # CSS global con directivas de Tailwind
 ```
 
-El sistema i18n usa **claves de traducción tipadas** derivadas del locale en inglés, asegurando seguridad en tiempo de compilación al agregar o usar traducciones. Las colecciones de contenido soportan IDs con prefijo de locale (`en/portfolio`, `es/portfolio`) para contenido bilingüe sin fricciones.
+Las claves de traducción toman su tipo del idioma inglés, así que usar una clave que no existe falla en tiempo de compilación. Las colecciones de contenido usan IDs con prefijo de idioma (`en/portfolio`, `es/portfolio`), lo que mantiene ambos idiomas uno al lado del otro.
 
----
+## Funcionalidades
 
-## Características Principales
+### Animación orbital de habilidades
 
-### Animación Orbital de Habilidades
+La sección principal muestra mis habilidades orbitando en anillos concéntricos, animadas con GSAP. Cada anillo tiene su propia velocidad y dirección.
 
-La sección hero presenta habilidades orbitando en anillos concéntricos, animadas con GSAP. Cada órbita tiene su propia velocidad y dirección, creando una visualización viva de mi stack tecnológico.
+### Cuadrícula de puntos interactiva
 
-### Grilla de Puntos Interactiva
+Un canvas en React dibuja miles de puntos que reaccionan cuando el cursor se acerca. Funciona con `requestAnimationFrame` y usa un `IntersectionObserver` para pausarse cuando no está en pantalla, así no gasta ciclos en algo que nadie ve.
 
-Un canvas potenciado por React renderiza miles de puntos que reaccionan a la proximidad del cursor con resistencia configurable. El componente usa `requestAnimationFrame` con un `IntersectionObserver` para pausar cuando está fuera de pantalla, asegurando cero ciclos desperdiciados.
+### Modo oscuro sin parpadeo
 
-### Modo Oscuro con Prevención de FOUC
+El modo oscuro funciona con clases. Un pequeño script inline lee `localStorage` antes del primer pintado, así la página nunca muestra el tema equivocado por un instante, y un `MutationObserver` les pasa los cambios de tema a las islas de React.
 
-Modo oscuro basado en clases con un script inline síncrono que lee `localStorage` antes del primer render, previniendo cualquier flash de contenido sin estilos. Un `MutationObserver` conecta el estado del tema con las islas de React.
+### Animaciones al hacer scroll
 
-### Animaciones de Revelado
+Las secciones aparecen con un desvanecimiento y un desplazamiento al hacer scroll, usando un `IntersectionObserver` con retrasos escalonados. Si prefieres movimiento reducido, el contenido simplemente aparece.
 
-Animaciones de revelado activadas por scroll usando `IntersectionObserver` con delays escalonados. Los elementos aparecen con fade y traducción a medida que el usuario hace scroll, con degradación elegante para usuarios que prefieren movimiento reducido.
+## Problemas que tuve que resolver
 
----
+### Cambios de tema en las islas de React
 
-## Desafíos y Soluciones
+En Astro, las islas de React se hidratan de forma independiente, así que cuando alguien cambiaba al modo oscuro desde el encabezado de Astro, las islas no se enteraban. Ahora un `MutationObserver` vigila la clase `dark` en `<html>` y actualiza el estado de React, que vuelve a renderizar las islas con los colores correctos.
 
-### Desafío: Reactividad del Tema en Islas React
+### i18n sin una librería
 
-La arquitectura de islas de Astro significa que los componentes React se hidratan independientemente. Cuando el usuario cambia el modo oscuro desde el header de Astro, las islas React no tenían forma de saberlo.
+No quería agregar una librería pesada de i18n, así que escribí un sistema tipado pequeño. Lo difícil fue mantener las traducciones con tipos seguros mientras el idioma se lee desde la URL. El archivo `en.ts` define el tipo `TranslationKey`, `useTranslations(locale)` devuelve una función `t()` tipada y `getLocalizedPath()` arma el enlace al otro idioma.
 
-**Solución:** Un `MutationObserver` observa la lista de clases del elemento `<html>` buscando cambios de `dark`, actualizando el estado de React para disparar re-renders con los colores correctos del tema.
+### Animaciones pesadas en dispositivos lentos
 
-### Desafío: i18n Sin Framework
-
-En lugar de integrar una librería i18n pesada, construí un sistema ligero con tipos. El desafío fue mantener las traducciones type-safe mientras se soportaba resolución dinámica de locale desde URLs.
-
-**Solución:** El locale `en.ts` sirve como fuente de verdad para los tipos `TranslationKey`. Una función `useTranslations(locale)` retorna un helper `t()` tipado, y `getLocalizedPath()` maneja el cambio de locale en URLs.
-
-### Desafío: Rendimiento con Animaciones Pesadas
-
-Las animaciones orbitales de GSAP y el renderizado de canvas pueden exigir mucho a dispositivos de gama baja. El sitio necesitaba lucir impresionante sin ser inutilizable.
-
-**Solución:** Las media queries `prefers-reduced-motion` deshabilitan las animaciones completamente para usuarios que lo eligen. Las animaciones del canvas pausan vía `IntersectionObserver` cuando se hace scroll fuera de vista. El resultado: 60fps en hardware moderno, degradación elegante en el resto.
-
----
+Las órbitas de GSAP y el canvas pueden exigir demasiado a los dispositivos de gama baja, y el sitio tenía que seguir siendo usable en ellos. Con `prefers-reduced-motion` activado, las animaciones se desactivan por completo, y el canvas se pausa mediante un `IntersectionObserver` cuando sale de la vista. En hardware moderno corre a 60fps.
 
 ## Rendimiento
 
-| Métrica           | Puntuación |
-| ----------------- | ---------- |
-| Performance       | 98         |
-| Accesibilidad     | 100        |
-| Mejores Prácticas | 100        |
-| SEO               | 100        |
+PageSpeed Insights en la página de inicio, 2 de noviembre de 2026:
 
----
+| Métrica                | Móvil | Escritorio |
+| ---------------------- | ----- | ---------- |
+| Rendimiento            | 100   | 100        |
+| Accesibilidad          | 100   | 100        |
+| Prácticas recomendadas | 100   | 100        |
+| SEO                    | 100   | 100        |
 
-## Lecciones Aprendidas
+## Lo que aprendí
 
-1. **Diseñar primero, codear después** — Tener un diseño completo en Figma antes de escribir código eliminó la parálisis de decisión durante el desarrollo.
-2. **La arquitectura de islas es poderosa** — El enfoque de Astro de no enviar JS por defecto e hidratar solo componentes interactivos mantiene el bundle diminuto.
-3. **La accesibilidad es una feature, no un extra** — Construir con a11y en mente desde el día uno (skip links, etiquetas ARIA, navegación por teclado) es mucho más fácil que retrofitear.
-4. **i18n simple puede ser type-safe** — No necesitas un framework pesado para obtener seguridad de claves de traducción en tiempo de compilación.
+1. Terminar el diseño en Figma antes de escribir código hizo que no tuviera que tomar decisiones de diseño a mitad de un componente.
+2. Las islas mantienen pequeño el bundle: Astro no envía JavaScript por defecto e hidrata solo las partes interactivas.
+3. Incluir la accesibilidad desde el primer día (enlaces para saltar al contenido, etiquetas ARIA, navegación con teclado) es mucho más fácil que agregarla después.
+4. Un sistema de i18n pequeño puede tener tipos seguros sin un framework grande.
 
----
+## Próximos pasos
 
-## Próximos Pasos
-
-- [ ] Agregar narrativas de caso de estudio con media enriquecida
-- [ ] Implementar view transitions entre páginas
-- [ ] Agregar formulario de contacto con backend serverless
-- [ ] Integrar analíticas con herramientas que respeten la privacidad
-- [ ] Crear un feed RSS para los posts del blog
+- [ ] Agregar un formulario de contacto con una función serverless
+- [ ] Agregar analítica con herramientas que respeten la privacidad

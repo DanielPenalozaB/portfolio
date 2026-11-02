@@ -10,35 +10,27 @@ repo: "https://github.com/DanielPenalozaB/recoagua-fe"
 
 ## Overview
 
-RecoAgua is an educational platform aimed at promoting responsible water consumption in Cali, Colombia. Through **gamification**, interactive tools, and localized data, it empowers citizens to understand their water footprint and take concrete action to reduce it.
+RecoAgua is an educational platform that promotes responsible water use in Cali, Colombia. It uses gamification, interactive tools, and local data to help people understand how much water they use and then use less.
 
-> Water scarcity isn't just a future problem — it's happening now. RecoAgua makes conservation tangible, measurable, and even fun.
+## The problem
 
----
+Cali goes through recurring periods of water stress, but most residents don't know their own consumption patterns. Conservation campaigns have mostly been passive, like posters and TV ads, and they change little about how people behave. The city needed:
 
-## The Problem
-
-Cali faces recurring water stress events, yet most citizens lack awareness of their personal consumption patterns. Existing conservation campaigns are passive (posters, TV ads) and produce minimal behavioral change. The city needed:
-
-- An engaging way to educate residents about water usage
-- Tools to measure and reduce personal consumption
-- Localized data showing which neighborhoods face the highest risk
-- A system that rewards consistent conservation efforts
-
----
+- An engaging way to teach residents about water use
+- Tools to measure personal consumption and reduce it
+- Local data showing which neighborhoods face the highest risk
+- A system that rewards people for saving water consistently
 
 ## Goals
 
-- Create an engaging educational platform that drives real behavior change
-- Implement gamification mechanics (badges, challenges, leaderboards) to sustain user engagement
-- Build an interactive water consumption calculator with personalized recommendations
-- Develop a city map with zone-level water stress indicators
-- Provide administrators with a full content management panel
-- Make the platform accessible to users of all technical skill levels
+- Build an educational platform that changes how people use water day to day
+- Keep users coming back with badges, challenges, and leaderboards
+- Build a water consumption calculator with personalized recommendations
+- Map water stress zone by zone across the city
+- Give administrators a complete content management panel
+- Keep the platform usable for people at any level of technical skill
 
----
-
-## Tech Stack
+## Tech stack
 
 | Technology | Role |
 | ---------- | ---- |
@@ -49,8 +41,6 @@ Cali faces recurring water stress events, yet most citizens lack awareness of th
 | **Chart.js** | Consumption visualizations and progress charts |
 | **TailwindCSS** | Responsive UI styling |
 | **JWT** | Authentication for users and admin panel |
-
----
 
 ## Architecture
 
@@ -67,26 +57,24 @@ Cali faces recurring water stress events, yet most citizens lack awareness of th
 └──────────────────┘     └──────────────────┘
 ```
 
-The NestJS backend follows a **modular monolith** pattern — each domain (users, challenges, zones, calculator) is an independent module with its own service, controller, and repository layers.
+The NestJS backend is a modular monolith: each domain (users, challenges, zones, calculator) is its own module, with its own service, controller, and repository layers.
 
----
+## Features
 
-## Key Features
+### Interactive guides
 
-### Interactive Guides
+Step-by-step guides cover water conservation topics:
 
-Step-by-step educational content covering water conservation topics:
-
-- Home water-saving techniques
+- Saving water at home
 - Understanding your water bill
-- Seasonal conservation strategies
-- Community-level initiatives
+- Conservation by season
+- Community initiatives
 
-Each guide tracks completion progress and awards XP upon finishing.
+Each guide tracks your progress and awards XP when you finish it.
 
-### Gamification System
+### Gamification
 
-The core engagement loop revolves around:
+The engagement loop is built from these pieces:
 
 | Element | Description |
 | ------- | ----------- |
@@ -95,65 +83,53 @@ The core engagement loop revolves around:
 | **XP & Levels** | Accumulated through all activities, unlocking new content |
 | **Leaderboards** | Zone-based and city-wide rankings |
 
-### Water Consumption Calculator
+### Water consumption calculator
 
-Users input their household details (number of residents, appliances, habits) and receive:
+Users enter details about their household (number of residents, appliances, habits) and get:
 
-- Estimated daily/monthly water consumption in liters
-- Comparison against city averages
-- Personalized reduction recommendations
-- Projected savings in both liters and cost
+- Their estimated daily and monthly water use in liters
+- A comparison with the city average
+- Personalized recommendations for using less
+- Projected savings, in liters and in money
 
-### Interactive City Map
+### Interactive city map
 
-A Leaflet-powered map of Cali displaying:
+A Leaflet map of Cali shows:
 
-- Color-coded zones by water stress level (green → red)
-- Per-zone consumption averages
-- Infrastructure status indicators
-- Historical trend data on hover
+- Zones colored by water stress level, from green to red
+- Average consumption per zone
+- Infrastructure status
+- Historical trends when you hover over a zone
 
-### Admin Panel
+### Admin panel
 
-A full CMS for platform administrators:
+Administrators get a complete CMS where they can:
 
-- Create/edit/publish educational guides
-- Manage challenges and badge criteria
-- Monitor user engagement metrics
+- Create, edit, and publish educational guides
+- Manage challenges and the criteria for each badge
+- Monitor how users engage with the platform
 - Update zone data and map indicators
-- View platform-wide analytics
+- See analytics for the whole platform
 
----
+## Problems I had to solve
 
-## Challenges & Solutions
+### Gamification with substance
 
-### Challenge: Gamification That Isn't Superficial
+Plenty of "gamified" apps attach points to actions without any real progression, and people lose interest once the novelty wears off. In RecoAgua, rewards unlock things that are useful: new calculator features, advanced guides, and community challenges. Badges stand for real achievements; "Saved 1000L", for example, needs a reduction the app has tracked. Leaderboards are grouped by zone, which sets up friendly competition between neighborhoods.
 
-Many "gamified" apps slap points on actions without meaningful progression. Users disengage once the novelty wears off.
+### Accurate consumption estimates
 
-**Solution:** Designed a progression system where rewards unlock _real value_ — new calculator features, advanced guides, community challenges. Badges represent genuine achievements (e.g., "Saved 1000L" requires actual tracked reduction). The leaderboard uses zones to create friendly neighborhood competition.
+Water use varies a lot with household size, climate, and infrastructure, so a generic calculator would be useless. I built a model with several factors, calibrated against Cali's municipal water data: number of residents, shower length and frequency, appliances such as washing machines and dishwashers, garden size, and seasonal rainfall. Its results are checked against anonymized billing data from the local utility.
 
-### Challenge: Accurate Consumption Estimates
+### Map performance with dense zone data
 
-Water usage varies enormously by household composition, climate, and infrastructure. A generic calculator would be useless.
+Rendering hundreds of polygons with real-time data overlays made the map lag badly on phones. It now loads progressively: first the zone boundaries with cached colors, then detailed statistics when you zoom in or click. Switching the boundaries from GeoJSON to vector tiles cut the payload by 85%.
 
-**Solution:** Built a multi-factor model calibrated against Cali's municipal water data. Factors include: number of residents, shower duration/frequency, appliance types (washing machine, dishwasher), garden size, and seasonal rainfall. Results are validated against anonymized billing data from the local utility.
+### Content workflow for admins
 
-### Challenge: Map Performance with Dense Zone Data
+Administrators needed to write guides without technical knowledge, yet the guides needed rich formatting such as images, callouts, and embedded calculators. I built a block-based editor inspired by Notion. Admins put a guide together from predefined blocks (text, image, quiz, tip, calculator embed), and each block has its own validation and preview, so every guide comes out consistently formatted.
 
-Rendering hundreds of polygons with real-time data overlays caused significant lag on mobile devices.
-
-**Solution:** Implemented **progressive loading** — the map initially renders zone boundaries with cached color data, then fetches detailed statistics on zoom/click. Vector tiles replaced GeoJSON for boundary rendering, reducing payload by 85%.
-
-### Challenge: Admin Content Workflow
-
-Administrators needed to create educational content without technical knowledge, but the content required rich formatting (images, callouts, embedded calculators).
-
-**Solution:** Built a block-based editor inspired by Notion, where admins compose guides from pre-defined block types (text, image, quiz, tip, calculator embed). Each block has its own validation and preview, making content creation intuitive while maintaining consistent formatting.
-
----
-
-## Database Schema (Simplified)
+## Database schema (simplified)
 
 ```sql
 CREATE TABLE users (
@@ -184,9 +160,7 @@ CREATE TABLE zones (
 );
 ```
 
----
-
-## Impact Metrics
+## Impact
 
 | Metric | Result |
 | ------ | ------ |
@@ -196,22 +170,18 @@ CREATE TABLE zones (
 | Active challenge participants | 340/month |
 | Admin-published guides | 45 |
 
----
+## What I learned
 
-## Lessons Learned
+1. Points alone don't change behavior. Tying rewards to real outcomes, like lower bills and visible community impact, is what keeps people engaged.
+2. NestJS modules scaled well. The modular monolith kept the codebase organized as features grew, without the overhead of microservices.
+3. Maps are expensive on mobile. For a map-heavy app aimed at phones, vector tiles and progressive loading were necessary.
+4. Local data builds trust. People engaged more when they saw their own neighborhood's numbers instead of city-wide statistics.
+5. The admin experience matters as much as the user's. If content creators can't publish easily, the platform stalls no matter how good the rest of it is.
 
-1. **Gamification needs intrinsic motivation** — Points alone don't drive behavior change. Connecting rewards to real-world outcomes (lower bills, community impact) sustains engagement.
-2. **NestJS modules scale well** — The modular monolith approach kept the codebase organized as features grew, without the overhead of microservices.
-3. **Maps are expensive on mobile** — Vector tiles and progressive loading are essential for map-heavy applications targeting a mobile-first audience.
-4. **Local data builds trust** — Users engaged more when they saw their own neighborhood's data rather than generic city-wide statistics.
-5. **Admin UX matters as much as user UX** — If content creators can't easily publish, the platform stagnates regardless of how good the user experience is.
+## What's next
 
----
-
-## What's Next
-
-- [ ] Push notification reminders for active challenges
-- [ ] Integration with local water utility billing API
-- [ ] Community forums per zone for sharing conservation tips
-- [ ] Offline mode for areas with limited connectivity
-- [ ] School partnership program with classroom challenges
+- [ ] Push notifications that remind users about active challenges
+- [ ] Integration with the local water utility's billing API
+- [ ] Forums for each zone where neighbors can share conservation tips
+- [ ] An offline mode for areas with poor connectivity
+- [ ] A school program with classroom challenges

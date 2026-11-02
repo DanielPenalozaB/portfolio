@@ -10,37 +10,29 @@ repo: ""
 
 ## Overview
 
-Volo is a mobile-first gym companion designed to remove the guesswork from training. It helps users **build structured routines**, follow exercise tutorials with muscle group targeting, track nutritional intake, and visualize their weight progress over time — all in one streamlined app.
+Volo is a mobile gym companion that takes the guesswork out of training. In one app, you can build structured routines, follow exercise tutorials that show which muscles each exercise works, track what you eat, and chart your weight over time. The idea is that you shouldn't need a personal trainer to find your way around a gym.
 
-> The gym shouldn't require a personal trainer to navigate. Volo puts expert-level routine building in everyone's pocket.
+## The problem
 
----
+Most people who go to the gym run into the same frustrations:
 
-## The Problem
+- Without a plan, workouts end up random and don't get results
+- There are hundreds of exercises, and it's hard to know which ones target what you need
+- Routines, nutrition, and progress usually live in separate apps
+- Without tracking your weight over time, you can't tell whether you're improving
 
-Most gym-goers face a common set of frustrations:
-
-- **No structure** — Walking into the gym without a plan leads to random, ineffective workouts
-- **Information overload** — Hundreds of exercises exist, but which ones target what you need?
-- **Fragmented tools** — Separate apps for routines, nutrition, and progress tracking creates friction
-- **No progression** — Without tracking weight over time, it's impossible to know if you're improving
-
-I wanted a single app that addresses all four problems with a clean, distraction-free mobile experience.
-
----
+I wanted one app that handled all four, with a clean mobile interface and nothing to distract you.
 
 ## Goals
 
 - Build a cross-platform mobile app with Flutter for iOS and Android
-- Design a routine builder organized by body sections (push, pull, legs, etc.)
-- Include exercise tutorials with animated muscle group highlighting
-- Implement a nutrition tracker with macro breakdowns
-- Create a weight progress log with visual trend charts
-- Deliver a fast, offline-capable experience for gym environments
+- Organize the routine builder by body section (push, pull, legs, and so on)
+- Show exercise tutorials with animated highlighting of the muscles involved
+- Track nutrition with a breakdown of macros
+- Log weight and show the trend in charts
+- Keep the app fast and usable offline, since gyms often have bad reception
 
----
-
-## Tech Stack
+## Tech stack
 
 | Technology | Role |
 | ---------- | ---- |
@@ -50,8 +42,6 @@ I wanted a single app that addresses all four problems with a clean, distraction
 | **PostgreSQL** | Database for users, routines, and exercise library |
 | **SQLite** | Local device storage for offline support |
 | **Matplotlib** | Server-side progress chart generation |
-
----
 
 ## Architecture
 
@@ -68,15 +58,13 @@ I wanted a single app that addresses all four problems with a clean, distraction
 └──────────────────┘
 ```
 
-The app follows an **offline-first** strategy — routines and exercise data sync to local SQLite on first load. Users can complete full workouts without connectivity; data syncs when connection resumes.
+The app works offline first. On first load, routines and exercise data are copied to a local SQLite database, so users can finish a whole workout without a connection, and their data syncs once they're back online.
 
----
+## Features
 
-## Key Features
+### Routines by body section
 
-### Routine Builder by Body Section
-
-Users create routines organized by muscle group targeting:
+Users build routines around the muscle groups they want to work:
 
 | Section | Example Exercises |
 | ------- | ----------------- |
@@ -87,43 +75,44 @@ Users create routines organized by muscle group targeting:
 | **Arms** | Bicep curls, skull crushers, hammer curls |
 
 Each routine supports:
-- Custom exercise ordering
-- Set/rep/weight configuration per exercise
-- Rest timer between sets
-- Notes per exercise
 
-### Exercise Library with Tutorials
+- Any exercise order
+- Sets, reps, and weight for each exercise
+- A rest timer between sets
+- Notes on each exercise
 
-A comprehensive database of 200+ exercises, each featuring:
+### Exercise library with tutorials
 
-- Step-by-step text instructions
-- Animated muscle group diagrams showing primary and secondary muscles
+The library has more than 200 exercises, and each one includes:
+
+- Step-by-step written instructions
+- Animated diagrams of the primary and secondary muscles worked
 - Common mistakes to avoid
-- Suggested alternatives for equipment limitations
+- Alternatives when you don't have the right equipment
 
-### Nutrition Tracker
+### Nutrition tracker
 
-Daily food logging with:
+Daily food logging includes:
 
-- Macro breakdown (protein, carbs, fats)
-- Calorie tracking against daily targets
-- Meal categorization (breakfast, lunch, dinner, snacks)
-- Quick-add for frequently logged foods
-- Weekly/monthly nutrition summaries
+- A breakdown of protein, carbs, and fats
+- Calories compared with your daily target
+- Meals grouped into breakfast, lunch, dinner, and snacks
+- Quick-add for foods you log often
+- Weekly and monthly nutrition summaries
 
-### Weight Progress Tracking
+### Weight tracking
 
-A dedicated section for recording body weight over time:
+A separate section records your body weight over time:
 
-- Daily weigh-in logging
-- Trend line chart smoothing daily fluctuations
-- Goal setting with projected timeline
-- Weekly averages to reduce noise from water weight
-- Progress photos timeline (optional)
+- Daily weigh-ins
+- A trend line that smooths out daily fluctuations
+- Goals with a projected timeline
+- Weekly averages, which reduce the noise from water weight
+- An optional timeline of progress photos
 
-### Active Workout Mode
+### Workout mode
 
-When a routine is started, the app enters a focused workout mode:
+Starting a routine switches the app into a focused workout screen:
 
 ```
 ┌─────────────────────────────┐
@@ -139,37 +128,25 @@ When a routine is started, the app enters a focused workout mode:
 └─────────────────────────────┘
 ```
 
----
+## Problems I had to solve
 
-## Challenges & Solutions
+### Syncing data that was recorded offline
 
-### Challenge: Offline-First Data Sync
+Gyms are known for poor reception, so the app had to work fully offline and then sync without losing data or creating conflicts. Sync uses last-write-wins, resolving conflicts by timestamp. Local SQLite stores all workout data with a `synced` flag, and a background isolate tries to sync every 30 seconds whenever there's a connection. The important actions, like creating routines and logging sets, never depend on the network.
 
-Gym environments have notoriously poor connectivity. The app needed to work fully offline, then sync without data loss or conflicts.
+### Showing which muscles an exercise works
 
-**Solution:** Implemented a **last-write-wins** sync strategy with timestamp-based conflict resolution. Local SQLite stores all workout data with a `synced` flag. A background isolate attempts sync every 30 seconds when connectivity is available. Critical operations (creating routines, logging sets) never depend on network.
+This needed clear, consistent anatomy drawings that change with the selected exercise. I made a set of SVG body maps where each muscle group can be addressed on its own. Every exercise maps to primary muscle IDs (highlighted) and secondary ones (dimmed), and Flutter's SVG rendering paints the right groups, so I didn't need dozens of separate illustrations.
 
-### Challenge: Muscle Group Visualization
+### Managing Flutter state as the app grew
 
-Showing which muscles an exercise targets required clear, consistent anatomical illustrations that respond to the selected exercise.
+Once routines, nutrition, progress, and workout mode were all in place, state management across the app got complicated. I moved to Riverpod for dependency injection and state management, giving each feature its own providers with clear boundaries. The active workout's state lives in a `StateNotifier` that saves to local storage, so a workout survives the app being killed halfway through.
 
-**Solution:** Created a set of **SVG body maps** with individually addressable muscle groups. Each exercise maps to primary (highlighted) and secondary (dimmed) muscle IDs. Flutter's SVG rendering paints the relevant groups, producing a clear visual without requiring dozens of individual illustrations.
+### A rest timer you can trust
 
-### Challenge: Flutter State Management at Scale
+In a real gym, a rest timer that drifts or stops when the app goes to the background is useless. The timer runs in a Flutter `Isolate` and uses local notifications for alerts in the background. It works out the remaining time from a saved start timestamp instead of counting down, so it stays accurate no matter what the operating system does to the app.
 
-As features grew (routines + nutrition + progress + workout mode), managing state across the app became complex.
-
-**Solution:** Adopted **Riverpod** for dependency injection and state management. Each feature domain has its own providers with clear boundaries. The active workout state uses a `StateNotifier` that persists to local storage, surviving app kills mid-workout.
-
-### Challenge: Rest Timer Accuracy
-
-A rest timer that drifts or stops when the app is backgrounded is useless in a real gym scenario.
-
-**Solution:** Used Flutter's `Isolate` for timer computation and local notifications for background alerts. The timer calculates remaining time from a stored start timestamp rather than counting down, ensuring accuracy regardless of app lifecycle events.
-
----
-
-## Data Model (Simplified)
+## Data model (simplified)
 
 ```python
 class Routine(BaseModel):
@@ -202,8 +179,6 @@ class SetLog(BaseModel):
     completed_at: datetime
 ```
 
----
-
 ## Performance
 
 | Metric | Target | Achieved |
@@ -214,22 +189,18 @@ class SetLog(BaseModel):
 | Exercise search | < 200ms | 90ms |
 | Frame rate (animations) | 60fps | 60fps |
 
----
+## What I learned
 
-## Lessons Learned
+1. Designing for offline use from the start is much easier than adding it later, and it forces a clean split between local state and the server's data.
+2. Flutter and FastAPI work well together. Flutter's hot reload and FastAPI's generated OpenAPI docs made the development loop very fast.
+3. A gym app needs big touch targets. With sweaty hands and quick glances between sets, buttons have to be large, contrast has to be high, and mistakes have to be easy to undo.
+4. SVG muscle maps scale well. One set of vector assets works on every screen size and density, and coloring them in code replaced dozens of static images.
+5. Rest timers are harder than they look. Running in the background, notification permissions, and staying accurate through the operating system's lifecycle events took more engineering than I expected.
 
-1. **Offline-first changes everything** — Designing for offline from day one is vastly easier than retrofitting. It forces clean separation between local state and remote truth.
-2. **Flutter + FastAPI is a great combo** — Flutter's hot reload speed and FastAPI's auto-generated OpenAPI docs make the development loop extremely fast.
-3. **Gym UX needs big touch targets** — Sweaty hands and quick glances between sets mean buttons need to be large, contrast needs to be high, and interactions need to be forgiving.
-4. **SVG muscle maps scale beautifully** — One set of vector assets works across all screen sizes and densities, with programmatic coloring replacing dozens of static images.
-5. **Rest timers are deceptively complex** — Background execution, notification permissions, and timer accuracy across OS lifecycle events required more engineering than expected.
+## What's next
 
----
-
-## What's Next
-
-- [ ] Social features (share routines, follow friends' progress)
-- [ ] AI-powered routine suggestions based on goals and history
-- [ ] Apple Watch / Wear OS companion for active workout tracking
-- [ ] Exercise form check via device camera and pose estimation
-- [ ] Integration with smart scales for automatic weight logging
+- [ ] Social features: sharing routines and following friends' progress
+- [ ] AI-suggested routines based on goals and history
+- [ ] An Apple Watch and Wear OS companion for tracking active workouts
+- [ ] Exercise form checks through the camera, using pose estimation
+- [ ] Automatic weight logging from smart scales
