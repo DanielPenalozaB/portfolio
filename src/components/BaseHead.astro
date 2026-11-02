@@ -19,6 +19,15 @@ const t = useTranslations(locale);
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const { title, description, image, preloadLCP = false } = Astro.props;
 
+// Default social card: 1200×630 generated in the site's style (see public/images/og-default.jpg).
+// Page images (e.g. blog covers) are re-encoded to a 1200px JPEG for social crawlers.
+const pageOg = image
+  ? await getImage({ src: image, width: 1200, format: "jpg", quality: 85 })
+  : undefined;
+const ogImage = new URL(pageOg ? pageOg.src : "/images/og-default.jpg", Astro.site);
+const ogWidth = pageOg ? pageOg.attributes.width : 1200;
+const ogHeight = pageOg ? pageOg.attributes.height : 630;
+
 let lcpImageUrl: string | undefined;
 if (preloadLCP) {
   const profileSrc = await getProfileImage();
@@ -62,6 +71,13 @@ if (preloadLCP) {
   type="font/woff2"
   crossorigin
 />
+<link
+  rel="preload"
+  href="/fonts/DMSerifDisplay-Italic.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
 
 <link rel="canonical" href={canonicalURL} />
 
@@ -73,11 +89,13 @@ if (preloadLCP) {
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-{/* eslint-disable astro/no-set-html-directive */}
-<meta property="og:image" content={image ? new URL(image.src, Astro.url) : new URL("/images/profile.png", Astro.url)} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content={String(ogWidth)} />
+<meta property="og:image:height" content={String(ogHeight)} />
+<meta property="og:image:alt" content={title} />
 
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content={Astro.url} />
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={image ? new URL(image.src, Astro.url) : new URL("/images/profile.png", Astro.url)} />
+<meta property="twitter:image" content={ogImage} />

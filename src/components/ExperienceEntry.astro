@@ -1,11 +1,22 @@
 ---
 import type { ExperienceEntry as ExperienceType } from "../data/experience";
+import { getLocaleFromUrl, useTranslations, type Locale } from "../i18n";
 
 interface Props {
   entry: ExperienceType;
 }
 
 const { entry } = Astro.props;
+const locale: Locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const monthYear = new Intl.DateTimeFormat(locale, {
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+const format = (ym: string) => monthYear.format(new Date(`${ym}-01T00:00:00Z`));
+const period = `${format(entry.start)} — ${entry.end ? format(entry.end) : t("experience.present")}`;
 ---
 
 <div
@@ -38,7 +49,7 @@ const { entry } = Astro.props;
       </p>
     </a>
     <span class="m-0! text-lg leading-8 font-medium text-stone-400 dark:text-stone-500 md:text-xl">
-      {entry.period}
+      {period}
     </span>
   </div>
 </div>

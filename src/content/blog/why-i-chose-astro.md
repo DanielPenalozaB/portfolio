@@ -2,10 +2,11 @@
 title: "Why I Chose Astro and Why I'd Do It Again"
 description: "A deep dive into building with Astro: the performance wins, the island architecture, and how it plays beautifully with React, GSAP, TailwindCSS and everything in between."
 pubDate: 'May 01 2026'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+updatedDate: 'Nov 02 2026'
+heroImage: '../../assets/blog/why-i-chose-astro-cover.png'
 ---
 
-When I started planning my portfolio, I had a clear goal: ship something fast, visually polished, and technically interesting — without drowning in framework complexity. After evaluating Next.js, SvelteKit, and even plain HTML with a build tool, I landed on **Astro**. Six months in, it's one of the best technical decisions I've made.
+When I started planning my portfolio, I had a clear goal: ship something fast, visually polished, and technically interesting — without drowning in framework complexity. After evaluating Next.js, SvelteKit, and even plain HTML with a build tool, I landed on **Astro**. A couple of weeks in, it already felt like one of the best technical decisions I'd made, and that hasn't changed.
 
 This post is a walkthrough of my experience — the good parts, the tricky parts, and why Astro's philosophy keeps winning me over.
 
@@ -15,7 +16,7 @@ This post is a walkthrough of my experience — the good parts, the tricky parts
 
 Astro's pitch is deceptively simple: **zero JavaScript by default**. Every page renders to static HTML at build time. If a component doesn't need interactivity, it ships no JS. Period.
 
-This sounds like an obvious thing, but coming from Next.js where even a static page carries a hydration cost, the difference is dramatic. My portfolio's homepage ships under 50KB of JS — and most of that is the interactive canvas and GSAP animations that genuinely need it.
+This sounds like an obvious thing, but coming from Next.js where even a static page carries a hydration cost, the difference is dramatic. My portfolio's homepage ships about 110 KB of gzipped JS, and nearly all of it is the React runtime and WebGL code behind two interactive islands. The static content around them ships none.
 
 ```astro
 ---
@@ -201,17 +202,22 @@ When a content collection schema fails or an import path is wrong, the error mes
 
 ## The Numbers
 
-Here's what matters in the end:
+PageSpeed Insights on the homepage, November 2, 2026 (Lighthouse 13.6, lab data):
 
-| Metric | Score |
-| ------ | ----- |
-| Lighthouse Performance | 98 |
-| Lighthouse Accessibility | 100 |
-| Total JS (homepage) | ~48KB |
-| Time to Interactive | 0.8s |
-| Build time (26 pages) | 2.8s |
+| Metric | Mobile | Desktop |
+| ------ | ------ | ------- |
+| Performance | 96 | 99 |
+| Accessibility | 96 | 96 |
+| Best Practices | 96 | 100 |
+| SEO | 100 | 100 |
+| First Contentful Paint | 1.6 s | 0.4 s |
+| Largest Contentful Paint | 2.0 s | 0.7 s |
+| Total Blocking Time | 0 ms | — |
+| Cumulative Layout Shift | 0 | — |
 
-For a site with GSAP animations, a React canvas, WebGL effects, dark mode, and full i18n — those numbers are absurd. And they're effortless. I didn't optimize for them; Astro's architecture just produces them naturally.
+Mobile runs on an emulated Moto G Power with slow 4G throttling. The homepage ships about 110 KB of gzipped JavaScript, and a production build of all 16 pages takes around 2 seconds.
+
+For a site with GSAP animations, a React canvas, WebGL effects, dark mode, and full i18n, I'm happy with that. It wasn't free: I still had to preload the hero image, serve optimized WebP, and switch the fonts to woff2. But Astro's defaults meant I was tuning a fast site, not rescuing a slow one.
 
 ---
 

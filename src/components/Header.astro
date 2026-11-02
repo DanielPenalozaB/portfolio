@@ -70,7 +70,7 @@ const optimizedProfile = await getProfileImage();
         <button
           id="theme-toggle"
           type="button"
-          aria-label="Toggle dark mode"
+          aria-label={t("a11y.toggleTheme")}
           class="ml-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-stone-300 bg-stone-200/50 transition-all hover:bg-stone-200 dark:border-stone-600 dark:bg-stone-700/50 dark:hover:bg-stone-600"
         >
           <svg
@@ -141,8 +141,7 @@ const optimizedProfile = await getProfileImage();
   <!-- Mobile Menu Dropdown -->
   <div
     id="mobile-menu"
-    role="menu"
-    aria-hidden="true"
+    inert
     class="pointer-events-none absolute top-full left-0 isolate flex w-full origin-top -translate-y-2 flex-col gap-2 border-b border-stone-200 bg-stone-100/70 p-6 opacity-0 shadow-xl backdrop-blur-md transition-all duration-300 ease-out dark:border-stone-700 dark:bg-stone-900/70 md:hidden"
   >
     {
@@ -172,7 +171,7 @@ const optimizedProfile = await getProfileImage();
       <button
         id="theme-toggle-mobile"
         type="button"
-        aria-label="Toggle dark mode"
+        aria-label={t("a11y.toggleTheme")}
         class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg hover:bg-stone-500/10"
       >
         <svg
@@ -201,6 +200,8 @@ const optimizedProfile = await getProfileImage();
 </header>
 
 <script>
+  let headerAbort: AbortController | undefined;
+
   function initHeader() {
     // MOBILE MENU
     const menuToggle = document.getElementById("menu-toggle");
@@ -211,7 +212,8 @@ const optimizedProfile = await getProfileImage();
     if (menuToggle && mobileMenu && menuIcon && closeIcon) {
       const toggleMenu = (show: boolean) => {
         menuToggle.setAttribute("aria-expanded", String(show));
-        mobileMenu.setAttribute("aria-hidden", String(!show));
+        // `inert` keeps the closed menu's links out of the tab order and the a11y tree.
+        mobileMenu.inert = !show;
 
         if (show) {
           mobileMenu.classList.remove(
@@ -245,6 +247,10 @@ const optimizedProfile = await getProfileImage();
         });
       });
 
+      // initHeader re-runs after every view transition; drop the previous
+      // document-level listener so they don't accumulate.
+      headerAbort?.abort();
+      headerAbort = new AbortController();
       document.addEventListener("click", (e) => {
         if (
           !menuToggle.contains(e.target as Node) &&
@@ -252,7 +258,18 @@ const optimizedProfile = await getProfileImage();
         ) {
           toggleMenu(false);
         }
-      });
+      }, { signal: headerAbort.signal });
+
+      document.addEventListener(
+        "keydown",
+        (e) => {
+          if (e.key === "Escape" && !mobileMenu.inert) {
+            toggleMenu(false);
+            menuToggle.focus();
+          }
+        },
+        { signal: headerAbort.signal },
+      );
     }
 
     // THEME TOGGLE

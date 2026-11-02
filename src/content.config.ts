@@ -21,7 +21,7 @@ const projects = defineCollection({
 	schema: z.object({
 		title: z.string(),
 		description: z.string(),
-		image: z.string(), // Keeping it simple for now, as it was in data/projects.ts
+		image: z.string(),
 		tags: z.array(z.string()),
 		url: z.string().optional(),
 		repo: z.string().optional(),

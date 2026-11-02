@@ -1,0 +1,40 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Page not found | Daniel Peñaloza"
+  description="This page doesn't exist."
+  hasTranslation={false}
+>
+  <section
+    class="flex min-h-[70vh] flex-col items-center justify-center gap-6 px-6 py-20 text-center"
+  >
+    <p class="m-0! text-sm font-medium tracking-widest text-[#6C969D]">404</p>
+    <h1
+      class="dm-serif-display text-4xl font-bold text-stone-800 sm:text-5xl dark:text-stone-100"
+    >
+      Page not found
+    </h1>
+    <p class="m-0! max-w-md text-lg text-stone-600 dark:text-stone-400">
+      The page you're looking for doesn't exist or was moved.
+      <br />
+      <span lang="es">La página que buscas no existe o fue movida.</span>
+    </p>
+    <div class="flex gap-3">
+      <a
+        href="/"
+        class="rounded-full bg-[#6C969D] px-5 py-2 text-sm font-medium text-stone-100! transition-colors hover:bg-[#5a7f85]!"
+      >
+        Home
+      </a>
+      <a
+        href="/es/"
+        lang="es"
+        class="rounded-full border border-stone-300 px-5 py-2 text-sm font-medium text-stone-700! transition-colors hover:bg-stone-200 dark:border-stone-600 dark:text-stone-300! dark:hover:bg-stone-700"
+      >
+        Inicio
+      </a>
+    </div>
+  </section>
+</Layout>
