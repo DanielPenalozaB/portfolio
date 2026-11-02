@@ -1,181 +1,88 @@
 ---
 title: "SaveSphere"
-description: "A personal finances and budget tracker app with account management, categorized transactions, AI-powered financial advice, and insightful analytics to improve spending habits."
+description: "A personal finance app in active development: a double-entry ledger for expenses, income, savings goals and subscriptions, with optional AI insights where each user brings their own key."
 image: "/images/projects/savesphere/front.png"
-tags: ["SvelteKit", "Go", "Chi", "AI"]
-order: 3
+tags: ["SvelteKit", "NestJS", "PostgreSQL", "AI"]
+order: 4
 url: "/projects/savesphere"
 repo: "https://github.com/DanielPenalozaB/savesphere"
 ---
 
 ## Overview
 
-SaveSphere is a personal finance application designed to give users complete visibility and control over their spending habits. It combines traditional budget tracking with **AI-powered insights** that provide actionable financial advice based on real transaction patterns.
+SaveSphere is a personal finance app for tracking expenses, income, savings and subscriptions, and for planning purchases. It installs as a PWA and works in English and Spanish. AI is optional: each user can connect their own Anthropic, OpenAI or Google key, and the app still works without one.
 
-> The best budget app is the one you actually use. SaveSphere was built to make financial awareness effortless, not tedious.
+It's in active development. I restarted it from scratch as a monorepo on October 20, 2026, and so far the ledger, accounts, categories, savings goals and AI key management work end to end.
 
----
+## What I wanted from it
 
-## The Problem
+I wanted a tracker where recording a movement takes seconds, money is never rounded by floating-point math, and nothing depends on sending my data to an AI provider. The interface follows a Google Stitch design project ("Expense and Budget Tracker").
 
-Existing finance apps either overwhelm users with complexity (YNAB, Quicken) or oversimplify to the point of uselessness. Most critically, they _describe_ your spending but rarely _prescribe_ what to change. I wanted an app that would:
+## Stack
 
-- Be fast and intuitive enough to log transactions in seconds
-- Categorize spending automatically
-- Provide AI-generated insights that actually help improve habits
-- Work across multiple accounts and currencies
-
----
-
-## Goals
-
-- Build a performant full-stack application with SvelteKit and Go
-- Implement AI-assisted financial advice using transaction history analysis
-- Design an intuitive dashboard with meaningful analytics
-- Support multiple accounts, categories, and recurring transactions
-- Deliver sub-100ms API response times for core operations
-
----
-
-## Tech Stack
-
-| Technology | Role |
-| ---------- | ---- |
-| **SvelteKit** | Frontend framework with SSR and file-based routing |
-| **Go** | Backend API service for high-performance data processing |
-| **Chi** | Lightweight HTTP router for the Go API |
-| **PostgreSQL** | Primary database for transactions and user data |
-| **OpenAI API** | AI-powered financial insights and recommendations |
-| **TailwindCSS** | UI styling with custom design tokens |
-
----
+| Layer      | Technology                                                                   |
+| ---------- | ---------------------------------------------------------------------------- |
+| Web        | SvelteKit 3, Svelte 5, Tailwind CSS 4, Paraglide (en/es), PWA                |
+| API        | NestJS 12 on Express, Better Auth, Zod                                       |
+| Database   | PostgreSQL 18, Drizzle ORM                                                   |
+| AI         | Optional, bring your own key through the Vercel AI SDK (Anthropic, OpenAI, Google) |
+| Tooling    | pnpm workspaces, Turborepo, TypeScript 6, Node 24                            |
+| Tests      | Vitest (unit, component, integration with Testcontainers), Playwright        |
+| Deployment | Docker images on GHCR, deployed with Coolify on a VPS                        |
 
 ## Architecture
 
-The application follows a clean separation between frontend and backend:
+SaveSphere is a modular monolith. One NestJS API holds all the business logic, and the SvelteKit app only renders the interface. The browser only talks to the web server, which forwards `/api/*` to the API, so cookies stay first-party and there's no CORS to configure.
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌──────────────┐
-│   SvelteKit     │────▶│   Go API (Chi)  │────▶│  PostgreSQL  │
-│   Frontend      │◀────│   /api/v1/*     │◀────│              │
-└─────────────────┘     └────────┬────────┘     └──────────────┘
-                                 │
-                                 ▼
-                        ┌─────────────────┐
-                        │   OpenAI API    │
-                        │   (Insights)    │
-                        └─────────────────┘
+Browser (PWA) ──▶ web (SvelteKit) ──/api/*──▶ api (NestJS) ──▶ PostgreSQL 18
+                                               │
+                                               └──▶ AI provider (optional, per-user key)
 ```
 
-The Go backend handles all business logic, authentication, and data persistence. The AI layer processes transaction history asynchronously to generate periodic insights without blocking the main user flow.
+The repository is split so the important rules don't depend on any framework:
 
----
+- `apps/web`: the SvelteKit PWA
+- `apps/api`: the NestJS API, with auth, business rules and AI gating
+- `packages/core`: money and ledger rules with no framework and no I/O
+- `packages/contracts`: Zod schemas and error codes shared by the web app and the API
+- `packages/db`: the Drizzle schema, migrations and seeds
 
-## Key Features
+Every API response uses the same envelope (`{ success, data }` or `{ success, error }`), and the error codes live in the shared contracts, so the web app can react to each one.
 
-### Multi-Account Management
+## Data model
 
-Users can track finances across checking accounts, savings, credit cards, and cash — each with its own balance and transaction history. A unified dashboard aggregates totals across all accounts.
+The schema has 32 tables in third normal form. A few decisions shape all of it:
 
-### Categorized Transactions
+- Money is stored as integer minor units (`bigint`), never as floats.
+- It's a double-entry ledger. Each transaction has one or more entries with a signed amount per account: an expense or an income has one entry and a transfer has two. Balances are always derived from the entries and never stored.
+- Child tables point to their parent through `(user_id, id)` composite foreign keys, so PostgreSQL itself rejects data that links two different users, even if the application code has a bug. Integration tests check this.
+- Primary keys are UUIDv7 values generated by PostgreSQL 18, so they're ordered by time and easy on indexes.
+- Each transaction has a `client_ref` that's unique per user, so retrying a write made offline never creates a duplicate.
 
-Every transaction is assigned a category (food, transport, entertainment, etc.) either manually or via smart suggestions. Categories power the analytics engine and AI recommendations.
+## Optional AI
 
-### AI Financial Advisor
+Each user decides whether to use AI. The API checks, in order, whether the user turned AI off, whether they have an active key of their own, and whether the instance has a shared key. If none applies, AI features show as locked, with an explanation and a link to settings, instead of disappearing.
 
-The standout feature: an AI assistant that analyzes spending patterns and provides personalized, actionable advice. It identifies trends like:
+Keys are encrypted with AES-256-GCM, tested with a real call before they're saved, and never sent back to the browser apart from their last four characters. Features like insights and "can I afford it?" are designed to work with rules alone and use AI only to explain the result, so the numbers always come from code. In tests, a fake provider gives deterministic answers, so no test ever calls a real AI API.
 
-- Unusual spending spikes in specific categories
-- Opportunities to save based on recurring patterns
-- Monthly budget recommendations based on income and goals
+## Testing
 
-### Analytics Dashboard
+| Level           | Runs against                                                       |
+| --------------- | ------------------------------------------------------------------ |
+| Unit            | Nothing external; `packages/core` requires 90% coverage            |
+| Component       | A real Chromium browser (Vitest browser mode)                      |
+| API integration | Real HTTP into NestJS and a throwaway PostgreSQL 18 container      |
+| End-to-end      | The production Docker images, once with AI off and once with it on |
 
-Visual breakdowns of spending by category, time period, and account. Includes:
+## What works and what's next
 
-- Monthly spending trends (line charts)
-- Category distribution (donut charts)
-- Income vs. expenses comparison
-- Budget progress indicators
+Working now: sign-up and sign-in, settings, accounts, categories, transactions with monthly summaries, savings goals, AI key management, and turning a sentence into a transaction with AI. On the web side, there's a dashboard, the transaction list, a sheet for recording movements, first-account setup and savings vaults.
 
-### Recurring Transactions
+Next on the list:
 
-Support for scheduled transactions (rent, subscriptions, salary) that auto-populate on their due dates, keeping the ledger accurate without manual entry.
-
----
-
-## Challenges & Solutions
-
-### Challenge: Real-Time Balance Calculations
-
-With thousands of transactions across multiple accounts, calculating balances needed to be instant. Naive approaches (summing all transactions per request) degraded quickly.
-
-**Solution:** Implemented a **running balance** strategy where each transaction stores the resulting balance. Account balances are denormalized and updated transactionally, ensuring O(1) balance lookups while maintaining consistency.
-
-### Challenge: Meaningful AI Insights
-
-Early iterations of the AI feature produced generic advice ("spend less on dining out"). Users needed specific, contextual recommendations.
-
-**Solution:** Engineered detailed prompts that include categorized monthly summaries, spending deltas, and user-defined goals. The AI now produces insights like: "Your grocery spending increased 23% this month compared to your 3-month average. Consider meal planning on Sundays — users with similar profiles save ~$80/month this way."
-
-### Challenge: Go + SvelteKit Communication
-
-Type safety between the Go API and SvelteKit frontend required careful coordination to prevent drift between request/response shapes.
-
-**Solution:** Defined shared API contracts using OpenAPI specs, generating TypeScript types for the frontend and validating Go handlers against the same schema. Any contract change is caught at build time.
-
----
-
-## Database Schema (Simplified)
-
-```sql
-CREATE TABLE accounts (
-    id          UUID PRIMARY KEY,
-    user_id     UUID REFERENCES users(id),
-    name        VARCHAR(100) NOT NULL,
-    type        VARCHAR(20) NOT NULL,
-    balance     DECIMAL(12,2) DEFAULT 0,
-    currency    VARCHAR(3) DEFAULT 'USD'
-);
-
-CREATE TABLE transactions (
-    id          UUID PRIMARY KEY,
-    account_id  UUID REFERENCES accounts(id),
-    category_id UUID REFERENCES categories(id),
-    amount      DECIMAL(12,2) NOT NULL,
-    type        VARCHAR(10) NOT NULL, -- 'income' | 'expense'
-    description TEXT,
-    date        TIMESTAMP NOT NULL,
-    balance     DECIMAL(12,2) NOT NULL
-);
-```
-
----
-
-## Performance
-
-| Metric | Target | Achieved |
-| ------ | ------ | -------- |
-| API response (p95) | < 100ms | 47ms |
-| Dashboard load | < 1.5s | 1.1s |
-| Transaction creation | < 200ms | 89ms |
-| AI insight generation | < 5s | ~3.2s |
-
----
-
-## Lessons Learned
-
-1. **Go is excellent for financial APIs** — The type system catches precision errors at compile time, and goroutines handle concurrent balance calculations elegantly.
-2. **AI features need guardrails** — Without structured prompts and output validation, LLM responses are too generic to be useful. Context engineering matters more than model choice.
-3. **SvelteKit's reactivity shines for dashboards** — Derived stores and reactive declarations make chart updates feel instantaneous without manual state management.
-4. **Start with the data model** — Getting the transaction/account schema right early prevented costly migrations later.
-
----
-
-## What's Next
-
-- [ ] Bank account sync via Plaid integration
-- [ ] Budget goal setting with progress notifications
-- [ ] Shared household accounts
-- [ ] Mobile app with Flutter (shared backend)
-- [ ] Export to CSV/PDF for tax season
+- [ ] Budgets and the purchase planner
+- [ ] Recurring rules and subscriptions
+- [ ] Insights and reports, generated by a background worker
+- [ ] Web push and email notifications
+- [ ] Telegram and WhatsApp bots that use the same API

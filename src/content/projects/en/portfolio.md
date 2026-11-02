@@ -3,45 +3,35 @@ title: "Portfolio"
 description: "Personal portfolio designed in Figma and built with Astro, featuring orbital skill animations, i18n support, dark mode, interactive dot grid, and GSAP-powered transitions."
 image: "/images/projects/portfolio/front.png"
 tags: ["Astro", "TailwindCSS", "GSAP", "Figma"]
-order: 1
+order: 2
 repo: "https://github.com/danielpenalozab/portfolio"
 url: "/projects/portfolio"
 ---
 
 ## Overview
 
-This portfolio is my digital home — a place to showcase not just what I build, but _how_ I build it. Every interaction, animation, and layout decision was intentional, designed from scratch in Figma and brought to life with Astro's island architecture.
+This portfolio shows what I build and how I build it. I designed it from scratch in Figma and built it with Astro's island architecture. If a site claims to care about performance and design, it should prove it, so I held this one to that standard.
 
-> A portfolio should practice what it preaches. If you claim to care about performance and design, your own site should prove it.
+## The problem
 
----
-
-## The Problem
-
-Most developer portfolios fall into two camps: either they're over-engineered React SPAs that take seconds to load, or they're static templates with no personality. I wanted something in between — **blazing fast**, visually distinctive, and technically interesting without sacrificing accessibility or performance.
-
----
+Most developer portfolios fall into one of two groups: React single-page apps that take seconds to load, or static templates with no personality. I wanted something in between: very fast and visually distinctive, still interesting to build, and without giving up accessibility or performance.
 
 ## Design
 
-Everything started in Figma — from the layout grid and color palette to the orbital animation concept and component breakdowns. Having a complete design system before writing any code kept development focused and fast.
+Everything started in Figma, from the layout grid and color palette to the orbital animation and how the page breaks into components. Having the whole design system ready before writing code kept development focused and fast.
 
 ![Figma design files for the portfolio](/images/projects/portfolio/portfolio-figma-design.webp)
 
----
-
 ## Goals
 
-- Design a unique visual identity from scratch in Figma
-- Achieve near-perfect Lighthouse scores across all categories
-- Support full internationalization (English/Spanish)
-- Implement smooth, performant animations that respect `prefers-reduced-motion`
-- Build with a modern stack that keeps bundle size minimal
-- Ensure full accessibility compliance (WCAG 2.1 AA)
+- Design a visual identity from scratch in Figma
+- Reach near-perfect Lighthouse scores in every category
+- Support English and Spanish throughout
+- Keep animations smooth and respect `prefers-reduced-motion`
+- Keep the JavaScript bundle small
+- Meet WCAG 2.1 AA accessibility
 
----
-
-## Tech Stack
+## Tech stack
 
 | Technology         | Role                                                 |
 | ------------------ | ---------------------------------------------------- |
@@ -51,12 +41,13 @@ Everything started in Figma — from the layout grid and color palette to the or
 | **React**          | Interactive islands (DotGrid canvas, WebGL effects)  |
 | **TypeScript**     | Type safety across components and i18n system        |
 | **Figma**          | Full design system and prototyping                   |
-
----
+| **Docker + Nginx** | Production image with security headers and caching   |
+| **Coolify**        | Deployment on my own server                          |
+| **GitHub Actions** | Type checking and a production build on every PR     |
 
 ## Architecture
 
-The site follows Astro's content-driven approach with a custom i18n layer:
+The site follows Astro's content-driven structure, with my own i18n layer on top:
 
 ```
 src/
@@ -70,76 +61,71 @@ src/
 └── styles/         # Global CSS with Tailwind directives
 ```
 
-The i18n system uses **typed translation keys** derived from the English locale, ensuring compile-time safety when adding or using translations. Content collections support locale-prefixed IDs (`en/portfolio`, `es/portfolio`) for seamless bilingual content.
+Translation keys are typed from the English locale, so using a key that doesn't exist fails at compile time. Content collections use locale-prefixed IDs (`en/portfolio`, `es/portfolio`), which keeps both languages side by side.
 
----
+## Features
 
-## Key Features
+### Orbital skill animation
 
-### Orbital Skill Animation
+The hero shows my skills orbiting in concentric rings, animated with GSAP. Each ring has its own speed and direction.
 
-The hero section features skills orbiting in concentric rings, animated with GSAP. Each orbit has its own speed and direction, creating a living, breathing visualization of my tech stack.
+### Interactive dot grid
 
-### Interactive Dot Grid
+A React canvas draws thousands of dots that react when the cursor gets close. It runs on `requestAnimationFrame` and uses an `IntersectionObserver` to pause while it's off screen, so it doesn't spend cycles on something nobody can see.
 
-A React-powered canvas renders thousands of dots that react to cursor proximity with configurable resistance. The component uses `requestAnimationFrame` with an `IntersectionObserver` to pause when off-screen, ensuring zero wasted cycles.
+### Dark mode without a flash
 
-### Dark Mode with FOUC Prevention
+Dark mode is class-based. A small inline script reads `localStorage` before the first paint, so the page never flashes the wrong theme, and a `MutationObserver` passes theme changes on to the React islands.
 
-Class-based dark mode with a synchronous inline script that reads `localStorage` before the first paint, preventing any flash of unstyled content. A `MutationObserver` bridges the theme state to React islands.
+### Reveal animations
 
-### Reveal Animations
+Sections fade and slide into view as you scroll, using an `IntersectionObserver` with staggered delays. If you prefer reduced motion, the content simply appears.
 
-Scroll-triggered reveal animations using `IntersectionObserver` with staggered delays. Elements fade and translate into view as the user scrolls, with graceful degradation for users who prefer reduced motion.
+## Problems I had to solve
 
----
+### Theme changes in React islands
 
-## Challenges & Solutions
+In Astro, React islands hydrate independently, so when someone toggled dark mode from the Astro header, the islands never found out. A `MutationObserver` now watches the `dark` class on `<html>` and updates React state, which re-renders the islands with the right colors.
 
-### Challenge: Theme Reactivity in React Islands
+### i18n without a library
 
-Astro's island architecture means React components hydrate independently. When the user toggles dark mode via the Astro header, React islands had no way to know.
+I didn't want to pull in a heavy i18n library, so I wrote a small typed system. The hard part was keeping translations type-safe while reading the locale from the URL. The `en.ts` locale defines the `TranslationKey` type, `useTranslations(locale)` returns a typed `t()` helper, and `getLocalizedPath()` builds the link to the other language.
 
-**Solution:** A `MutationObserver` watches the `<html>` element's class list for `dark` changes, updating React state to trigger re-renders with the correct theme colors.
+### Heavy animations on slower devices
 
-### Challenge: i18n Without a Framework
+The GSAP orbits and the canvas can strain lower-end devices, and the site still had to be usable there. When `prefers-reduced-motion` is set, the animations are turned off completely, and the canvas pauses through an `IntersectionObserver` whenever it scrolls out of view. On modern hardware it runs at 60fps.
 
-Rather than pulling in a heavy i18n library, I built a lightweight typed system. The challenge was keeping translations type-safe while supporting dynamic locale resolution from URLs.
+### Fonts that never loaded
 
-**Solution:** The `en.ts` locale serves as the source of truth for `TranslationKey` types. A `useTranslations(locale)` function returns a typed `t()` helper, and `getLocalizedPath()` handles URL locale switching.
+For months the site rendered in fallback fonts without me noticing. The `@font-face` rules declared `font-family: "DM Sans", sans-serif`, but that descriptor only accepts a single name, so browsers dropped the whole rule. I confirmed it in headless Chrome, fixed both faces, and gave the variable font its weight range so bold and light text use the real font instead of a synthesized one.
 
-### Challenge: Performance with Heavy Animations
+### Upgrading Astro without changing the site
 
-GSAP orbital animations and canvas rendering can strain lower-end devices. The site needed to look impressive without being unusable.
+Moving from Astro 5 to 7 crossed two major versions, and Astro 7 removes whitespace between elements by default, which can silently glue words together. To catch that, I built the old and new versions side by side and compared the text a real browser renders on all 16 pages, at desktop and phone widths. The only difference was a real bug: the collection order had changed and swapped which Spanish projects were featured. Projects now have an explicit `order` field.
 
-**Solution:** `prefers-reduced-motion` media queries disable animations entirely for users who opt out. Canvas animations pause via `IntersectionObserver` when scrolled out of view. The result: 60fps on modern hardware, graceful fallback everywhere else.
+## Shipping it
 
----
+The site builds into a multi-stage Docker image served by Nginx and deploys with Coolify. Nginx sends security headers on every response (`nosniff`, a referrer policy, frame blocking, a permissions policy and a minimal content security policy), caches hashed assets for a year, and makes HTML revalidate on every visit so deploys show up immediately. Every pull request runs type checking and a production build in GitHub Actions.
 
 ## Performance
 
-| Metric         | Score |
-| -------------- | ----- |
-| Performance    | 98    |
-| Accessibility  | 100   |
-| Best Practices | 100   |
-| SEO            | 100   |
+PageSpeed Insights on the homepage, November 2, 2026:
 
----
+| Metric         | Mobile | Desktop |
+| -------------- | ------ | ------- |
+| Performance    | 100    | 100     |
+| Accessibility  | 100    | 100     |
+| Best Practices | 100    | 100     |
+| SEO            | 100    | 100     |
 
-## Lessons Learned
+## What I learned
 
-1. **Design first, code second** — Having a complete Figma design before writing any code eliminated decision paralysis during development.
-2. **Islands architecture is powerful** — Astro's approach of shipping zero JS by default and hydrating only interactive components keeps the bundle tiny.
-3. **Accessibility is a feature, not an afterthought** — Building with a11y in mind from day one (skip links, ARIA labels, keyboard nav) is far easier than retrofitting.
-4. **Simple i18n can be type-safe** — You don't need a heavyweight framework to get compile-time translation key safety.
+1. Finishing the Figma design before writing code meant I wasn't making design decisions halfway through building a component.
+2. Islands keep the bundle small: Astro ships no JavaScript by default and hydrates only the interactive parts.
+3. Building accessibility in from the first day (skip links, ARIA labels, keyboard navigation) is much easier than adding it later.
+4. A small i18n setup can be type-safe without a large framework.
 
----
+## What's next
 
-## What's Next
-
-- [ ] Add project case study narratives with rich media
-- [ ] Implement view transitions between pages
-- [ ] Add a contact form with serverless function backend
-- [ ] Integrate analytics with privacy-respecting tooling
-- [ ] Create an RSS feed for blog posts
+- [ ] Add a contact form backed by a serverless function
+- [ ] Add analytics with privacy-respecting tooling
