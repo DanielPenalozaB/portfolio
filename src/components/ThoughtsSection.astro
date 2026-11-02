@@ -12,7 +12,6 @@ const locale: Locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
 const posts = (await getCollection("blog"))
-  .filter((post) => post.data.heroImage)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
 ---

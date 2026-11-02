@@ -1,7 +1,7 @@
 export default {
   "site.title": "Daniel Peñaloza",
   "site.description":
-    "Desarrollador Web SSR, Entusiasta DevOps e Ingeniero de Diseño",
+    "Desarrollador Web Full Stack Semi-Senior, Entusiasta DevOps e Ingeniero de Diseño",
   "nav.projects": "Proyectos",
   "nav.tnt": "T&T",
   "nav.about": "Sobre mí",
@@ -12,7 +12,7 @@ export default {
   "hero.name": "Daniel",
   "hero.download": "Descargar CV",
   "hero.roles":
-    "Desarrollador Web SSR • Entusiasta DevOps • Ingeniero de Diseño •",
+    "Desarrollador Web Full Stack Semi-Senior • Entusiasta DevOps • Ingeniero de Diseño •",
   "tnt.title": "Herramientas y Tecnologías",
   "tnt.subtitle":
     "Una selección especializada de las tecnologías y herramientas que utilizo a diario para construir.",
@@ -23,6 +23,7 @@ export default {
   "tnt.tools": "Herramientas",
   "experience.title": "Experiencia",
   "experience.subtitle": "Dónde he trabajado y qué he construido.",
+  "experience.present": "Actualidad",
   "certificates.title": "Certificados",
   "certificates.subtitle":
     "Aprendizaje continuo en acción. Una muestra de mis certificaciones especializadas—referentes de mi trayectoria profesional y rigor técnico.",
@@ -32,6 +33,7 @@ export default {
   "thoughts.readMore": "Leer más",
   "thoughts.viewAll": "Ver todos los artículos",
   "blog.title": "Blog",
+  "blog.englishOnly": "Los artículos están escritos en inglés.",
   "blog.lastUpdated": "Última actualización el",
   "footer.madeWith": "Hecho con",
   "footer.andPassion": "y pasión",
@@ -42,8 +44,6 @@ export default {
   "footer.rights": "Todos los Derechos Reservados por Daniel Peñaloza",
   "about.title": "Sobre mí",
   "about.description": "Conoce más sobre Daniel Peñaloza",
-  "about.bio":
-    "Hola! Soy Daniel, un desarrollador apasionado por crear experiencias web increíbles. Me especializo en tecnologías modernas y siempre busco aprender algo nuevo.",
   "projects.title": "Todos los Proyectos",
   "projects.description": "Una colección de todos mis proyectos y trabajo.",
   "projects.viewAll": "Ver todos los proyectos",
@@ -53,6 +53,7 @@ export default {
   "a11y.mainNav": "Navegación principal",
   "a11y.footerNav": "Navegación del pie de página",
   "a11y.socialNav": "Enlaces sociales",
+  "a11y.toggleTheme": "Cambiar modo oscuro",
   "a11y.toggleMenu": "Alternar menú de navegación",
   "a11y.viewCertificate": "Ver certificado",
 } as const;

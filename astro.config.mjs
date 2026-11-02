@@ -20,7 +20,9 @@ export default defineConfig({
     },
   },
   build: {
-    inlineStylesheets: "always",
+    // "auto" inlines small stylesheets and links large ones so browsers can cache them
+    // across pages instead of re-downloading ~80 KB of CSS inside every HTML document.
+    inlineStylesheets: "auto",
   },
   vite: {
     plugins: [tailwindcss()],

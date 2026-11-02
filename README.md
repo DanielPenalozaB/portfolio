@@ -64,7 +64,7 @@ Open [localhost:4321](http://localhost:4321).
 | `npm run dev` | Start dev server at `localhost:4321` |
 | `npm run build` | Build production site to `./dist/` |
 | `npm run preview` | Preview production build locally |
-| `npx astro check` | Run type checking |
+| `npm run check` | Run type checking (also runs in CI with the build) |
 
 ## Deployment
 

@@ -1,7 +1,11 @@
+// Source of truth: public/Daniel_Penaloza_CV.pdf. Keep both in sync.
 export interface ExperienceEntry {
   company: string;
   role: string;
-  period: string;
+  /** "YYYY-MM" */
+  start: string;
+  /** "YYYY-MM"; omitted while the role is current. */
+  end?: string;
   description: string;
   tags: string[];
   logo: string;
@@ -11,31 +15,33 @@ export interface ExperienceEntry {
 export const EXPERIENCE: ExperienceEntry[] = [
   {
     company: "Globant",
-    role: "Ssr Web UI Developer",
-    period: "Nov 2025 — Present",
+    role: "Semi Senior Advanced Web UI Developer",
+    start: "2025-11",
     description:
-      "Led the development of customer-facing web applications using React and Next.js. Implemented CI/CD pipelines and improved deploy times by 40%.",
-    tags: ["React", "Next.js", "AWS", "CI/CD"],
+      "Design and implement accessible digital experiences for Disney with React and Hono: reusable UI components and pages, lightweight backend routes, WCAG-compliant UI refined with design and product in Figma, and bundle-size and design-system improvements.",
+    tags: ["React", "Hono", "TypeScript", "Figma"],
     logo: "/icons/globant.svg",
     companyUrl: "https://globant.com",
   },
   {
     company: "Rootstack",
     role: "Mid Full Stack Developer",
-    period: "Jun 2024 — Nov 2025",
+    start: "2024-06",
+    end: "2025-11",
     description:
-      "Built and maintained RESTful APIs with Django and Node.js. Designed responsive UIs with Vue.js and TailwindCSS.",
-    tags: ["Vue", "Django", "Node.js", "PostgreSQL"],
+      "Built scalable web applications with Next.js and NestJS, including an interface for managing ALS systems on ships integrated with onboard systems. Prototyped in Figma and worked in agile teams with peer reviews.",
+    tags: ["Next.js", "NestJS", "TypeScript", "Figma"],
     logo: "/icons/rootstack.svg",
     companyUrl: "https://rootstack.com",
   },
   {
-    company: "SPA Grupo Inmobiliario",
+    company: "Sociedad Privada del Alquiler",
     role: "Junior Developer",
-    period: "Oct 2023 — Jun 2024",
+    start: "2022-04",
+    end: "2024-06",
     description:
-      "Developed internal tools and contributed to the main product frontend. Gained experience with Docker, Linux servers, and agile workflows.",
-    tags: ["JavaScript", "Docker", "Linux", "Figma"],
+      "Supported internal business applications for a real estate group operating in Colombia and Spain: responsive features with React, Next.js and Astro, mobile support with Flutter, code-quality work through component patterns, docs and reviews, and mentoring new hires.",
+    tags: ["React", "Next.js", "Astro", "Flutter"],
     logo: "/icons/spa.svg",
     companyUrl: "https://spagrupoinmobiliario.com/",
   },

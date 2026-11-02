@@ -1,29 +1,17 @@
 ---
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
-import type { Project } from "../data/projects";
 import { getProjectImage } from "../utils/images";
 
 interface Props {
-  project?: Project;
-  data?: CollectionEntry<"projects">["data"];
+  data: CollectionEntry<"projects">["data"];
   class?: string;
   isFeatured?: boolean;
   darkStandalone?: boolean;
 }
 
-const {
-  project: oldProject,
-  data: newData,
-  class: className,
-  isFeatured,
-  darkStandalone,
-} = Astro.props;
-const project = newData || oldProject;
-
-if (!project) {
-  throw new Error("ProjectCard requires either a 'project' or 'data' prop");
-}
+const { data: project, class: className, isFeatured, darkStandalone } =
+  Astro.props;
 
 const slug = project.url?.split("/").pop() || "";
 const optimizedImage = await getProjectImage(project.image);

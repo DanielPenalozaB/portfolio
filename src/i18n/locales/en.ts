@@ -1,6 +1,6 @@
 export default {
   "site.title": "Daniel Peñaloza",
-  "site.description": "SSR Web Developer, DevOps Enthusiast & Design Engineer",
+  "site.description": "Semi-Senior Full Stack Web Developer, DevOps Enthusiast & Design Engineer",
   "nav.projects": "Projects",
   "nav.tnt": "T&T",
   "nav.about": "About",
@@ -10,7 +10,7 @@ export default {
   "hero.greeting": "Hi, I'm",
   "hero.name": "Daniel",
   "hero.download": "Download CV",
-  "hero.roles": "SSR Web Developer • DevOps Enthusiast • Design Engineer •",
+  "hero.roles": "Semi-Senior Full Stack Web Developer • DevOps Enthusiast • Design Engineer •",
   "tnt.title": "Tools & Technologies",
   "tnt.subtitle":
     "A specialized selection of the technologies and tools I leverage daily to build scalable, high-performance solutions.",
@@ -21,6 +21,7 @@ export default {
   "tnt.tools": "Tools",
   "experience.title": "Experience",
   "experience.subtitle": "Where I've worked and what I've built.",
+  "experience.present": "Present",
   "certificates.title": "Certificates",
   "certificates.subtitle":
     "Continuous learning in action. A showcase of my specialized certifications—benchmarks of my professional journey and technical rigor.",
@@ -30,6 +31,7 @@ export default {
   "thoughts.readMore": "Read more",
   "thoughts.viewAll": "View all posts",
   "blog.title": "Blog",
+  "blog.englishOnly": "Articles are written in English.",
   "blog.lastUpdated": "Last updated on",
   "footer.madeWith": "Made with",
   "footer.andPassion": "and passion",
@@ -40,8 +42,6 @@ export default {
   "footer.rights": "All Rights Reserved by Daniel Peñaloza",
   "about.title": "About Me",
   "about.description": "Learn more about Daniel Peñaloza",
-  "about.bio":
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam adipiscing.",
   "projects.title": "All Projects",
   "projects.description": "A collection of all my projects and work.",
   "projects.viewAll": "View all projects",
@@ -51,6 +51,7 @@ export default {
   "a11y.mainNav": "Main navigation",
   "a11y.footerNav": "Footer navigation",
   "a11y.socialNav": "Social links",
+  "a11y.toggleTheme": "Toggle dark mode",
   "a11y.toggleMenu": "Toggle navigation menu",
   "a11y.viewCertificate": "View certificate",
 } as const;

@@ -27,13 +27,14 @@
     0 16px 32px rgba(0, 0, 0, 0.5);
 }
 @font-face {
-  font-family: "DM Sans", sans-serif;
+  font-family: "DM Sans";
   src: url("/fonts/DMSans-VariableFont_opsz,wght.woff2") format("woff2");
+  font-weight: 100 1000;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "DM Serif Display", serif;
+  font-family: "DM Serif Display";
   src: url("/fonts/DMSerifDisplay-Italic.woff2") format("woff2");
   font-style: italic;
   font-display: swap;

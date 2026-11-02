@@ -15,6 +15,8 @@ interface Props {
   description?: string;
   image?: ImageMetadata;
   preloadLCP?: boolean;
+  /** False when the page has no translated counterpart (e.g. English-only blog posts). */
+  hasTranslation?: boolean;
 }
 
 const locale: Locale = getLocaleFromUrl(Astro.url);
@@ -26,6 +28,7 @@ const {
   description = t("site.description"),
   image,
   preloadLCP = false,
+  hasTranslation = true,
 } = Astro.props;
 
 const canonicalPath = Astro.url.pathname;
@@ -36,21 +39,27 @@ const altPath = getLocalizedPath(canonicalPath, altLocale);
 <html lang={locale}>
   <head>
     <BaseHead title={title} description={description} image={image} preloadLCP={preloadLCP} />
-    <link
-      rel="alternate"
-      hreflang={locale}
-      href={new URL(canonicalPath, Astro.site)}
-    />
-    <link
-      rel="alternate"
-      hreflang={altLocale}
-      href={new URL(altPath, Astro.site)}
-    />
-    <link
-      rel="alternate"
-      hreflang="x-default"
-      href={new URL(canonicalPath.replace(/^\/(en|es)/, ""), Astro.site)}
-    />
+    {
+      hasTranslation && (
+        <>
+          <link
+            rel="alternate"
+            hreflang={locale}
+            href={new URL(canonicalPath, Astro.site)}
+          />
+          <link
+            rel="alternate"
+            hreflang={altLocale}
+            href={new URL(altPath, Astro.site)}
+          />
+          <link
+            rel="alternate"
+            hreflang="x-default"
+            href={new URL(canonicalPath.replace(/^\/(en|es)/, ""), Astro.site)}
+          />
+        </>
+      )
+    }
     <script
       type="application/ld+json"
       set:html={JSON.stringify({
@@ -58,10 +67,10 @@ const altPath = getLocalizedPath(canonicalPath, altLocale);
         "@type": "Person",
         name: "Daniel Peñaloza",
         url: Astro.site?.toString(),
-        jobTitle: "SSR Web Developer",
+        jobTitle: "Semi-Senior Full Stack Web Developer",
         sameAs: [
-          "https://linkedin.com/in/danielpenalozab",
-          "https://github.com/danielpenalozab",
+          "https://www.linkedin.com/in/juan-daniel-pe%C3%B1aloza-brito/",
+          "https://github.com/DanielPenalozaB",
         ],
       })}
     />

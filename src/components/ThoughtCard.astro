@@ -1,11 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import FormattedDate from "./FormattedDate.astro";
-import {
-  getLocaleFromUrl,
-  getLocalizedPath,
-  useTranslations,
-  type Locale,
-} from "../i18n";
+import { getLocaleFromUrl, type Locale } from "../i18n";
 
 interface Props {
   post: {
@@ -14,18 +10,18 @@ interface Props {
       title: string;
       description: string;
       pubDate: Date;
-      heroImage?: ImageMetadata;
+      heroImage?: import("astro").ImageMetadata;
     };
   };
 }
 
 const { post } = Astro.props;
 const locale: Locale = getLocaleFromUrl(Astro.url);
-const t = useTranslations(locale);
 ---
 
 <a
-  href={getLocalizedPath(`/blog/${post.id}`, locale)}
+  href={`/blog/${post.id}`}
+  hreflang={locale === "en" ? undefined : "en"}
   class="flex w-full flex-col items-start justify-between gap-2 p-4 transition-all duration-150 ease-out hover:bg-stone-50 sm:flex-row dark:hover:bg-stone-800/50 md:items-end md:p-6"
 >
   <div
@@ -36,11 +32,14 @@ const t = useTranslations(locale);
     >
       {
         post.data.heroImage && (
-          <img
-            src={post.data.heroImage.src}
+          <Image
+            src={post.data.heroImage}
             alt={post.data.title}
-            width={post.data.heroImage.width}
-            height={post.data.heroImage.height}
+            width={480}
+            height={240}
+            densities={[1, 2]}
+            format="webp"
+            quality={80}
             class="absolute inset-0 h-[inherit]! w-full object-cover"
             loading="lazy"
           />
