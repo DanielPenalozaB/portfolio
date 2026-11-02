@@ -3,7 +3,7 @@ title: "RecoAgua"
 description: "Mi tesis de Ingeniería de Sistemas: una plataforma web que ayuda a los hogares de Cali a recolectar y aprovechar el agua lluvia, con guías interactivas, una calculadora hídrica, un mapa de zonas de pluviosidad y progreso gamificado."
 image: "/images/projects/recoagua/front.png"
 tags: ["Next.js", "NestJS", "PostgreSQL", "Gamificación"]
-order: 2
+order: 3
 url: "/es/projects/recoagua"
 repo: "https://github.com/DanielPenalozaB/recoagua-fe"
 ---
@@ -14,7 +14,7 @@ RecoAgua fue mi tesis de Ingeniería de Sistemas en la UNIAJC (Institución Univ
 
 Apoya a los hogares de cuatro formas: las guías interactivas informan, una calculadora estima cuánta agua lluvia podría recoger una vivienda, un mapa muestra las zonas de pluviosidad de la ciudad, y los puntos, niveles, insignias y retos motivan a seguir. Los administradores gestionan todo desde un mismo panel.
 
-El código está en dos repositorios: el [frontend](https://github.com/DanielPenalozaB/recoagua-fe) y el [backend](https://github.com/DanielPenalozaB/recoagua-be).
+Está disponible en [recoagua.com](https://recoagua.com), y el código está en dos repositorios: el [frontend](https://github.com/DanielPenalozaB/recoagua-fe) y el [backend](https://github.com/DanielPenalozaB/recoagua-be).
 
 ## El problema
 

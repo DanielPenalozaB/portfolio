@@ -3,7 +3,7 @@ title: "Portafolio"
 description: "Portafolio personal diseñado en Figma y construido con Astro, con animaciones orbitales, soporte i18n, modo oscuro, grilla de puntos interactiva y transiciones con GSAP."
 image: "/images/projects/portfolio/front.png"
 tags: ["Astro", "TailwindCSS", "GSAP", "Figma"]
-order: 1
+order: 2
 repo: "https://github.com/danielpenalozab/portfolio"
 url: "/es/projects/portfolio"
 ---

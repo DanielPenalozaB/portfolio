@@ -3,7 +3,7 @@ title: "Murmur"
 description: "A local-first meeting recorder for macOS. It transcribes calls on-device with Whisper, recognizes speakers by voice, and writes notes, decisions and action items as Markdown, using a local LLM or your own API key."
 image: "/images/projects/murmur/front.png"
 tags: ["Rust", "Tauri", "Whisper", "macOS"]
-order: 3
+order: 1
 url: "/projects/murmur"
 repo: "https://github.com/DanielPenalozaB/murmur"
 ---

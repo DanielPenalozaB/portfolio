@@ -3,7 +3,7 @@ title: "RecoAgua"
 description: "My Systems Engineering thesis: a web platform that helps households in Cali collect and use rainwater, with interactive guides, a rainwater calculator, a map of the city's rainfall zones and gamified progress."
 image: "/images/projects/recoagua/front.png"
 tags: ["Next.js", "NestJS", "PostgreSQL", "Gamification"]
-order: 2
+order: 3
 url: "/projects/recoagua"
 repo: "https://github.com/DanielPenalozaB/recoagua-fe"
 ---
@@ -14,7 +14,7 @@ RecoAgua was my Systems Engineering thesis at UNIAJC (Institución Universitaria
 
 It supports households in four ways: interactive guides explain the topic, a calculator estimates how much rainwater a home could collect, a map shows the city's rainfall zones, and points, levels, badges and challenges keep people going. Administrators manage all of it from one panel.
 
-The code lives in two repositories: the [frontend](https://github.com/DanielPenalozaB/recoagua-fe) and the [backend](https://github.com/DanielPenalozaB/recoagua-be).
+It's live at [recoagua.com](https://recoagua.com), and the code lives in two repositories: the [frontend](https://github.com/DanielPenalozaB/recoagua-fe) and the [backend](https://github.com/DanielPenalozaB/recoagua-be).
 
 ## The problem
 

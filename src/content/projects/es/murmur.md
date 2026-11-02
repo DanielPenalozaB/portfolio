@@ -3,7 +3,7 @@ title: "Murmur"
 description: "Una grabadora de reuniones local para macOS. Transcribe las llamadas en el propio equipo con Whisper, reconoce a quién habla por su voz y escribe notas, decisiones y tareas en Markdown, con un LLM local o tu propia clave de API."
 image: "/images/projects/murmur/front.png"
 tags: ["Rust", "Tauri", "Whisper", "macOS"]
-order: 3
+order: 1
 url: "/es/projects/murmur"
 repo: "https://github.com/DanielPenalozaB/murmur"
 ---
