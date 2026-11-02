@@ -1,153 +1,88 @@
 ---
 title: "SaveSphere"
-description: "App de finanzas personales y control de presupuesto con gestión de cuentas, transacciones categorizadas, asistencia financiera con IA y analíticas para mejorar hábitos de gasto."
+description: "Una aplicación de finanzas personales en desarrollo activo: un libro contable de doble entrada para gastos, ingresos, metas de ahorro y suscripciones, con insights de IA opcionales en los que cada usuario usa su propia clave."
 image: "/images/projects/savesphere/front.png"
-tags: ["SvelteKit", "Go", "Chi", "AI"]
-order: 3
+tags: ["SvelteKit", "NestJS", "PostgreSQL", "IA"]
+order: 4
 url: "/es/projects/savesphere"
 repo: "https://github.com/DanielPenalozaB/savesphere"
 ---
 
 ## Resumen
 
-SaveSphere es una aplicación de finanzas personales que muestra con claridad en qué se va el dinero y ayuda a controlarlo. Además del seguimiento de presupuesto tradicional, da consejos generados con IA a partir de las transacciones reales de cada usuario.
+SaveSphere es una aplicación de finanzas personales para registrar gastos, ingresos, ahorros y suscripciones, y para planear compras. Se instala como PWA y funciona en español e inglés. La IA es opcional: cada usuario puede conectar su propia clave de Anthropic, OpenAI o Google, y la aplicación funciona igual sin ella.
 
-## El problema
+Está en desarrollo activo. La reinicié desde cero como monorepo el 20 de octubre de 2026, y por ahora el libro contable, las cuentas, las categorías, las metas de ahorro y la gestión de claves de IA funcionan de punta a punta.
 
-Las aplicaciones de finanzas que existen o abruman con su complejidad (YNAB, Quicken) o son tan simples que dejan de ser útiles. Además, la mayoría describe en qué gastas sin decirte qué cambiar. Yo quería una aplicación que:
+## Lo que quería de ella
 
-- Te permitiera registrar una transacción en pocos segundos
-- Categorizara los gastos automáticamente
-- Diera consejos generados con IA que ayuden a cambiar hábitos
-- Funcionara con varias cuentas y monedas
+Quería una herramienta donde registrar un movimiento tome segundos, el dinero nunca se redondee por errores de punto flotante y nada dependa de enviar mis datos a un proveedor de IA. La interfaz sigue un proyecto de diseño de Google Stitch ("Expense and Budget Tracker").
 
-## Objetivos
+## Stack
 
-- Construir una aplicación full-stack rápida con SvelteKit y Go
-- Dar consejos financieros asistidos por IA a partir del historial de transacciones
-- Diseñar un dashboard claro, con analítica que signifique algo
-- Soportar varias cuentas, categorías y transacciones recurrentes
-- Mantener por debajo de 100ms las respuestas de la API en las operaciones principales
-
-## Stack tecnológico
-
-| Tecnología | Rol |
-| ---------- | --- |
-| **SvelteKit** | Framework frontend con SSR y rutas basadas en archivos |
-| **Go** | Servicio backend para procesamiento de datos de alto rendimiento |
-| **Chi** | Router HTTP ligero para la API en Go |
-| **PostgreSQL** | Base de datos primaria para transacciones y datos de usuario |
-| **OpenAI API** | Insights y recomendaciones financieras con IA |
-| **TailwindCSS** | Estilos de UI con design tokens personalizados |
+| Capa        | Tecnología                                                                     |
+| ----------- | ------------------------------------------------------------------------------ |
+| Web         | SvelteKit 3, Svelte 5, Tailwind CSS 4, Paraglide (en/es), PWA                  |
+| API         | NestJS 12 sobre Express, Better Auth, Zod                                      |
+| Base de datos | PostgreSQL 18, Drizzle ORM                                                   |
+| IA          | Opcional, con la clave de cada usuario mediante el Vercel AI SDK (Anthropic, OpenAI, Google) |
+| Herramientas | pnpm workspaces, Turborepo, TypeScript 6, Node 24                             |
+| Pruebas     | Vitest (unitarias, de componentes y de integración con Testcontainers), Playwright |
+| Despliegue  | Imágenes Docker en GHCR, desplegadas con Coolify en un VPS                     |
 
 ## Arquitectura
 
-El frontend y el backend están completamente separados:
+SaveSphere es un monolito modular. Una sola API en NestJS tiene toda la lógica de negocio, y la aplicación en SvelteKit solo dibuja la interfaz. El navegador solo habla con el servidor web, que reenvía `/api/*` a la API, así las cookies son de primera parte y no hay que configurar CORS.
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌──────────────┐
-│   SvelteKit     │────▶│   Go API (Chi)  │────▶│  PostgreSQL  │
-│   Frontend      │◀────│   /api/v1/*     │◀────│              │
-└─────────────────┘     └────────┬────────┘     └──────────────┘
-                                 │
-                                 ▼
-                        ┌─────────────────┐
-                        │   OpenAI API    │
-                        │   (Insights)    │
-                        └─────────────────┘
+Navegador (PWA) ──▶ web (SvelteKit) ──/api/*──▶ api (NestJS) ──▶ PostgreSQL 18
+                                                 │
+                                                 └──▶ proveedor de IA (opcional, clave por usuario)
 ```
 
-El backend en Go maneja toda la lógica de negocio, la autenticación y el almacenamiento de datos. La capa de IA procesa el historial de transacciones en segundo plano para generar insights periódicos, así nunca vuelve lento el flujo principal de la aplicación.
+El repositorio está dividido para que las reglas importantes no dependan de ningún framework:
 
-## Funcionalidades
+- `apps/web`: la PWA en SvelteKit
+- `apps/api`: la API en NestJS, con autenticación, reglas de negocio y control de acceso a la IA
+- `packages/core`: las reglas de dinero y del libro contable, sin framework y sin I/O
+- `packages/contracts`: esquemas de Zod y códigos de error compartidos entre la web y la API
+- `packages/db`: el esquema de Drizzle, las migraciones y los datos iniciales
 
-### Varias cuentas
+Todas las respuestas de la API usan el mismo formato (`{ success, data }` o `{ success, error }`), y los códigos de error viven en los contratos compartidos, así la web puede reaccionar a cada uno.
 
-Los usuarios pueden llevar cuentas corrientes, ahorros, tarjetas de crédito y efectivo, cada uno con su propio saldo e historial de transacciones. Un solo dashboard suma los totales de todas.
+## Modelo de datos
 
-### Transacciones categorizadas
+El esquema tiene 32 tablas en tercera forma normal. Unas pocas decisiones lo definen:
 
-Cada transacción recibe una categoría (comida, transporte, entretenimiento, etc.), ya sea a mano o a partir de una sugerencia. Las categorías alimentan tanto la analítica como las recomendaciones de la IA.
+- El dinero se guarda como enteros en la unidad mínima de la moneda (`bigint`), nunca como decimales de punto flotante.
+- Es un libro contable de doble entrada. Cada transacción tiene uno o más asientos con un monto con signo por cuenta: un gasto o un ingreso tiene un asiento y una transferencia tiene dos. Los saldos siempre se calculan a partir de los asientos y nunca se guardan.
+- Las tablas hijas apuntan a su tabla padre con llaves foráneas compuestas `(user_id, id)`, así el propio PostgreSQL rechaza datos que mezclen a dos usuarios aunque el código de la aplicación tenga un error. Las pruebas de integración lo verifican.
+- Las llaves primarias son UUIDv7 generados por PostgreSQL 18, ordenados en el tiempo y amables con los índices.
+- Cada transacción tiene un `client_ref` único por usuario, así reintentar una escritura hecha sin conexión nunca crea un duplicado.
 
-### Asesor financiero con IA
+## IA opcional
 
-Es la funcionalidad principal: un asistente de IA que analiza los patrones de gasto y da consejos personalizados que puedes aplicar. Detecta cosas como:
+Cada usuario decide si usa IA. La API revisa, en orden, si el usuario la desactivó, si tiene una clave propia activa y si la instancia tiene una clave compartida. Si nada de eso aplica, las funciones de IA aparecen bloqueadas, con una explicación y un enlace a la configuración, en lugar de desaparecer.
 
-- Picos de gasto inusuales en una categoría
-- Oportunidades de ahorro a partir de patrones recurrentes
-- Recomendaciones de presupuesto mensual según los ingresos y las metas
+Las claves se cifran con AES-256-GCM, se prueban con una llamada real antes de guardarlas y nunca vuelven al navegador, salvo sus últimos cuatro caracteres. Funciones como los insights y "¿me alcanza para comprarlo?" están pensadas para funcionar solo con reglas y usar la IA únicamente para explicar el resultado, así los números siempre salen del código. En las pruebas, un proveedor falso da respuestas fijas, así ninguna prueba llama a una API de IA real.
 
-### Dashboard de analítica
+## Pruebas
 
-Los gráficos desglosan el gasto por categoría, periodo y cuenta:
+| Nivel                | Contra qué corre                                                     |
+| -------------------- | -------------------------------------------------------------------- |
+| Unitarias            | Nada externo; `packages/core` exige 90% de cobertura                 |
+| Componentes          | Un navegador Chromium real (modo navegador de Vitest)                |
+| Integración de la API | HTTP real hacia NestJS y un contenedor desechable de PostgreSQL 18  |
+| De punta a punta     | Las imágenes Docker de producción, una vez con la IA apagada y otra encendida |
 
-- Tendencias de gasto mensual (gráficos de líneas)
-- Gasto por categoría (gráficos de dona)
-- Ingresos comparados con gastos
-- Avance de cada presupuesto
+## Qué funciona y qué sigue
 
-### Transacciones recurrentes
+Ya funciona: registro e inicio de sesión, configuración, cuentas, categorías, transacciones con resúmenes mensuales, metas de ahorro, gestión de claves de IA y convertir una frase en una transacción con IA. En la web hay un panel de inicio, la lista de movimientos, un panel para registrar movimientos, la creación de la primera cuenta y las bóvedas de ahorro.
 
-Las transacciones programadas, como el arriendo, las suscripciones y el salario, se agregan solas en su fecha, así el registro se mantiene al día sin ingresarlas a mano.
+Lo siguiente:
 
-## Problemas que tuve que resolver
-
-### Saldos que se actualizan al instante
-
-Con miles de transacciones en varias cuentas, los saldos tenían que ser instantáneos, y sumar todas las transacciones en cada petición se volvía lento muy rápido. En cambio, cada transacción guarda el saldo que resulta de ella. Los saldos de las cuentas están desnormalizados y se actualizan dentro de la misma transacción de base de datos, lo que mantiene las consultas de saldo en O(1) y los datos consistentes.
-
-### Consejos de IA que sirvan
-
-Las primeras versiones de la funcionalidad de IA daban consejos genéricos como "gasta menos en restaurantes", y los usuarios necesitaban algo específico para ellos. Reescribí los prompts para incluir resúmenes mensuales por categoría, los cambios en el gasto y las metas del propio usuario. Ahora los insights se ven así: "Tu gasto en supermercado aumentó 23% este mes comparado con tu promedio de 3 meses. Considera planificar comidas los domingos — usuarios con perfiles similares ahorran ~$80.000/mes de esta forma."
-
-### Mantener Go y SvelteKit sincronizados
-
-Mantener con tipos seguros la comunicación entre la API en Go y el frontend en SvelteKit requería cuidado, porque las formas de las peticiones y respuestas podían desalinearse. Los contratos de la API se definen una sola vez como especificaciones OpenAPI: de ellas se generan los tipos de TypeScript del frontend y contra ellas se validan los handlers de Go, así un cambio en el contrato se detecta en tiempo de compilación.
-
-## Esquema de base de datos (simplificado)
-
-```sql
-CREATE TABLE accounts (
-    id          UUID PRIMARY KEY,
-    user_id     UUID REFERENCES users(id),
-    name        VARCHAR(100) NOT NULL,
-    type        VARCHAR(20) NOT NULL,
-    balance     DECIMAL(12,2) DEFAULT 0,
-    currency    VARCHAR(3) DEFAULT 'COP'
-);
-
-CREATE TABLE transactions (
-    id          UUID PRIMARY KEY,
-    account_id  UUID REFERENCES accounts(id),
-    category_id UUID REFERENCES categories(id),
-    amount      DECIMAL(12,2) NOT NULL,
-    type        VARCHAR(10) NOT NULL, -- 'income' | 'expense'
-    description TEXT,
-    date        TIMESTAMP NOT NULL,
-    balance     DECIMAL(12,2) NOT NULL
-);
-```
-
-## Rendimiento
-
-| Métrica | Objetivo | Logrado |
-| ------- | -------- | ------- |
-| Respuesta API (p95) | < 100ms | 47ms |
-| Carga del dashboard | < 1.5s | 1.1s |
-| Creación de transacción | < 200ms | 89ms |
-| Generación de insight IA | < 5s | ~3.2s |
-
-## Lo que aprendí
-
-1. Go funciona bien para APIs financieras. Su sistema de tipos atrapa errores de precisión en tiempo de compilación, y las goroutines manejan los cálculos de saldo concurrentes con limpieza.
-2. Las funcionalidades de IA necesitan límites. Sin prompts estructurados y validación de la respuesta, lo que devuelve el LLM es demasiado genérico para ser útil, y el contexto que le das al modelo importa más que el modelo que elijas.
-3. La reactividad de SvelteKit encaja con los dashboards. Los stores derivados y las declaraciones reactivas hacen que los gráficos se actualicen al instante sin manejar el estado a mano.
-4. Hay que empezar por el modelo de datos. Definir bien desde temprano el esquema de transacciones y cuentas me ahorró migraciones costosas después.
-
-## Próximos pasos
-
-- [ ] Sincronización de cuentas bancarias mediante Plaid
-- [ ] Metas de presupuesto con notificaciones de avance
-- [ ] Cuentas compartidas para el hogar
-- [ ] Una aplicación móvil en Flutter sobre el mismo backend
-- [ ] Exportación a CSV y PDF para la temporada de impuestos
+- [ ] Presupuestos y el planeador de compras
+- [ ] Reglas recurrentes y suscripciones
+- [ ] Insights y reportes generados por un proceso en segundo plano
+- [ ] Notificaciones push y por correo
+- [ ] Bots de Telegram y WhatsApp que usen la misma API

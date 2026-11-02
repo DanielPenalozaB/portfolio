@@ -41,6 +41,9 @@ Everything started in Figma, from the layout grid and color palette to the orbit
 | **React**          | Interactive islands (DotGrid canvas, WebGL effects)  |
 | **TypeScript**     | Type safety across components and i18n system        |
 | **Figma**          | Full design system and prototyping                   |
+| **Docker + Nginx** | Production image with security headers and caching   |
+| **Coolify**        | Deployment on my own server                          |
+| **GitHub Actions** | Type checking and a production build on every PR     |
 
 ## Architecture
 
@@ -91,6 +94,18 @@ I didn't want to pull in a heavy i18n library, so I wrote a small typed system. 
 ### Heavy animations on slower devices
 
 The GSAP orbits and the canvas can strain lower-end devices, and the site still had to be usable there. When `prefers-reduced-motion` is set, the animations are turned off completely, and the canvas pauses through an `IntersectionObserver` whenever it scrolls out of view. On modern hardware it runs at 60fps.
+
+### Fonts that never loaded
+
+For months the site rendered in fallback fonts without me noticing. The `@font-face` rules declared `font-family: "DM Sans", sans-serif`, but that descriptor only accepts a single name, so browsers dropped the whole rule. I confirmed it in headless Chrome, fixed both faces, and gave the variable font its weight range so bold and light text use the real font instead of a synthesized one.
+
+### Upgrading Astro without changing the site
+
+Moving from Astro 5 to 7 crossed two major versions, and Astro 7 removes whitespace between elements by default, which can silently glue words together. To catch that, I built the old and new versions side by side and compared the text a real browser renders on all 16 pages, at desktop and phone widths. The only difference was a real bug: the collection order had changed and swapped which Spanish projects were featured. Projects now have an explicit `order` field.
+
+## Shipping it
+
+The site builds into a multi-stage Docker image served by Nginx and deploys with Coolify. Nginx sends security headers on every response (`nosniff`, a referrer policy, frame blocking, a permissions policy and a minimal content security policy), caches hashed assets for a year, and makes HTML revalidate on every visit so deploys show up immediately. Every pull request runs type checking and a production build in GitHub Actions.
 
 ## Performance
 

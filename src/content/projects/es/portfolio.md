@@ -41,6 +41,9 @@ Todo empezó en Figma, desde la retícula y la paleta de colores hasta la animac
 | **React**          | Islas interactivas (DotGrid canvas, efectos WebGL)              |
 | **TypeScript**     | Seguridad de tipos en componentes y sistema i18n                |
 | **Figma**          | Sistema de diseño completo y prototipado                        |
+| **Docker + Nginx** | Imagen de producción con cabeceras de seguridad y caché         |
+| **Coolify**        | Despliegue en mi propio servidor                                |
+| **GitHub Actions** | Verificación de tipos y build de producción en cada PR          |
 
 ## Arquitectura
 
@@ -91,6 +94,18 @@ No quería agregar una librería pesada de i18n, así que escribí un sistema ti
 ### Animaciones pesadas en dispositivos lentos
 
 Las órbitas de GSAP y el canvas pueden exigir demasiado a los dispositivos de gama baja, y el sitio tenía que seguir siendo usable en ellos. Con `prefers-reduced-motion` activado, las animaciones se desactivan por completo, y el canvas se pausa mediante un `IntersectionObserver` cuando sale de la vista. En hardware moderno corre a 60fps.
+
+### Fuentes que nunca cargaban
+
+Durante meses el sitio se mostró con fuentes de respaldo sin que me diera cuenta. Las reglas `@font-face` declaraban `font-family: "DM Sans", sans-serif`, pero ese descriptor solo acepta un nombre, así que los navegadores descartaban la regla completa. Lo confirmé en Chrome sin interfaz, corregí ambas fuentes y le di a la fuente variable su rango de pesos, para que el texto en negrita y el liviano usen la fuente real en lugar de una sintetizada.
+
+### Actualizar Astro sin cambiar el sitio
+
+Pasar de Astro 5 a 7 implicaba saltar dos versiones mayores, y Astro 7 elimina por defecto los espacios entre elementos, lo que puede pegar palabras sin que nadie lo note. Para detectarlo, construí la versión vieja y la nueva lado a lado y comparé el texto que un navegador real muestra en las 16 páginas, en anchos de escritorio y de celular. La única diferencia fue un error real: el orden de la colección había cambiado y alteraba qué proyectos aparecían destacados en español. Ahora los proyectos tienen un campo `order` explícito.
+
+## Cómo se publica
+
+El sitio se construye en una imagen Docker de varias etapas que sirve Nginx y se despliega con Coolify. Nginx envía cabeceras de seguridad en cada respuesta (`nosniff`, una política de referer, bloqueo de iframes, una política de permisos y una política de seguridad de contenido mínima), guarda en caché por un año los archivos con hash y obliga a revalidar el HTML en cada visita, así los despliegues se ven de inmediato. Cada pull request ejecuta la verificación de tipos y un build de producción en GitHub Actions.
 
 ## Rendimiento
 

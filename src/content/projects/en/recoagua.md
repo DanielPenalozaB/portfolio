@@ -1,6 +1,6 @@
 ---
 title: "RecoAgua"
-description: "An educational platform for responsible water usage in Cali, Colombia. Features interactive guides, gamification with badges and challenges, a water consumption calculator, an interactive city map with zone indicators, and a full admin panel."
+description: "My Systems Engineering thesis: a web platform that helps households in Cali collect and use rainwater, with interactive guides, a rainwater calculator, a map of the city's rainfall zones and gamified progress."
 image: "/images/projects/recoagua/front.png"
 tags: ["Next.js", "NestJS", "PostgreSQL", "Gamification"]
 order: 2
@@ -10,178 +10,94 @@ repo: "https://github.com/DanielPenalozaB/recoagua-fe"
 
 ## Overview
 
-RecoAgua is an educational platform that promotes responsible water use in Cali, Colombia. It uses gamification, interactive tools, and local data to help people understand how much water they use and then use less.
+RecoAgua was my Systems Engineering thesis at UNIAJC (Institución Universitaria Antonio José Camacho), built with Ismael Yate Calderón and directed by Beatriz E. Marín. It's a web platform that helps households in Cali, Colombia, collect rainwater and use it where drinking water isn't needed, like flushing toilets, washing clothes and cleaning.
+
+It supports households in four ways: interactive guides explain the topic, a calculator estimates how much rainwater a home could collect, a map shows the city's rainfall zones, and points, levels, badges and challenges keep people going. Administrators manage all of it from one panel.
+
+The code lives in two repositories: the [frontend](https://github.com/DanielPenalozaB/recoagua-fe) and the [backend](https://github.com/DanielPenalozaB/recoagua-be).
 
 ## The problem
 
-Cali goes through recurring periods of water stress, but most residents don't know their own consumption patterns. Conservation campaigns have mostly been passive, like posters and TV ads, and they change little about how people behave. The city needed:
+Cali's rivers get worse as they cross the city. Three of the four main rivers leave it with a water quality index rated "bad", and the city produces about half of the Cauca river's pollution. EMCALI's treatment plants take drinking water from those same rivers.
 
-- An engaging way to teach residents about water use
-- Tools to measure personal consumption and reduce it
-- Local data showing which neighborhoods face the highest risk
-- A system that rewards people for saving water consistently
+Before writing any code, we surveyed 410 households (95% confidence, 5% margin of error):
 
-## Goals
+| Question                         | Result                                              |
+| -------------------------------- | --------------------------------------------------- |
+| Where does your water come from? | 88% from the municipal supply                       |
+| How reliable is the service?     | 32% report interruptions                            |
+| Do you store water?              | 56.6% in buckets, 12.2% in tanks, 19.5% not at all  |
+| What do you use water for?       | Toilets 72.7%, laundry 65.4%, cleaning 55.9%        |
+| Do you take steps to save water? | 43.9% don't                                         |
+| How do you get online?           | 82.9% by phone; 75.8% have a low or mid-range phone |
 
-- Build an educational platform that changes how people use water day to day
-- Keep users coming back with badges, challenges, and leaderboards
-- Build a water consumption calculator with personalized recommendations
-- Map water stress zone by zone across the city
-- Give administrators a complete content management panel
-- Keep the platform usable for people at any level of technical skill
+Most household water goes to uses where rainwater works fine, and many homes already store water, just informally. What people lacked was knowledge and tools. The phone numbers settled the format: a light, mobile-first web app.
 
-## Tech stack
+## How we built it
 
-| Technology | Role |
-| ---------- | ---- |
-| **Next.js** | Frontend with SSR for SEO and dynamic content |
-| **NestJS** | Backend framework with modular architecture |
-| **PostgreSQL** | Relational database for users, challenges, and zone data |
-| **Leaflet** | Interactive city map with zone overlays |
-| **Chart.js** | Consumption visualizations and progress charts |
-| **TailwindCSS** | Responsive UI styling |
-| **JWT** | Authentication for users and admin panel |
+We used ICONIX for the software, which goes from use cases to robustness diagrams to design, and ADDIE for the educational content. That produced 26 use cases, a 13-screen prototype in Figma, and a trace from every requirement to its test.
 
-## Architecture
+| Layer      | Technology                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------ |
+| Frontend   | Next.js 16, React 19, TanStack Query and Table, React Hook Form with Zod, Tailwind CSS, Mapbox GL, Recharts |
+| Backend    | NestJS, TypeORM, Swagger docs, rate limiting, email with Resend                                  |
+| Database   | PostgreSQL                                                                                       |
+| Security   | bcrypt for passwords, 1-hour JWTs with renewal, role guards, HTTPS                               |
+| Deployment | Three Docker containers (frontend, API, database) on an Ubuntu VPS managed with Coolify          |
+
+We compared each piece with alternatives. Next.js beat Angular and Vue because server rendering loads fast on low-end phones. NestJS beat Django and Rails for its modular structure and because it let us use TypeScript on both sides. PostgreSQL beat MySQL and MongoDB for full ACID transactions on a schema we didn't expect to change much.
 
 ```
-┌──────────────────┐     ┌──────────────────┐     ┌──────────────┐
-│   Next.js App    │────▶│   NestJS API     │────▶│  PostgreSQL  │
-│   (SSR + CSR)    │◀────│   /api/v1/*      │◀────│              │
-└──────────────────┘     └──────────────────┘     └──────────────┘
-        │                         │
-        ▼                         ▼
-┌──────────────────┐     ┌──────────────────┐
-│   Leaflet Map    │     │   Admin Panel    │
-│   (Zone Data)    │     │   (CMS + Stats)  │
-└──────────────────┘     └──────────────────┘
+Phone or browser ──HTTPS──▶ Next.js (SSR) ──▶ NestJS REST API ──▶ PostgreSQL
+                    (three Docker containers on a VPS, deployed with Coolify)
 ```
-
-The NestJS backend is a modular monolith: each domain (users, challenges, zones, calculator) is its own module, with its own service, controller, and repository layers.
 
 ## Features
 
 ### Interactive guides
 
-Step-by-step guides cover water conservation topics:
+Content is organized into guides, modules and blocks. A block can be text, a video, an image, a question, a quiz or an interactive exercise. Questions can be multiple choice, true or false, open-ended, matching or ordering, and the interactive exercises include drag and drop, sorting, fill in the blanks and simulations. Blocks and modules are worth points, and the platform tracks each user's progress through them. We wrote 4 guides with 8 modules and 33 blocks, 24 of which include check questions.
 
-- Saving water at home
-- Understanding your water bill
-- Conservation by season
-- Community initiatives
+### Rainwater calculator
 
-Each guide tracks your progress and awards XP when you finish it.
+The calculator estimates how much rainwater a home could collect with `Volume = Rainfall × Area × Roof efficiency × System efficiency`. Rainfall comes from the user's zone, roof efficiency depends on the roofing material, and system efficiency accounts for losses. It also estimates availability, savings and CO₂. For example, a home in the south of the city (about 1,600 mm of rain a year) with a 50 m² green roof and a basic system could collect around 24,000 liters a year. It's an estimate for a scenario, not a measurement of water actually collected.
+
+### Rainfall zone map
+
+A Mapbox map shows the city's zones, grouped by region and city. Each zone has its average rainfall, altitude, average temperature, soil type and recommendations for collecting water there.
 
 ### Gamification
 
-The engagement loop is built from these pieces:
-
-| Element | Description |
-| ------- | ----------- |
-| **Badges** | Earned by completing guides, challenges, or milestones |
-| **Challenges** | Time-limited tasks (e.g., "Reduce consumption 10% this week") |
-| **XP & Levels** | Accumulated through all activities, unlocking new content |
-| **Leaderboards** | Zone-based and city-wide rankings |
-
-### Water consumption calculator
-
-Users enter details about their household (number of residents, appliances, habits) and get:
-
-- Their estimated daily and monthly water use in liters
-- A comparison with the city average
-- Personalized recommendations for using less
-- Projected savings, in liters and in money
-
-### Interactive city map
-
-A Leaflet map of Cali shows:
-
-- Zones colored by water stress level, from green to red
-- Average consumption per zone
-- Infrastructure status
-- Historical trends when you hover over a zone
+Users earn experience points by completing blocks and modules, move up through levels, unlock badges when they pass a threshold, and take on challenges. Challenges are educational, practical or community-based, and each one is rated easy, medium or hard.
 
 ### Admin panel
 
-Administrators get a complete CMS where they can:
+Administrators and moderators manage users, guides, modules and blocks, cities, regions and zones, and challenges, levels and badges from the same panel.
 
-- Create, edit, and publish educational guides
-- Manage challenges and the criteria for each badge
-- Monitor how users engage with the platform
-- Update zone data and map indicators
-- See analytics for the whole platform
+### Accounts
 
-## Problems I had to solve
+Sign-up includes email confirmation, and users can reset their password by email.
 
-### Gamification with substance
+## Built for the phones people actually have
 
-Plenty of "gamified" apps attach points to actions without any real progression, and people lose interest once the novelty wears off. In RecoAgua, rewards unlock things that are useful: new calculator features, advanced guides, and community challenges. Badges stand for real achievements; "Saved 1000L", for example, needs a reduction the app has tracked. Leaderboards are grouped by zone, which sets up friendly competition between neighborhoods.
+The survey shaped the interface. Since most people connect by phone, the layout is mobile-first and works down to 320 px wide. For low and mid-range phones, pages render on the server and stay light, with a goal of loading in under 3 seconds on 4G. Since 40% of respondents had at most a high school education, the language is plain and the main features are one tap from the home screen.
 
-### Accurate consumption estimates
+## Testing and validation
 
-Water use varies a lot with household size, climate, and infrastructure, so a generic calculator would be useless. I built a model with several factors, calibrated against Cali's municipal water data: number of residents, shower length and frequency, appliances such as washing machines and dishwashers, garden size, and seasonal rainfall. Its results are checked against anonymized billing data from the local utility.
+We documented 113 tests following IEEE 829: 95 functional, 13 non-functional and 5 unit tests with Jest, plus API checks in Postman. All of them passed after fixing the issues they found, such as an unclear sign-out button and missing sign-up notifications. We assessed quality against ISO/IEC 25010.
 
-### Map performance with dense zone data
+Then we tested it with people:
 
-Rendering hundreds of polygons with real-time data overlays made the map lag badly on phones. It now loads progressively: first the zone boundaries with cached colors, then detailed statistics when you zoom in or click. Switching the boundaries from GeoJSON to vector tiles cut the payload by 85%.
+- 15 participants used Useberry to sign in, complete a guide, use the calculator, explore the map and review their profile. All 15 finished. 87% strongly agreed the guides and the map were easy to use, 80% the calculator, and 100% the profile.
+- 10 first-semester engineering students and a professor completed 8 tasks in an exploratory session and rated each dimension between 6.5 and 7.0 out of 7.
 
-### Content workflow for admins
-
-Administrators needed to write guides without technical knowledge, yet the guides needed rich formatting such as images, callouts, and embedded calculators. I built a block-based editor inspired by Notion. Admins put a guide together from predefined blocks (text, image, quiz, tip, calculator embed), and each block has its own validation and preview, so every guide comes out consistently formatted.
-
-## Database schema (simplified)
-
-```sql
-CREATE TABLE users (
-    id          UUID PRIMARY KEY,
-    email       VARCHAR(255) UNIQUE NOT NULL,
-    name        VARCHAR(100) NOT NULL,
-    zone_id     UUID REFERENCES zones(id),
-    xp          INTEGER DEFAULT 0,
-    level       INTEGER DEFAULT 1
-);
-
-CREATE TABLE challenges (
-    id          UUID PRIMARY KEY,
-    title       VARCHAR(200) NOT NULL,
-    description TEXT,
-    xp_reward   INTEGER NOT NULL,
-    target      JSONB NOT NULL, -- { metric, threshold, duration }
-    starts_at   TIMESTAMP NOT NULL,
-    ends_at     TIMESTAMP NOT NULL
-);
-
-CREATE TABLE zones (
-    id              UUID PRIMARY KEY,
-    name            VARCHAR(100) NOT NULL,
-    geometry        GEOMETRY(Polygon, 4326),
-    stress_level    VARCHAR(20) NOT NULL,
-    avg_consumption DECIMAL(10,2)
-);
-```
-
-## Impact
-
-| Metric | Result |
-| ------ | ------ |
-| Registered users | 2,400+ |
-| Guides completed | 8,500+ |
-| Avg. reported reduction | 12% monthly consumption |
-| Active challenge participants | 340/month |
-| Admin-published guides | 45 |
-
-## What I learned
-
-1. Points alone don't change behavior. Tying rewards to real outcomes, like lower bills and visible community impact, is what keeps people engaged.
-2. NestJS modules scaled well. The modular monolith kept the codebase organized as features grew, without the overhead of microservices.
-3. Maps are expensive on mobile. For a map-heavy app aimed at phones, vector tiles and progressive loading were necessary.
-4. Local data builds trust. People engaged more when they saw their own neighborhood's numbers instead of city-wide statistics.
-5. The admin experience matters as much as the user's. If content creators can't publish easily, the platform stalls no matter how good the rest of it is.
+These results show the platform works and is easy to use. They don't prove that households saved water or kept the habit; that would need a longer study.
 
 ## What's next
 
-- [ ] Push notifications that remind users about active challenges
-- [ ] Integration with the local water utility's billing API
-- [ ] Forums for each zone where neighbors can share conservation tips
-- [ ] An offline mode for areas with poor connectivity
-- [ ] A school program with classroom challenges
+These come from the thesis's future work:
+
+- [ ] A longitudinal study of whether households adopt the practices
+- [ ] IoT sensors that report the water level in each tank
+- [ ] A WCAG 2.1 accessibility audit
+- [ ] Expanding to the rest of the metropolitan area

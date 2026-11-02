@@ -1,6 +1,6 @@
 ---
 title: "RecoAgua"
-description: "Plataforma educativa para el uso responsable del agua en Cali, Colombia. Incluye guías interactivas, gamificación con insignias y retos, calculadora de consumo hídrico, mapa interactivo con indicadores por zonas y un panel administrativo completo."
+description: "Mi tesis de Ingeniería de Sistemas: una plataforma web que ayuda a los hogares de Cali a recolectar y aprovechar el agua lluvia, con guías interactivas, una calculadora hídrica, un mapa de zonas de pluviosidad y progreso gamificado."
 image: "/images/projects/recoagua/front.png"
 tags: ["Next.js", "NestJS", "PostgreSQL", "Gamificación"]
 order: 2
@@ -10,178 +10,94 @@ repo: "https://github.com/DanielPenalozaB/recoagua-fe"
 
 ## Resumen
 
-RecoAgua es una plataforma educativa que promueve el uso responsable del agua en Cali, Colombia. Usa gamificación, herramientas interactivas y datos locales para que las personas entiendan cuánta agua consumen y logren consumir menos.
+RecoAgua fue mi tesis de Ingeniería de Sistemas en la UNIAJC (Institución Universitaria Antonio José Camacho), desarrollada con Ismael Yate Calderón y dirigida por Beatriz E. Marín. Es una plataforma web que ayuda a los hogares de Cali, Colombia, a recolectar agua lluvia y usarla donde no hace falta agua potable, como en los sanitarios, el lavado de ropa y la limpieza.
+
+Apoya a los hogares de cuatro formas: las guías interactivas informan, una calculadora estima cuánta agua lluvia podría recoger una vivienda, un mapa muestra las zonas de pluviosidad de la ciudad, y los puntos, niveles, insignias y retos motivan a seguir. Los administradores gestionan todo desde un mismo panel.
+
+El código está en dos repositorios: el [frontend](https://github.com/DanielPenalozaB/recoagua-fe) y el [backend](https://github.com/DanielPenalozaB/recoagua-be).
 
 ## El problema
 
-Cali atraviesa periodos recurrentes de estrés hídrico, pero la mayoría de sus habitantes no conoce sus propios patrones de consumo. Las campañas de ahorro han sido sobre todo pasivas, como afiches y comerciales de televisión, y cambian poco la forma en que la gente actúa. La ciudad necesitaba:
+Los ríos de Cali se deterioran al atravesar la ciudad. Tres de los cuatro ríos principales salen de ella con un Índice de Calidad del Agua «malo», y Cali aporta cerca de la mitad de la contaminación del río Cauca. Las plantas de EMCALI toman el agua potable de esos mismos ríos.
 
-- Una forma atractiva de enseñarles a los habitantes sobre el uso del agua
-- Herramientas para medir el consumo personal y reducirlo
-- Datos locales que muestren qué barrios enfrentan mayor riesgo
-- Un sistema que premie a quienes ahorran agua de forma constante
+Antes de escribir código, encuestamos a 410 hogares (95% de confianza y 5% de error):
 
-## Objetivos
+| Pregunta                             | Resultado                                                  |
+| ------------------------------------ | ---------------------------------------------------------- |
+| ¿Cómo obtiene el agua su hogar?      | 88% del acueducto                                          |
+| ¿Con qué frecuencia recibe el servicio? | 32% reporta interrupciones                              |
+| ¿Tiene un sistema de almacenamiento? | 56,6% canecas, 12,2% tanques, 19,5% ninguno                |
+| ¿En qué usa el agua?                 | Sanitarios 72,7%, ropa 65,4%, limpieza 55,9%               |
+| ¿Aplica medidas para ahorrar agua?   | 43,9% no                                                   |
+| ¿Cómo se conecta a internet?         | 82,9% por celular; 75,8% tiene un celular de gama baja o media |
 
-- Construir una plataforma educativa que cambie cómo la gente usa el agua en la práctica
-- Hacer que los usuarios vuelvan con insignias, retos y tablas de clasificación
-- Construir una calculadora de consumo de agua con recomendaciones personalizadas
-- Mapear el estrés hídrico zona por zona en toda la ciudad
-- Darles a los administradores un panel completo de gestión de contenido
-- Hacer que la plataforma sea fácil de usar para personas con cualquier nivel técnico
+La mayor parte del agua de los hogares va a usos donde el agua lluvia sirve, y muchos ya la almacenan, aunque de manera informal. Lo que faltaba era conocimiento y herramientas. Los datos de conectividad definieron el formato: una aplicación web liviana y pensada primero para el celular.
 
-## Stack tecnológico
+## Cómo lo construimos
 
-| Tecnología | Rol |
-| ---------- | --- |
-| **Next.js** | Frontend con SSR para SEO y contenido dinámico |
-| **NestJS** | Framework backend con arquitectura modular |
-| **PostgreSQL** | Base de datos relacional para usuarios, retos y datos zonales |
-| **Leaflet** | Mapa interactivo de la ciudad con overlays por zona |
-| **Chart.js** | Visualizaciones de consumo y gráficos de progreso |
-| **TailwindCSS** | Estilos de UI responsivos |
-| **JWT** | Autenticación para usuarios y panel administrativo |
+Usamos ICONIX para el software, que va de los casos de uso a los diagramas de robustez y luego al diseño, y ADDIE para el contenido educativo. De ahí salieron 26 casos de uso, un prototipo de 13 pantallas en Figma y la trazabilidad de cada requerimiento hasta su prueba.
 
-## Arquitectura
+| Capa        | Tecnología                                                                                      |
+| ----------- | ----------------------------------------------------------------------------------------------- |
+| Frontend    | Next.js 16, React 19, TanStack Query y Table, React Hook Form con Zod, Tailwind CSS, Mapbox GL, Recharts |
+| Backend     | NestJS, TypeORM, documentación con Swagger, límite de peticiones, correos con Resend           |
+| Base de datos | PostgreSQL                                                                                    |
+| Seguridad   | bcrypt para las contraseñas, JWT de 1 hora con renovación, guards por rol, HTTPS               |
+| Despliegue  | Tres contenedores Docker (frontend, API y base de datos) en un VPS con Ubuntu gestionado con Coolify |
+
+Comparamos cada pieza con alternativas. Next.js le ganó a Angular y Vue porque el renderizado en el servidor carga rápido en celulares de gama baja. NestJS le ganó a Django y Rails por su estructura modular y porque nos permitía usar TypeScript en ambos lados. PostgreSQL le ganó a MySQL y MongoDB por sus transacciones ACID completas sobre un esquema que no esperábamos cambiar mucho.
 
 ```
-┌──────────────────┐     ┌──────────────────┐     ┌──────────────┐
-│   Next.js App    │────▶│   NestJS API     │────▶│  PostgreSQL  │
-│   (SSR + CSR)    │◀────│   /api/v1/*      │◀────│              │
-└──────────────────┘     └──────────────────┘     └──────────────┘
-        │                         │
-        ▼                         ▼
-┌──────────────────┐     ┌──────────────────┐
-│   Mapa Leaflet   │     │   Panel Admin    │
-│   (Datos Zona)   │     │   (CMS + Stats)  │
-└──────────────────┘     └──────────────────┘
+Celular o navegador ──HTTPS──▶ Next.js (SSR) ──▶ API REST NestJS ──▶ PostgreSQL
+                    (tres contenedores Docker en un VPS, desplegados con Coolify)
 ```
-
-El backend en NestJS es un monolito modular: cada dominio (usuarios, retos, zonas, calculadora) es un módulo independiente, con sus propias capas de servicio, controlador y repositorio.
 
 ## Funcionalidades
 
 ### Guías interactivas
 
-Guías paso a paso que cubren temas de ahorro de agua:
+El contenido se organiza en guías, módulos y bloques. Un bloque puede ser texto, un video, una imagen, una pregunta, un quiz o un ejercicio interactivo. Las preguntas pueden ser de selección múltiple, falso o verdadero, abiertas, de emparejar o de ordenar, y los ejercicios interactivos incluyen arrastrar y soltar, clasificar, completar espacios y simulaciones. Los bloques y los módulos otorgan puntos, y la plataforma registra el avance de cada usuario. Escribimos 4 guías con 8 módulos y 33 bloques, 24 de ellos con preguntas de verificación.
 
-- Cómo ahorrar agua en casa
-- Cómo entender tu factura de agua
-- Ahorro según la temporada
-- Iniciativas comunitarias
+### Calculadora hídrica
 
-Cada guía registra tu progreso y te da XP cuando la terminas.
+La calculadora estima cuánta agua lluvia podría recoger una vivienda con `Volumen = Lluvia × Área × Eficiencia del techo × Eficiencia del sistema`. La lluvia depende de la zona del usuario, la eficiencia del techo depende del material de la cubierta y la del sistema descuenta las pérdidas. También estima la disponibilidad, el ahorro y el CO₂. Por ejemplo, una vivienda en el sur de la ciudad (unos 1.600 mm de lluvia al año) con 50 m² de techo verde y un sistema básico podría recoger cerca de 24.000 litros al año. Es una estimación de un escenario, no una medición del agua recolectada.
+
+### Mapa de zonas de pluviosidad
+
+Un mapa hecho con Mapbox muestra las zonas de la ciudad, agrupadas por región y ciudad. Cada zona tiene su lluvia promedio, altitud, temperatura promedio, tipo de suelo y recomendaciones para recolectar agua allí.
 
 ### Gamificación
 
-El ciclo de participación se construye con estas piezas:
-
-| Elemento | Descripción |
-| -------- | ----------- |
-| **Insignias** | Ganadas al completar guías, retos o hitos |
-| **Retos** | Tareas con tiempo limitado (ej. "Reduce consumo 10% esta semana") |
-| **XP y Niveles** | Acumulados a través de todas las actividades, desbloqueando nuevo contenido |
-| **Tablas de Clasificación** | Rankings por zona y a nivel ciudad |
-
-### Calculadora de consumo de agua
-
-Los usuarios ingresan datos de su hogar (número de residentes, electrodomésticos, hábitos) y obtienen:
-
-- Su consumo diario y mensual estimado en litros
-- Una comparación con el promedio de la ciudad
-- Recomendaciones personalizadas para consumir menos
-- El ahorro proyectado, en litros y en dinero
-
-### Mapa interactivo de la ciudad
-
-Un mapa de Cali hecho con Leaflet muestra:
-
-- Las zonas coloreadas según su nivel de estrés hídrico, de verde a rojo
-- El consumo promedio por zona
-- El estado de la infraestructura
-- Tendencias históricas al pasar el cursor sobre una zona
+Los usuarios ganan puntos de experiencia al completar bloques y módulos, suben de nivel, desbloquean insignias al superar un umbral y aceptan retos. Los retos son educativos, prácticos o comunitarios, y cada uno tiene una dificultad fácil, media o difícil.
 
 ### Panel de administración
 
-Los administradores tienen un CMS completo donde pueden:
+Los administradores y moderadores gestionan usuarios, guías, módulos y bloques, ciudades, regiones y zonas, y retos, niveles e insignias desde el mismo panel.
 
-- Crear, editar y publicar guías educativas
-- Gestionar los retos y los criterios de cada insignia
-- Monitorear cómo participan los usuarios en la plataforma
-- Actualizar los datos de las zonas y los indicadores del mapa
-- Ver la analítica de toda la plataforma
+### Cuentas
 
-## Problemas que tuve que resolver
+El registro incluye confirmación por correo, y los usuarios pueden restablecer su contraseña por correo.
 
-### Una gamificación con sustancia
+## Pensada para los celulares que la gente tiene
 
-Muchas aplicaciones "gamificadas" ponen puntos a las acciones sin ninguna progresión real, y la gente pierde el interés cuando pasa la novedad. En RecoAgua, las recompensas desbloquean cosas útiles: nuevas funciones de la calculadora, guías avanzadas y retos comunitarios. Las insignias representan logros reales; "Ahorré 1000L", por ejemplo, exige una reducción que la aplicación haya registrado. Las tablas de clasificación se agrupan por zona, lo que genera una competencia amistosa entre barrios.
+La encuesta definió la interfaz. Como la mayoría se conecta por celular, el diseño es mobile-first y funciona desde 320 px de ancho. Para los celulares de gama baja y media, las páginas se renderizan en el servidor y son livianas, con la meta de cargar en menos de 3 segundos en 4G. Y como el 40% de los encuestados tenía como máximo la secundaria, el lenguaje es claro y las funciones principales están a un toque desde el inicio.
 
-### Estimaciones de consumo precisas
+## Pruebas y validación
 
-El consumo de agua varía mucho según el tamaño del hogar, el clima y la infraestructura, así que una calculadora genérica no serviría de nada. Construí un modelo con varios factores, calibrado con datos municipales de agua de Cali: número de residentes, duración y frecuencia de las duchas, electrodomésticos como la lavadora y el lavavajillas, tamaño del jardín y lluvias de cada temporada. Sus resultados se validan con datos de facturación anonimizados de la empresa de servicios local.
+Documentamos 113 pruebas según IEEE 829: 95 funcionales, 13 no funcionales y 5 unitarias con Jest, además de pruebas de la API en Postman. Todas pasaron después de corregir los problemas que encontraron, como un botón de cerrar sesión poco visible y notificaciones de registro que faltaban. Evaluamos la calidad con el modelo ISO/IEC 25010.
 
-### Rendimiento del mapa con muchos datos por zona
+Después la probamos con personas:
 
-Dibujar cientos de polígonos con capas de datos en tiempo real hacía que el mapa se trabara bastante en los celulares. Ahora carga de forma progresiva: primero los límites de las zonas con colores en caché y luego las estadísticas detalladas cuando haces zoom o clic. Pasar los límites de GeoJSON a tiles vectoriales redujo el tamaño de la carga en un 85%.
+- 15 participantes usaron Useberry para iniciar sesión, completar una guía, usar la calculadora, explorar el mapa y revisar su perfil. Los 15 terminaron. El 87% estuvo totalmente de acuerdo en que las guías y el mapa eran fáciles de usar, el 80% en el caso de la calculadora y el 100% en el del perfil.
+- 10 estudiantes de primer semestre de Ingeniería y un docente completaron 8 tareas en una sesión exploratoria y calificaron cada dimensión entre 6,5 y 7,0 sobre 7.
 
-### Flujo de contenido para administradores
-
-Los administradores necesitaban escribir guías sin conocimientos técnicos, pero las guías requerían formato enriquecido como imágenes, recuadros destacados y calculadoras integradas. Construí un editor por bloques inspirado en Notion. Los administradores arman cada guía con bloques predefinidos (texto, imagen, quiz, consejo, calculadora integrada), y cada bloque tiene su propia validación y vista previa, así que todas las guías quedan con un formato consistente.
-
-## Esquema de base de datos (simplificado)
-
-```sql
-CREATE TABLE users (
-    id          UUID PRIMARY KEY,
-    email       VARCHAR(255) UNIQUE NOT NULL,
-    name        VARCHAR(100) NOT NULL,
-    zone_id     UUID REFERENCES zones(id),
-    xp          INTEGER DEFAULT 0,
-    level       INTEGER DEFAULT 1
-);
-
-CREATE TABLE challenges (
-    id          UUID PRIMARY KEY,
-    title       VARCHAR(200) NOT NULL,
-    description TEXT,
-    xp_reward   INTEGER NOT NULL,
-    target      JSONB NOT NULL, -- { metric, threshold, duration }
-    starts_at   TIMESTAMP NOT NULL,
-    ends_at     TIMESTAMP NOT NULL
-);
-
-CREATE TABLE zones (
-    id              UUID PRIMARY KEY,
-    name            VARCHAR(100) NOT NULL,
-    geometry        GEOMETRY(Polygon, 4326),
-    stress_level    VARCHAR(20) NOT NULL,
-    avg_consumption DECIMAL(10,2)
-);
-```
-
-## Impacto
-
-| Métrica | Resultado |
-| ------- | --------- |
-| Usuarios registrados | 2.400+ |
-| Guías completadas | 8.500+ |
-| Reducción promedio reportada | 12% consumo mensual |
-| Participantes activos en retos | 340/mes |
-| Guías publicadas por admin | 45 |
-
-## Lo que aprendí
-
-1. Los puntos por sí solos no cambian el comportamiento. Lo que mantiene a la gente participando es conectar las recompensas con resultados reales, como facturas más bajas y un impacto visible en la comunidad.
-2. Los módulos de NestJS escalaron bien. El monolito modular mantuvo el código organizado a medida que crecían las funcionalidades, sin la carga de los microservicios.
-3. Los mapas son costosos en móviles. En una aplicación centrada en un mapa y pensada para celulares, los tiles vectoriales y la carga progresiva fueron necesarios.
-4. Los datos locales generan confianza. La gente participó más cuando vio los números de su propio barrio en lugar de estadísticas de toda la ciudad.
-5. La experiencia de los administradores importa tanto como la de los usuarios. Si quienes crean el contenido no pueden publicar con facilidad, la plataforma se estanca, sin importar qué tan bueno sea el resto.
+Estos resultados muestran que la plataforma funciona y es fácil de usar. No demuestran que los hogares ahorraran agua ni que mantuvieran el hábito; para eso haría falta un estudio más largo.
 
 ## Próximos pasos
 
-- [ ] Notificaciones que recuerden a los usuarios sus retos activos
-- [ ] Integración con la API de facturación de la empresa de agua local
-- [ ] Foros por zona donde los vecinos compartan consejos de ahorro
-- [ ] Un modo sin conexión para zonas con mala conectividad
-- [ ] Un programa para colegios con retos en el aula
+Vienen del trabajo futuro de la tesis:
+
+- [ ] Un estudio longitudinal sobre si los hogares adoptan las prácticas
+- [ ] Sensores IoT que reporten el nivel de agua de cada tanque
+- [ ] Una auditoría de accesibilidad WCAG 2.1
+- [ ] Ampliarla al resto del área metropolitana
