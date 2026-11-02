@@ -206,16 +206,16 @@ PageSpeed Insights on the homepage, November 2, 2026 (Lighthouse 13.6, lab data)
 
 | Metric | Mobile | Desktop |
 | ------ | ------ | ------- |
-| Performance | 97 | 100 |
-| Accessibility | 96 | 96 |
-| Best Practices | 96 | 100 |
+| Performance | 100 | 100 |
+| Accessibility | 100 | 100 |
+| Best Practices | 100 | 100 |
 | SEO | 100 | 100 |
-| First Contentful Paint | 1.1 s | 0.3 s |
-| Largest Contentful Paint | 1.8 s | 0.6 s |
+| First Contentful Paint | 0.9 s | 0.3 s |
+| Largest Contentful Paint | 1.7 s | 0.6 s |
 
 Mobile runs on an emulated Moto G Power with slow 4G throttling. The homepage ships about 110 KB of gzipped JavaScript, and a production build of all 16 pages takes around 2 seconds.
 
-For a site with GSAP animations, a React canvas, WebGL effects, dark mode, and full i18n, I'm happy with that. It wasn't free: I still had to preload the hero image, serve optimized WebP, and switch the fonts to woff2. But Astro's defaults meant I was tuning a fast site, not rescuing a slow one.
+For a site with GSAP animations, a React canvas, WebGL effects, dark mode, and full i18n, I'm happy with that. It wasn't free: I still had to preload the hero image, serve optimized WebP, switch the fonts to woff2, and fix a few contrast and alt-text issues before every category reached 100. But Astro's defaults meant I was tuning a fast site, not rescuing a slow one.
 
 ---
 
