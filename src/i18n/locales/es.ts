@@ -49,6 +49,8 @@ export default {
   "projects.viewAll": "Ver todos los proyectos",
   "projects.backToAll": "Todos los proyectos",
   "projects.viewRepo": "Ver repositorio",
+  "viz.viewData": "Ver los datos",
+  "viz.source": "Fuente",
   "a11y.skipToContent": "Saltar al contenido",
   "a11y.mainNav": "Navegación principal",
   "a11y.footerNav": "Navegación del pie de página",

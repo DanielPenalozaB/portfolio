@@ -8,6 +8,8 @@ url: "/projects/volo"
 repo: ""
 ---
 
+import Flow from "../../../components/viz/Flow.astro";
+
 ## Status
 
 Volo is a concept. I've worked out the problem, the features, the screens and the architecture, but I haven't built it yet, so everything below describes the plan.
@@ -94,6 +96,18 @@ Starting a routine would switch the app to a focused workout screen:
 ```
 
 The app would work offline first. Gyms often have bad reception, so routines and exercise data would be copied to a local SQLite database, and workouts would sync when the connection comes back.
+
+<Flow
+  title="Planned offline sync"
+  subtitle="A design, not built yet."
+  steps={[
+    { title: "Log a set", text: "Saved to local SQLite at once, marked as not synced." },
+    { title: "Wait for a connection", text: "A background isolate retries periodically." },
+    { title: "Resolve conflicts", text: "Last write wins, by timestamp." },
+    { title: "Mark as synced", text: "The server now has the same record." },
+  ]}
+/>
+
 
 The approaches I plan to use for the hard parts:
 

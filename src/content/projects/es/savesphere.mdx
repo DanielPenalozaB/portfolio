@@ -8,11 +8,28 @@ url: "/es/projects/savesphere"
 repo: "https://github.com/DanielPenalozaB/savesphere"
 ---
 
+import StatGrid from "../../../components/viz/StatGrid.astro";
+import Layers from "../../../components/viz/Layers.astro";
+import ChipGroups from "../../../components/viz/ChipGroups.astro";
+import Flow from "../../../components/viz/Flow.astro";
+import BarChart from "../../../components/viz/BarChart.astro";
+import Timeline from "../../../components/viz/Timeline.astro";
+
 ## Resumen
 
 SaveSphere es una aplicación de finanzas personales para registrar gastos, ingresos, ahorros y suscripciones, y para planear compras. Se instala como PWA y funciona en español e inglés. La IA es opcional: cada usuario puede conectar su propia clave de Anthropic, OpenAI o Google, y la aplicación funciona igual sin ella.
 
 Está en desarrollo activo. La reinicié desde cero como monorepo el 20 de octubre de 2026, y por ahora el libro contable, las cuentas, las categorías, las metas de ahorro y la gestión de claves de IA funcionan de punta a punta.
+
+<StatGrid
+  stats={[
+    { value: "32", label: "Tablas en la base de datos", note: "Tercera forma normal" },
+    { value: "2 + 3", label: "Aplicaciones y paquetes compartidos" },
+    { value: "4", label: "Niveles de pruebas", note: "De unitarias a punta a punta" },
+    { value: "3", label: "Proveedores de IA", note: "Cada usuario usa su propia clave" },
+  ]}
+/>
+
 
 ## Lo que quería de ella
 
@@ -34,11 +51,16 @@ Quería una herramienta donde registrar un movimiento tome segundos, el dinero n
 
 SaveSphere es un monolito modular. Una sola API en NestJS tiene toda la lógica de negocio, y la aplicación en SvelteKit solo dibuja la interfaz. El navegador solo habla con el servidor web, que reenvía `/api/*` a la API, así las cookies son de primera parte y no hay que configurar CORS.
 
-```
-Navegador (PWA) ──▶ web (SvelteKit) ──/api/*──▶ api (NestJS) ──▶ PostgreSQL 18
-                                                 │
-                                                 └──▶ proveedor de IA (opcional, clave por usuario)
-```
+<Layers
+  title="El recorrido de una petición"
+  subtitle="El navegador solo habla con el servidor web, así las cookies son de primera parte y no hay CORS."
+  layers={[
+    { label: "Cliente", nodes: [{ title: "Navegador (PWA)", text: "Instalable, en español e inglés" }], link: "Peticiones al mismo origen" },
+    { label: "Web", nodes: [{ title: "SvelteKit 3", text: "Dibuja la interfaz y reenvía /api/* a la API", accent: true }], link: "/api/* reenviado" },
+    { label: "API", nodes: [{ title: "NestJS 12", text: "Toda la lógica de negocio, la autenticación y el control de la IA", accent: true }, { title: "Proveedor de IA", text: "Opcional, con la clave del usuario", muted: true }], link: "Drizzle ORM" },
+    { label: "Datos", nodes: [{ title: "PostgreSQL 18", text: "32 tablas, dinero en enteros de la unidad mínima" }] },
+  ]}
+/>
 
 El repositorio está dividido para que las reglas importantes no dependan de ningún framework:
 
@@ -47,6 +69,16 @@ El repositorio está dividido para que las reglas importantes no dependan de nin
 - `packages/core`: las reglas de dinero y del libro contable, sin framework y sin I/O
 - `packages/contracts`: esquemas de Zod y códigos de error compartidos entre la web y la API
 - `packages/db`: el esquema de Drizzle, las migraciones y los datos iniciales
+
+<Layers
+  title="Qué código puede importar a cuál"
+  subtitle="Las aplicaciones dependen de los paquetes, nunca al revés, y core y contracts nunca importan de una aplicación."
+  layers={[
+    { label: "Aplicaciones", nodes: [{ title: "apps/web", text: "Solo importa contracts" }, { title: "apps/api", text: "Importa core, contracts y db" }], link: "Dependen de" },
+    { label: "Paquetes", nodes: [{ title: "packages/contracts", text: "Esquemas de Zod y códigos de error", accent: true }, { title: "packages/core", text: "Reglas de dinero y del libro contable, sin I/O", accent: true }, { title: "packages/db", text: "Esquema de Drizzle y migraciones" }] },
+  ]}
+/>
+
 
 Todas las respuestas de la API usan el mismo formato (`{ success, data }` o `{ success, error }`), y los códigos de error viven en los contratos compartidos, así la web puede reaccionar a cada uno.
 
@@ -60,9 +92,45 @@ El esquema tiene 32 tablas en tercera forma normal. Unas pocas decisiones lo def
 - Las llaves primarias son UUIDv7 generados por PostgreSQL 18, ordenados en el tiempo y amables con los índices.
 - Cada transacción tiene un `client_ref` único por usuario, así reintentar una escritura hecha sin conexión nunca crea un duplicado.
 
+<ChipGroups
+  title="Las 32 tablas, agrupadas por propósito"
+  source="packages/db/src/schema en el repositorio de SaveSphere"
+  code
+  groups={[
+    { name: "Libro contable", items: ["accounts", "transactions", "transaction_entries", "categories", "tags", "transaction_tags", "merchants", "currencies", "exchange_rates", "attachments"] },
+    { name: "Planeación", items: ["budgets", "budget_limits", "goals", "goal_allocations", "recurring_rules", "subscriptions", "purchase_evaluations"] },
+    { name: "IA e insights", items: ["ai_providers", "user_ai_credentials", "ai_usage", "insights", "reports"] },
+    { name: "Notificaciones y canales", items: ["notifications", "notification_preferences", "push_subscriptions", "channel_identities", "outbox_events"] },
+    { name: "Cuentas y autenticación", items: ["users", "sessions", "auth_accounts", "verifications", "user_settings"] },
+  ]}
+/>
+
+Así se ve la doble entrada en dos movimientos cotidianos. Los montos son un ejemplo y se guardan como enteros en la unidad mínima:
+
+| Transacción | Asiento | Cuenta | Monto |
+| ----------- | ------- | ------ | ----: |
+| Mercado     | 1       | Cuenta corriente | −85.000 |
+| Pasar a ahorros | 1   | Cuenta corriente | −500.000 |
+| Pasar a ahorros | 2   | Ahorros | +500.000 |
+
+El saldo de cada cuenta es la suma de sus asientos, así una transferencia nunca deja dinero «en el aire» entre dos cuentas.
+
+
 ## IA opcional
 
 Cada usuario decide si usa IA. La API revisa, en orden, si el usuario la desactivó, si tiene una clave propia activa y si la instancia tiene una clave compartida. Si nada de eso aplica, las funciones de IA aparecen bloqueadas, con una explicación y un enlace a la configuración, en lugar de desaparecer.
+
+<Flow
+  title="Cómo decide la API si hay IA disponible"
+  subtitle="Se revisa en este orden en cada petición que necesita IA."
+  steps={[
+    { title: "¿El usuario la desactivó?", text: "Entonces la IA está apagada para él, aunque existan claves." },
+    { title: "Clave propia", text: "Si guardó una clave activa, se usa esa." },
+    { title: "Clave de la instancia", text: "Si no, se usa la clave compartida si el servidor tiene una." },
+    { title: "No disponible", text: "La función aparece bloqueada, con el motivo y un enlace a la configuración." },
+  ]}
+/>
+
 
 Las claves se cifran con AES-256-GCM, se prueban con una llamada real antes de guardarlas y nunca vuelven al navegador, salvo sus últimos cuatro caracteres. Funciones como los insights y "¿me alcanza para comprarlo?" están pensadas para funcionar solo con reglas y usar la IA únicamente para explicar el resultado, así los números siempre salen del código. En las pruebas, un proveedor falso da respuestas fijas, así ninguna prueba llama a una API de IA real.
 
@@ -75,9 +143,34 @@ Las claves se cifran con AES-256-GCM, se prueban con una llamada real antes de g
 | Integración de la API | HTTP real hacia NestJS y un contenedor desechable de PostgreSQL 18  |
 | De punta a punta     | Las imágenes Docker de producción, una vez con la IA apagada y otra encendida |
 
+<BarChart
+  title="Archivos de prueba por nivel"
+  source="Repositorio de SaveSphere, 2 de noviembre de 2026"
+  headers={["Nivel", "Archivos de prueba"]}
+  rows={[
+    { label: "Unitarias", value: 18 },
+    { label: "Integración de la API", value: 6 },
+    { label: "De punta a punta", value: 4 },
+    { label: "Componentes", value: 2 },
+  ]}
+/>
+
+
 ## Qué funciona y qué sigue
 
 Ya funciona: registro e inicio de sesión, configuración, cuentas, categorías, transacciones con resúmenes mensuales, metas de ahorro, gestión de claves de IA y convertir una frase en una transacción con IA. En la web hay un panel de inicio, la lista de movimientos, un panel para registrar movimientos, la creación de la primera cuenta y las bóvedas de ahorro.
+
+<Timeline
+  title="Avance desde el reinicio"
+  source="Historial de commits de DanielPenalozaB/savesphere"
+  items={[
+    { date: "20 oct. 2026", title: "Estructura del monorepo", text: "Aplicaciones, paquetes, CI con actualizaciones agrupadas de Dependabot y las reglas de la rama principal." },
+    { date: "23 oct. 2026", title: "Sistema de diseño y autenticación", text: "Los tokens de diseño de Stitch, la estructura de la aplicación y las pantallas de inicio de sesión y registro." },
+    { date: "26 oct. 2026", title: "El libro contable en la interfaz", text: "Panel de inicio, lista de movimientos, el panel para registrar movimientos y las bóvedas de ahorro." },
+    { date: "27 oct. 2026", title: "CI más estable", text: "Dependencias de las pruebas de navegador preempaquetadas y un límite de 15 minutos para las pruebas." },
+  ]}
+/>
+
 
 Lo siguiente:
 

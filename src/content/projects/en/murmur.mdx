@@ -1,0 +1,190 @@
+---
+title: "Murmur"
+description: "A local-first meeting recorder for macOS. It transcribes calls on-device with Whisper, recognizes speakers by voice, and writes notes, decisions and action items as Markdown, using a local LLM or your own API key."
+image: "/images/projects/murmur/front.png"
+tags: ["Rust", "Tauri", "Whisper", "macOS"]
+order: 1
+url: "/projects/murmur"
+repo: "https://github.com/DanielPenalozaB/murmur"
+---
+
+import StatGrid from "../../../components/viz/StatGrid.astro";
+import Gallery from "../../../components/viz/Gallery.astro";
+import Flow from "../../../components/viz/Flow.astro";
+import Layers from "../../../components/viz/Layers.astro";
+import BarChart from "../../../components/viz/BarChart.astro";
+import Timeline from "../../../components/viz/Timeline.astro";
+import Dumbbell from "../../../components/viz/Dumbbell.astro";
+import RangeChart from "../../../components/viz/RangeChart.astro";
+import liveLight from "../../../assets/images/projects/murmur/live-light.png";
+import liveDark from "../../../assets/images/projects/murmur/live-dark.png";
+import notesLight from "../../../assets/images/projects/murmur/notes-light.png";
+import notesDark from "../../../assets/images/projects/murmur/notes-dark.png";
+import actionsLight from "../../../assets/images/projects/murmur/actions-light.png";
+import actionsDark from "../../../assets/images/projects/murmur/actions-dark.png";
+import speakersLight from "../../../assets/images/projects/murmur/speakers-light.png";
+import speakersDark from "../../../assets/images/projects/murmur/speakers-dark.png";
+import libraryLight from "../../../assets/images/projects/murmur/library-light.png";
+import libraryDark from "../../../assets/images/projects/murmur/library-dark.png";
+
+## Overview
+
+Murmur records and transcribes meetings on Teams, Google Meet, Slack and Zoom, entirely on your Mac. Transcription runs on-device with Whisper. Summaries and live questions use a local Qwen model through Ollama by default, or your own Claude or Gemini key if you choose that for a session. Audio never leaves the machine.
+
+The point is to get meeting notes without uploading calls to anyone's server. It's a released app that updates itself.
+
+<StatGrid
+  stats={[
+    { value: "4", label: "Releases", note: "Oct 28 to Nov 2, 2026" },
+    { value: "38", label: "Merged pull requests" },
+    { value: "~770 MB", label: "Speech models", note: "Downloaded once, run locally" },
+    { value: "0 bytes", label: "Audio uploaded", note: "Cloud LLMs only see text, and only if you opt in" },
+  ]}
+/>
+
+## What it does
+
+- Shows a live transcript of your microphone and the call, including meetings that switch languages, and answers questions about the meeting while it's happening.
+- Writes notes when the meeting ends: a summary, decisions, action items and open questions, each linked to the moment it was said, plus the recording so you can replay any moment. Every session is a Markdown file in a folder you choose, ready for Obsidian or any editor.
+- Shows a small card and a notification when someone mentions your name or asks you something. ⌃⌥M marks a moment and ⌃⌥N adds a quick note without leaving the call.
+- Collects action items from every meeting in one list, with yours first and overdue ones flagged. Ticking one off also ticks it in that meeting's notes.
+- Recognizes speakers by voice. Name someone once and Murmur suggests their name in later meetings, and it flags names that don't match a voice.
+- Notices when Teams, Slack, Zoom or a browser call starts using the microphone and offers to record. Nothing is recorded until you say so.
+- Searches across every meeting, organized into notebooks.
+
+<Gallery
+  title="The app"
+  subtitle="Screenshots from the app's preview mode. They follow this site's light or dark theme."
+  shots={[
+    { src: liveLight, dark: liveDark, alt: "Recording a meeting: live transcript on the left, questions answered from it on the right", caption: "Live transcript, with questions answered from it as the meeting happens", wide: true },
+    { src: notesLight, dark: notesDark, alt: "A meeting's notes with attendees, summary and decisions", caption: "Notes written when the meeting ends" },
+    { src: actionsLight, dark: actionsDark, alt: "Action items from several meetings, grouped by when they're due", caption: "Action items from every meeting" },
+    { src: speakersLight, dark: speakersDark, alt: "The speaker directory: people Murmur recognizes by voice", caption: "Speakers recognized by voice" },
+    { src: libraryLight, dark: libraryDark, alt: "All notes, with a preview of the selected meeting", caption: "Every meeting, searchable" },
+  ]}
+/>
+
+## How it works
+
+<Flow
+  title="From the call to your notes"
+  subtitle="Everything up to the notes runs on the Mac. Only the last step can use a cloud LLM, and only if you choose it."
+  steps={[
+    { title: "Capture", text: "A Swift helper records the microphone and, through a Core Audio process tap, the call. Each channel arrives as 16 kHz mono audio." },
+    { title: "Detect speech", text: "earshot, a pure-Rust voice detector, cuts the audio into chunks after 600 ms of silence, 15 s at most." },
+    { title: "Transcribe", text: "whisper.cpp runs large-v3-turbo on the GPU through Metal, on a worker thread." },
+    { title: "Live session", text: "A tokio actor appends each line to the transcript in memory and SQLite, and streams it to the interface." },
+    { title: "Split speakers", text: "When you stop, sherpa-onnx separates the other side of the call into individual voices." },
+    { title: "Write notes", text: "The LLM writes the summary, decisions and action items, saved as Markdown in your folder." },
+  ]}
+/>
+
+Speaker identity works in two layers. During the call, the channel decides it: your microphone is "Me" and system audio is "Them". After the call, speaker embeddings split "Them" into individual voices that you can name, and Murmur remembers each voice for later meetings.
+
+<Layers
+  title="How the code is split"
+  subtitle="The crates only depend on the core types, so audio, transcription and prompts can be tested with cargo test, without Tauri."
+  layers={[
+    { label: "Interface", nodes: [{ title: "React 19 UI", text: "TypeScript, Vite, Tailwind v4, TanStack Query, Zustand" }], link: "Typed IPC commands" },
+    { label: "App shell", nodes: [{ title: "src-tauri", text: "Tauri 2 commands, the session actor and app state. The only code that knows about Tauri.", accent: true }, { title: "audiocap", text: "Swift sidecar for microphone and system audio capture", muted: true }], link: "Uses" },
+    { label: "Crates", nodes: [{ title: "murmur-audio", text: "Capture, resampling, voice detection" }, { title: "murmur-stt", text: "Whisper and speaker separation" }, { title: "murmur-llm", text: "Providers, prompts, streaming" }, { title: "murmur-store", text: "Markdown export, SQLite index with full-text search" }], link: "All depend only on" },
+    { label: "Core", nodes: [{ title: "murmur-core", text: "Domain types such as Session, Segment and Speaker. No I/O.", accent: true }] },
+  ]}
+/>
+
+| Concern           | Choice                                                                 |
+| ----------------- | ---------------------------------------------------------------------- |
+| App shell         | Tauri 2                                                                |
+| Interface         | React 19, TypeScript, Vite, Tailwind CSS v4, TanStack Query, Zustand   |
+| Audio capture     | Swift helper with AVAudioEngine and Core Audio process taps (macOS 14.4+) |
+| Voice detection   | `earshot`, in pure Rust                                                |
+| Transcription     | `whisper-rs` (whisper.cpp on Metal), large-v3-turbo                    |
+| Speaker detection | `sherpa-onnx` with pyannote segmentation and NeMo TitaNet embeddings   |
+| LLMs              | Ollama, Anthropic and Gemini, streamed over SSE with `reqwest`         |
+| Storage           | Markdown files plus a SQLite index with full-text search (FTS5)        |
+| Secrets           | macOS Keychain; API keys never reach the webview                       |
+
+<BarChart
+  title="Languages in the repository"
+  subtitle="Share of the code by bytes, as GitHub measures it."
+  source="GitHub language statistics for DanielPenalozaB/murmur, November 2, 2026"
+  headers={["Language", "Share"]}
+  max={100}
+  highlight={["Rust"]}
+  rows={[
+    { label: "Rust", value: 54.6, display: "54.6%" },
+    { label: "TypeScript", value: 41.5, display: "41.5%" },
+    { label: "Swift", value: 2.9, display: "2.9%" },
+    { label: "CSS", value: 0.5, display: "0.5%" },
+    { label: "Shell", value: 0.4, display: "0.4%" },
+  ]}
+/>
+
+## Problems I had to solve
+
+### Too many speakers, or not?
+
+An early 21-minute meeting came out with more than 49 speakers, which looked like the diarization was splitting people apart. Before tuning anything, I checked recent meetings against their real headcounts. Current diarization actually finds fewer speakers than there are attendees:
+
+<Dumbbell
+  title="Speakers found vs. people in the meeting"
+  subtitle="Three recent standups. Attendee counts are approximate."
+  legend={["Speakers found", "Attendees"]}
+  labelHeader="Meeting"
+  min={0}
+  max={20}
+  ticks={[0, 5, 10, 15, 20]}
+  rows={[
+    { label: "Standup 1", from: 15, to: 19 },
+    { label: "Standup 2", from: 12, to: 15 },
+    { label: "Standup 3", from: 12, to: 16 },
+  ]}
+/>
+
+Every pair of different speakers also scored below 0.62 similarity, while a real split of one person scores between 0.83 and 0.92, so the two cases don't overlap. The meetings with huge speaker counts had been transcribed by an older version. The fix was to re-transcribe them, not to change the thresholds.
+
+### Checking names against voices
+
+Once speakers are remembered by voice, a wrong name can spread. The Speakers screen now reviews names with two checks: speakers who share a name but sound less than 50% alike are probably two people, and two saved voices that sound at least 60% alike but never appeared in the same meeting may be one. Correcting a name rebuilds the saved voice from the speakers still under it.
+
+<RangeChart
+  title="Voice similarity: where the cases fall"
+  subtitle="Similarity between two voice embeddings, from 0 (unrelated) to 1 (identical)."
+  headers={["Case or check", "Similarity"]}
+  min={0}
+  max={1}
+  ticks={[0, 0.25, 0.5, 0.75, 1]}
+  bands={[
+    { from: 0, to: 0.62, label: "Two different people (measured)" },
+    { from: 0.83, to: 0.92, label: "One person split in two (measured)" },
+  ]}
+  markers={[
+    { at: 0.5, label: "Same-name check" },
+    { at: 0.6, label: "Look-alike check" },
+  ]}
+/>
+
+### A silent microphone in Teams
+
+Four recordings came back with a microphone track of pure zeros for the whole call, while the call audio was fine. The microphone was a Bluetooth headset, and the same helper recorded it fine outside a call; the likely cause is that muting in Teams carries over to the headset. Murmur never mutes on its own, so I made it log stretches of digital silence along with the device, which makes this easy to spot next time.
+
+### Logs that went nowhere
+
+While debugging, I found that the app's tracing had no subscriber, so every warning was silently dropped. Warnings, errors and panics now go to a log file in `~/Library/Logs` with 1 MB rotation.
+
+## Releases
+
+<Timeline
+  title="Release history"
+  source="GitHub releases for DanielPenalozaB/murmur"
+  items={[
+    { date: "Oct 28, 2026", title: "v0.2.0", text: "First public release on GitHub." },
+    { date: "Oct 31, 2026", title: "v0.3.0", text: "Meeting detection, a menu-bar recorder, name suggestions for known voices, session and folder management, permission checks, and in-app updates." },
+    { date: "Nov 2, 2026", title: "v0.4.0", text: "Recording playback, action items from every meeting, bulk actions, alerts when someone says your name, and shortcuts to mark moments." },
+    { date: "Nov 2, 2026", title: "v0.4.1", text: "Fixed a crash on quit, and Whisper now loads only while recording." },
+  ]}
+/>
+
+Murmur ships as a `.dmg` for Apple silicon Macs on macOS 14.4 or later. On first run it downloads its speech models and asks for microphone and system audio access. Releases are built by a GitHub Actions workflow from a version tag, and since version 0.3.0 the app updates itself with signed updates. It isn't notarized by Apple yet.
+
+The code is source-available under the PolyForm Shield license.

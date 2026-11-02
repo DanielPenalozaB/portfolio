@@ -1,0 +1,115 @@
+---
+/**
+ * Before -> after per item (dumbbell): one hue, two shades, one shared axis.
+ * The lighter dot is the first value, the solid dot the second; a legend names both.
+ */
+import Figure from "./Figure.astro";
+
+interface Row {
+  label: string;
+  from: number;
+  to: number;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  source?: string;
+  rows: Row[];
+  min: number;
+  max: number;
+  /** Axis ticks to draw. */
+  ticks: number[];
+  /** Names of the two values, e.g. ["Before", "After"]. */
+  legend: [string, string];
+  /** Unit appended to formatted values, e.g. " s". */
+  unit?: string;
+  /** Decimal places for labels. */
+  decimals?: number;
+  /** Header for the label column of the data table. */
+  labelHeader?: string;
+}
+
+const {
+  title, subtitle, source, rows, min, max, ticks, legend,
+  unit = "", decimals = 0, labelHeader = "",
+} = Astro.props;
+const pos = (v: number) => ((v - min) / (max - min)) * 100;
+const f = (v: number) =>
+  v.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + unit;
+---
+
+<Figure
+  title={title}
+  subtitle={subtitle}
+  source={source}
+  table={{
+    headers: [labelHeader, legend[0], legend[1]],
+    rows: rows.map((r) => [r.label, f(r.from), f(r.to)]),
+    numeric: [1, 2],
+  }}
+>
+  <div class="mb-5 flex flex-wrap gap-4 text-xs text-[color:var(--viz-text-2)]">
+    <span class="inline-flex items-center gap-2">
+      <span class="viz-mark inline-block h-3 w-3 rounded-full" style="background:var(--viz-1-soft)" />
+      {legend[0]}
+    </span>
+    <span class="inline-flex items-center gap-2">
+      <span class="viz-mark inline-block h-3 w-3 rounded-full" style="background:var(--viz-1)" />
+      {legend[1]}
+    </span>
+  </div>
+
+  <ul class="flex flex-col gap-5" role="list">
+    {
+      rows.map((r) => {
+        const a = pos(r.from);
+        const b = pos(r.to);
+        const lo = Math.min(a, b);
+        const hi = Math.max(a, b);
+        return (
+          <li class="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,9rem)_1fr] sm:items-center sm:gap-4">
+            <span class="text-sm text-[color:var(--viz-text-2)]">{r.label}</span>
+            <div
+              class="viz-hit relative h-8"
+              tabindex="0"
+              aria-label={`${r.label}: ${legend[0]} ${f(r.from)}, ${legend[1]} ${f(r.to)}`}
+            >
+              <div class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2" style="background:var(--viz-grid)" />
+              <div
+                class="absolute top-1/2 h-0.5 -translate-y-1/2"
+                style={`left:${lo}%;width:${hi - lo}%;background:var(--viz-1-soft)`}
+              />
+              <span
+                class="viz-mark absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                style={`left:${a}%;background:var(--viz-1-soft);box-shadow:0 0 0 2px var(--viz-card)`}
+              />
+              <span
+                class="viz-mark absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                style={`left:${b}%;background:var(--viz-1);box-shadow:0 0 0 2px var(--viz-card)`}
+              />
+              <span
+                class="absolute -top-1 -translate-x-1/2 text-xs font-medium text-[color:var(--viz-text)]"
+                style={`left:${b}%`}
+              >
+                {f(r.to)}
+              </span>
+              <span class="viz-tip" aria-hidden="true">
+                {f(r.from)} → {f(r.to)}
+              </span>
+            </div>
+          </li>
+        );
+      })
+    }
+  </ul>
+
+  <div class="mt-2 grid grid-cols-1 sm:grid-cols-[minmax(0,9rem)_1fr] sm:gap-4" aria-hidden="true">
+    <span />
+    <div class="relative h-4 text-[11px] tabular-nums text-[color:var(--viz-text-3)]">
+      {ticks.map((tk) => (
+        <span class="absolute -translate-x-1/2 whitespace-nowrap" style={`left:${pos(tk)}%`}>{f(tk)}</span>
+      ))}
+    </div>
+  </div>
+</Figure>

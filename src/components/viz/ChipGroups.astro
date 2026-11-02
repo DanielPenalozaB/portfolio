@@ -1,0 +1,50 @@
+---
+/**
+ * Groups of short items (tables, routes, content types) with a count per group.
+ * Not a chart: the structure is the information, so the items are listed.
+ */
+import Figure from "./Figure.astro";
+
+interface Group {
+  name: string;
+  items: string[];
+  note?: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  source?: string;
+  groups: Group[];
+  /** Render items as code (e.g. table names). */
+  code?: boolean;
+}
+
+const { title, subtitle, source, groups, code = false } = Astro.props;
+---
+
+<Figure title={title} subtitle={subtitle} source={source}>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    {
+      groups.map((g) => (
+        <section class="flex flex-col gap-2 rounded-xl px-4 py-3" style="background:var(--viz-surface);border:1px solid var(--viz-border)">
+          <div class="flex items-baseline justify-between gap-3">
+            <span class="text-sm font-semibold text-[color:var(--viz-text)]">{g.name}</span>
+            <span class="text-xs tabular-nums text-[color:var(--viz-text-3)]">{g.items.length}</span>
+          </div>
+          {g.note && <span class="text-xs text-[color:var(--viz-text-2)]">{g.note}</span>}
+          <ul class="flex flex-wrap gap-1.5" role="list">
+            {g.items.map((it) => (
+              <li
+                class={`rounded-md px-2 py-0.5 text-xs text-[color:var(--viz-text-2)] ${code ? "font-mono" : ""}`}
+                style="background:var(--viz-track)"
+              >
+                {it}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</Figure>

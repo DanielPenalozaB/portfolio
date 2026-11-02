@@ -1,0 +1,62 @@
+---
+/**
+ * A formula as a worked example: each factor is a card with its value, joined by
+ * operators, ending in the result. Optional derived outputs below.
+ */
+import Figure from "./Figure.astro";
+
+interface Term {
+  label: string;
+  value: string;
+  note?: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  source?: string;
+  terms: Term[];
+  operator?: string;
+  result: Term;
+  derived?: Term[];
+}
+
+const { title, subtitle, source, terms, operator = "×", result, derived = [] } = Astro.props;
+---
+
+<Figure title={title} subtitle={subtitle} source={source}>
+  <div class="flex flex-col flex-wrap items-stretch gap-2 sm:flex-row sm:items-center">
+    {
+      terms.map((t, i) => (
+        <>
+          <div class="flex flex-1 flex-col gap-0.5 rounded-xl px-3 py-2.5" style="background:var(--viz-surface);border:1px solid var(--viz-border)">
+            <span class="text-[11px] uppercase tracking-wide text-[color:var(--viz-text-3)]">{t.label}</span>
+            <span class="text-lg font-semibold text-[color:var(--viz-text)]">{t.value}</span>
+            {t.note && <span class="text-xs text-[color:var(--viz-text-2)]">{t.note}</span>}
+          </div>
+          <span class="self-center text-lg text-[color:var(--viz-text-3)]" aria-hidden="true">
+            {i < terms.length - 1 ? operator : "="}
+          </span>
+        </>
+      ))
+    }
+    <div class="flex flex-col gap-0.5 rounded-xl px-4 py-2.5" style="background:var(--viz-surface);border:1px solid var(--viz-border);border-left:3px solid var(--viz-1)">
+      <span class="text-[11px] uppercase tracking-wide text-[color:var(--viz-text-3)]">{result.label}</span>
+      <span class="text-2xl font-semibold text-[color:var(--viz-text)]">{result.value}</span>
+      {result.note && <span class="text-xs text-[color:var(--viz-text-2)]">{result.note}</span>}
+    </div>
+  </div>
+  {
+    derived.length > 0 && (
+      <dl class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+        {derived.map((d) => (
+          <div class="flex flex-col gap-0.5 rounded-xl px-3 py-2.5" style="background:var(--viz-surface)">
+            <dt class="text-xs text-[color:var(--viz-text-2)]">{d.label}</dt>
+            <dd class="text-base font-semibold text-[color:var(--viz-text)]">{d.value}</dd>
+            {d.note && <dd class="text-[11px] text-[color:var(--viz-text-3)]">{d.note}</dd>}
+          </div>
+        ))}
+      </dl>
+    )
+  }
+</Figure>

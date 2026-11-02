@@ -1,0 +1,72 @@
+---
+/**
+ * Tall segmented bar: one whole split into <= 3 parts, read at a glance.
+ * Categorical slots in fixed order (--viz-1, --viz-2, --viz-3), 2px surface gaps,
+ * the share printed inside a block only when it fits; legend lists names only.
+ */
+import Figure from "./Figure.astro";
+
+interface Part {
+  label: string;
+  value: number;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  source?: string;
+  parts: Part[];
+  /** Headers for the data table: [part, amount, share]. */
+  headers?: [string, string, string];
+}
+
+const { title, subtitle, source, parts, headers = ["", "", "%"] } = Astro.props;
+if (parts.length > 3) throw new Error("SegmentedBar supports at most 3 parts (validated palette).");
+const total = parts.reduce((s, p) => s + p.value, 0);
+const colors = ["var(--viz-1)", "var(--viz-2)", "var(--viz-3)"];
+const share = (v: number) => (total ? (v / total) * 100 : 0);
+---
+
+<Figure
+  title={title}
+  subtitle={subtitle}
+  source={source}
+  table={{
+    headers,
+    rows: parts.map((p) => [p.label, p.value.toLocaleString(), `${share(p.value).toFixed(0)}%`]),
+    numeric: [1, 2],
+  }}
+>
+  <div class="flex h-7 w-full gap-[2px]" role="img" aria-label={parts.map((p) => `${p.label}: ${p.value} (${share(p.value).toFixed(0)}%)`).join(", ")}>
+    {
+      parts.map((p, i) => {
+        const s = share(p.value);
+        return (
+          <div
+            class="viz-mark viz-hit relative flex h-full items-center rounded-[4px] px-2"
+            style={`flex:${p.value} 1 0;background:${colors[i]}`}
+            tabindex="0"
+            aria-label={`${p.label}: ${p.value}`}
+          >
+            {s >= 12 && (
+              <span class="text-xs font-semibold text-white">{p.value.toLocaleString()}</span>
+            )}
+            <span class="viz-tip" aria-hidden="true">
+              {p.label}: {p.value.toLocaleString()} ({s.toFixed(0)}%)
+            </span>
+          </div>
+        );
+      })
+    }
+  </div>
+  <ul class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-[color:var(--viz-text-2)]" role="list">
+    {
+      parts.map((p, i) => (
+        <li class="inline-flex items-center gap-2">
+          <span class="viz-mark inline-block h-3 w-3 rounded-[3px]" style={`background:${colors[i]}`} />
+          {p.label}
+        </li>
+      ))
+    }
+  </ul>
+</Figure>

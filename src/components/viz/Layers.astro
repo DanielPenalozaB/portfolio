@@ -1,0 +1,71 @@
+---
+/**
+ * Layered architecture diagram: each layer is a row of boxes, and an arrow with
+ * an optional label connects each layer to the next. Boxes marked `accent`
+ * get the teal edge (the part the reader should focus on); `muted` boxes are
+ * optional or external pieces drawn with a dashed border.
+ */
+import Figure from "./Figure.astro";
+
+interface Node {
+  title: string;
+  text?: string;
+  accent?: boolean;
+  muted?: boolean;
+}
+
+interface Layer {
+  label?: string;
+  nodes: Node[];
+  /** Label on the arrow that leads to the next layer. */
+  link?: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  source?: string;
+  layers: Layer[];
+}
+
+const { title, subtitle, source, layers } = Astro.props;
+const cols = (n: number) =>
+  n >= 4 ? "sm:grid-cols-4" : n === 3 ? "sm:grid-cols-3" : n === 2 ? "sm:grid-cols-2" : "sm:grid-cols-1";
+---
+
+<Figure title={title} subtitle={subtitle} source={source}>
+  <div class="flex flex-col">
+    {
+      layers.map((layer, i) => (
+        <>
+          <section class="flex flex-col gap-2">
+            {layer.label && (
+              <span class="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--viz-text-3)]">
+                {layer.label}
+              </span>
+            )}
+            <div class={`grid grid-cols-1 gap-2 ${cols(layer.nodes.length)}`}>
+              {layer.nodes.map((n) => (
+                <div
+                  class="flex flex-col gap-1 rounded-xl px-4 py-3"
+                  style={`background:var(--viz-surface);border:1px ${n.muted ? "dashed" : "solid"} var(--viz-border);${n.accent ? "border-left:3px solid var(--viz-1);" : ""}`}
+                >
+                  <span class="text-sm font-semibold text-[color:var(--viz-text)]">{n.title}</span>
+                  {n.text && <span class="text-xs text-[color:var(--viz-text-2)]">{n.text}</span>}
+                </div>
+              ))}
+            </div>
+          </section>
+          {i < layers.length - 1 && (
+            <div class="flex items-center gap-2 py-2 pl-4" aria-hidden={layer.link ? undefined : "true"}>
+              <svg width="16" height="22" viewBox="0 0 16 22" fill="none" aria-hidden="true">
+                <path d="M8 2v16m0 0-5-5m5 5 5-5" stroke="var(--viz-1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              {layer.link && <span class="text-xs text-[color:var(--viz-text-3)]">{layer.link}</span>}
+            </div>
+          )}
+        </>
+      ))
+    }
+  </div>
+</Figure>

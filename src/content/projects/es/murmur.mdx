@@ -1,0 +1,190 @@
+---
+title: "Murmur"
+description: "Una grabadora de reuniones local para macOS. Transcribe las llamadas en el propio equipo con Whisper, reconoce a quién habla por su voz y escribe notas, decisiones y tareas en Markdown, con un LLM local o tu propia clave de API."
+image: "/images/projects/murmur/front.png"
+tags: ["Rust", "Tauri", "Whisper", "macOS"]
+order: 1
+url: "/es/projects/murmur"
+repo: "https://github.com/DanielPenalozaB/murmur"
+---
+
+import StatGrid from "../../../components/viz/StatGrid.astro";
+import Gallery from "../../../components/viz/Gallery.astro";
+import Flow from "../../../components/viz/Flow.astro";
+import Layers from "../../../components/viz/Layers.astro";
+import BarChart from "../../../components/viz/BarChart.astro";
+import Timeline from "../../../components/viz/Timeline.astro";
+import Dumbbell from "../../../components/viz/Dumbbell.astro";
+import RangeChart from "../../../components/viz/RangeChart.astro";
+import liveLight from "../../../assets/images/projects/murmur/live-light.png";
+import liveDark from "../../../assets/images/projects/murmur/live-dark.png";
+import notesLight from "../../../assets/images/projects/murmur/notes-light.png";
+import notesDark from "../../../assets/images/projects/murmur/notes-dark.png";
+import actionsLight from "../../../assets/images/projects/murmur/actions-light.png";
+import actionsDark from "../../../assets/images/projects/murmur/actions-dark.png";
+import speakersLight from "../../../assets/images/projects/murmur/speakers-light.png";
+import speakersDark from "../../../assets/images/projects/murmur/speakers-dark.png";
+import libraryLight from "../../../assets/images/projects/murmur/library-light.png";
+import libraryDark from "../../../assets/images/projects/murmur/library-dark.png";
+
+## Resumen
+
+Murmur graba y transcribe reuniones de Teams, Google Meet, Slack y Zoom, todo dentro de tu Mac. La transcripción corre en el equipo con Whisper. Los resúmenes y las preguntas en vivo usan por defecto un modelo Qwen local a través de Ollama, o tu propia clave de Claude o Gemini si eliges eso para una sesión. El audio nunca sale del equipo.
+
+La idea es tener notas de las reuniones sin subir las llamadas al servidor de nadie. Es una aplicación publicada que se actualiza sola.
+
+<StatGrid
+  stats={[
+    { value: "4", label: "Versiones publicadas", note: "Del 28 de oct. al 2 de nov. de 2026" },
+    { value: "38", label: "Pull requests integrados" },
+    { value: "~770 MB", label: "Modelos de voz", note: "Se descargan una vez y corren en el equipo" },
+    { value: "0 bytes", label: "Audio enviado", note: "Los LLM en la nube solo ven texto, y solo si lo eliges" },
+  ]}
+/>
+
+## Qué hace
+
+- Muestra una transcripción en vivo de tu micrófono y de la llamada, incluso en reuniones que cambian de idioma, y responde preguntas sobre la reunión mientras ocurre.
+- Escribe las notas cuando termina la reunión: un resumen, las decisiones, las tareas y las preguntas abiertas, cada una enlazada al momento en que se dijo, junto con la grabación para volver a escuchar cualquier momento. Cada sesión es un archivo Markdown en la carpeta que elijas, listo para Obsidian o cualquier editor.
+- Muestra una tarjeta y una notificación cuando alguien menciona tu nombre o te pregunta algo. ⌃⌥M marca un momento y ⌃⌥N agrega una nota rápida sin salir de la llamada.
+- Reúne las tareas de todas las reuniones en una sola lista, con las tuyas primero y las vencidas marcadas. Al tachar una, también se tacha en las notas de esa reunión.
+- Reconoce a quién habla por su voz. Nombras a alguien una vez y Murmur sugiere su nombre en las reuniones siguientes, y avisa cuando un nombre no coincide con una voz.
+- Detecta cuando Teams, Slack, Zoom o una llamada en el navegador empieza a usar el micrófono y ofrece grabar. No graba nada hasta que lo aceptas.
+- Busca en todas las reuniones, organizadas en cuadernos.
+
+<Gallery
+  title="La aplicación"
+  subtitle="Capturas del modo de vista previa de la aplicación. Siguen el tema claro u oscuro de este sitio."
+  shots={[
+    { src: liveLight, dark: liveDark, alt: "Grabando una reunión: transcripción en vivo a la izquierda y preguntas respondidas a partir de ella a la derecha", caption: "Transcripción en vivo, con preguntas respondidas mientras ocurre la reunión", wide: true },
+    { src: notesLight, dark: notesDark, alt: "Las notas de una reunión con asistentes, resumen y decisiones", caption: "Notas escritas al terminar la reunión" },
+    { src: actionsLight, dark: actionsDark, alt: "Tareas de varias reuniones agrupadas por fecha de vencimiento", caption: "Las tareas de todas las reuniones" },
+    { src: speakersLight, dark: speakersDark, alt: "El directorio de hablantes: personas que Murmur reconoce por su voz", caption: "Hablantes reconocidos por su voz" },
+    { src: libraryLight, dark: libraryDark, alt: "Todas las notas, con una vista previa de la reunión seleccionada", caption: "Todas las reuniones, con búsqueda" },
+  ]}
+/>
+
+## Cómo funciona
+
+<Flow
+  title="De la llamada a tus notas"
+  subtitle="Todo hasta las notas corre en el Mac. Solo el último paso puede usar un LLM en la nube, y solo si lo eliges."
+  steps={[
+    { title: "Captura", text: "Un programa en Swift graba el micrófono y, mediante un process tap de Core Audio, la llamada. Cada canal llega como audio mono a 16 kHz." },
+    { title: "Detección de voz", text: "earshot, un detector de voz en Rust puro, corta el audio en fragmentos tras 600 ms de silencio, de 15 s como máximo." },
+    { title: "Transcripción", text: "whisper.cpp ejecuta large-v3-turbo en la GPU mediante Metal, en un hilo aparte." },
+    { title: "Sesión en vivo", text: "Un actor de tokio agrega cada línea a la transcripción en memoria y en SQLite, y la envía a la interfaz." },
+    { title: "Separar hablantes", text: "Al detener la grabación, sherpa-onnx separa el otro lado de la llamada en voces individuales." },
+    { title: "Escribir las notas", text: "El LLM escribe el resumen, las decisiones y las tareas, que se guardan en Markdown en tu carpeta." },
+  ]}
+/>
+
+La identidad de quien habla funciona en dos capas. Durante la llamada la define el canal: tu micrófono se etiqueta «Me» y el audio del sistema «Them». Al terminar, los embeddings de voz separan «Them» en voces individuales que puedes nombrar, y Murmur recuerda cada voz para las reuniones siguientes.
+
+<Layers
+  title="Cómo está dividido el código"
+  subtitle="Los crates solo dependen de los tipos del núcleo, así el audio, la transcripción y los prompts se prueban con cargo test, sin Tauri."
+  layers={[
+    { label: "Interfaz", nodes: [{ title: "Interfaz en React 19", text: "TypeScript, Vite, Tailwind v4, TanStack Query, Zustand" }], link: "Comandos IPC tipados" },
+    { label: "Aplicación", nodes: [{ title: "src-tauri", text: "Comandos de Tauri 2, el actor de sesión y el estado. Es el único código que conoce Tauri.", accent: true }, { title: "audiocap", text: "Programa en Swift que captura el micrófono y el audio del sistema", muted: true }], link: "Usa" },
+    { label: "Crates", nodes: [{ title: "murmur-audio", text: "Captura, remuestreo, detección de voz" }, { title: "murmur-stt", text: "Whisper y separación de hablantes" }, { title: "murmur-llm", text: "Proveedores, prompts, streaming" }, { title: "murmur-store", text: "Exportación a Markdown, índice SQLite con búsqueda de texto completo" }], link: "Todos dependen solo de" },
+    { label: "Núcleo", nodes: [{ title: "murmur-core", text: "Tipos del dominio como Session, Segment y Speaker. Sin I/O.", accent: true }] },
+  ]}
+/>
+
+| Tema                   | Elección                                                                |
+| ---------------------- | ----------------------------------------------------------------------- |
+| Aplicación             | Tauri 2                                                                 |
+| Interfaz               | React 19, TypeScript, Vite, Tailwind CSS v4, TanStack Query, Zustand    |
+| Captura de audio       | Programa en Swift con AVAudioEngine y process taps de Core Audio (macOS 14.4+) |
+| Detección de voz       | `earshot`, en Rust puro                                                 |
+| Transcripción          | `whisper-rs` (whisper.cpp sobre Metal), large-v3-turbo                  |
+| Separación de hablantes | `sherpa-onnx` con segmentación de pyannote y embeddings de NeMo TitaNet |
+| LLMs                   | Ollama, Anthropic y Gemini, con respuestas en streaming por SSE con `reqwest` |
+| Almacenamiento         | Archivos Markdown y un índice SQLite con búsqueda de texto completo (FTS5) |
+| Secretos               | El llavero de macOS; las claves de API nunca llegan a la interfaz web   |
+
+<BarChart
+  title="Lenguajes del repositorio"
+  subtitle="Porcentaje del código por bytes, según GitHub."
+  source="Estadísticas de lenguajes de GitHub para DanielPenalozaB/murmur, 2 de noviembre de 2026"
+  headers={["Lenguaje", "Porcentaje"]}
+  max={100}
+  highlight={["Rust"]}
+  rows={[
+    { label: "Rust", value: 54.6, display: "54,6%" },
+    { label: "TypeScript", value: 41.5, display: "41,5%" },
+    { label: "Swift", value: 2.9, display: "2,9%" },
+    { label: "CSS", value: 0.5, display: "0,5%" },
+    { label: "Shell", value: 0.4, display: "0,4%" },
+  ]}
+/>
+
+## Problemas que tuve que resolver
+
+### ¿Demasiados hablantes?
+
+Una reunión temprana de 21 minutos salió con más de 49 hablantes, y parecía que la separación estaba dividiendo a las personas. Antes de ajustar nada, comparé reuniones recientes con su número real de asistentes. La separación actual en realidad encuentra menos hablantes que asistentes:
+
+<Dumbbell
+  title="Hablantes encontrados frente a personas en la reunión"
+  subtitle="Tres standups recientes. El número de asistentes es aproximado."
+  legend={["Hablantes encontrados", "Asistentes"]}
+  labelHeader="Reunión"
+  min={0}
+  max={20}
+  ticks={[0, 5, 10, 15, 20]}
+  rows={[
+    { label: "Standup 1", from: 15, to: 19 },
+    { label: "Standup 2", from: 12, to: 15 },
+    { label: "Standup 3", from: 12, to: 16 },
+  ]}
+/>
+
+Además, cada par de hablantes distintos tuvo menos de 0,62 de similitud, mientras que una división real de una misma persona da entre 0,83 y 0,92, así que los dos casos no se cruzan. Las reuniones con números enormes se habían transcrito con una versión anterior. La solución fue volver a transcribirlas, no cambiar los umbrales.
+
+### Revisar los nombres contra las voces
+
+Cuando la aplicación recuerda a las personas por su voz, un nombre equivocado puede propagarse. La pantalla de hablantes ahora revisa los nombres con dos reglas: si dos hablantes con el mismo nombre se parecen menos de un 50%, probablemente son dos personas, y si dos voces guardadas se parecen un 60% o más pero nunca coincidieron en una reunión, puede que sean una sola. Al corregir un nombre, la voz guardada se reconstruye con los hablantes que quedan bajo ese nombre.
+
+<RangeChart
+  title="Similitud de voz: dónde cae cada caso"
+  subtitle="Similitud entre dos embeddings de voz, de 0 (sin relación) a 1 (idénticos)."
+  headers={["Caso o regla", "Similitud"]}
+  min={0}
+  max={1}
+  ticks={[0, 0.25, 0.5, 0.75, 1]}
+  bands={[
+    { from: 0, to: 0.62, label: "Dos personas distintas (medido)" },
+    { from: 0.83, to: 0.92, label: "Una persona dividida en dos (medido)" },
+  ]}
+  markers={[
+    { at: 0.5, label: "Regla de mismo nombre" },
+    { at: 0.6, label: "Regla de voces parecidas" },
+  ]}
+/>
+
+### Un micrófono en silencio en Teams
+
+Cuatro grabaciones salieron con la pista del micrófono llena de ceros durante toda la llamada, mientras el audio de la llamada estaba bien. El micrófono era un audífono Bluetooth, y el mismo programa lo grababa sin problema fuera de una llamada; la causa probable es que silenciarse en Teams se transmite al audífono. Murmur nunca se silencia por su cuenta, así que hice que registre los tramos de silencio digital junto con el dispositivo, para detectarlo fácil la próxima vez.
+
+### Registros que no llegaban a ningún lado
+
+Depurando, descubrí que el tracing de la aplicación no tenía ningún suscriptor, así que todas las advertencias se perdían. Ahora las advertencias, los errores y los panics van a un archivo en `~/Library/Logs` que rota cada 1 MB.
+
+## Versiones
+
+<Timeline
+  title="Historial de versiones"
+  source="Releases de GitHub de DanielPenalozaB/murmur"
+  items={[
+    { date: "28 oct. 2026", title: "v0.2.0", text: "Primera versión pública en GitHub." },
+    { date: "31 oct. 2026", title: "v0.3.0", text: "Detección de reuniones, grabadora en la barra de menú, sugerencias de nombre para voces conocidas, gestión de sesiones y carpetas, revisión de permisos y actualizaciones dentro de la aplicación." },
+    { date: "2 nov. 2026", title: "v0.4.0", text: "Reproducción de grabaciones, tareas de todas las reuniones, acciones en lote, avisos cuando alguien dice tu nombre y atajos para marcar momentos." },
+    { date: "2 nov. 2026", title: "v0.4.1", text: "Corrige un cierre inesperado al salir, y Whisper ahora se carga solo mientras se graba." },
+  ]}
+/>
+
+Murmur se distribuye como un `.dmg` para Macs con Apple silicon y macOS 14.4 o posterior. En el primer uso descarga sus modelos de voz y pide acceso al micrófono y al audio del sistema. Las versiones se construyen con un workflow de GitHub Actions a partir de una etiqueta de versión, y desde la versión 0.3.0 la aplicación se actualiza sola con actualizaciones firmadas. Todavía no está notarizada por Apple.
+
+El código es de fuente disponible bajo la licencia PolyForm Shield.

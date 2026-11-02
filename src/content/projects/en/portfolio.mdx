@@ -8,9 +8,23 @@ repo: "https://github.com/danielpenalozab/portfolio"
 url: "/projects/portfolio"
 ---
 
+import StatGrid from "../../../components/viz/StatGrid.astro";
+import Flow from "../../../components/viz/Flow.astro";
+import Dumbbell from "../../../components/viz/Dumbbell.astro";
+import BarChart from "../../../components/viz/BarChart.astro";
+
 ## Overview
 
 This portfolio shows what I build and how I build it. I designed it from scratch in Figma and built it with Astro's island architecture. If a site claims to care about performance and design, it should prove it, so I held this one to that standard.
+
+<StatGrid
+  stats={[
+    { value: "100", label: "PageSpeed score in all four categories", note: "Mobile and desktop" },
+    { value: "398 → 131 KB", label: "Homepage HTML", note: "After moving inline SVGs and CSS out" },
+    { value: "26 → 2", label: "npm security advisories", note: "Both left are moderate, build-time only" },
+  ]}
+/>
+
 
 ## The problem
 
@@ -107,6 +121,17 @@ Moving from Astro 5 to 7 crossed two major versions, and Astro 7 removes whitesp
 
 The site builds into a multi-stage Docker image served by Nginx and deploys with Coolify. Nginx sends security headers on every response (`nosniff`, a referrer policy, frame blocking, a permissions policy and a minimal content security policy), caches hashed assets for a year, and makes HTML revalidate on every visit so deploys show up immediately. Every pull request runs type checking and a production build in GitHub Actions.
 
+<Flow
+  title="From a pull request to production"
+  steps={[
+    { title: "Pull request", text: "GitHub Actions runs astro check and a production build." },
+    { title: "Merge", text: "Squash-merged into master once CI is green." },
+    { title: "Build", text: "Coolify builds the multi-stage image: Node 22 builds the site, Nginx serves it." },
+    { title: "Serve", text: "Nginx adds security headers, long-lived caching for hashed assets, and no-cache HTML." },
+  ]}
+/>
+
+
 ## Performance
 
 PageSpeed Insights on the homepage, November 2, 2026:
@@ -117,6 +142,68 @@ PageSpeed Insights on the homepage, November 2, 2026:
 | Accessibility  | 100    | 100     |
 | Best Practices | 100    | 100     |
 | SEO            | 100    | 100     |
+
+All of that came from one day of fixes. These are the scores that changed between the first PageSpeed run, before the audit, and the last one:
+
+<Dumbbell
+  title="PageSpeed scores before and after the fixes"
+  subtitle="Only the categories that changed. SEO was already 100 on both."
+  source="PageSpeed Insights runs on November 2, 2026, at 12:58 PM and 2:03 PM"
+  legend={["Before", "After"]}
+  labelHeader="Score"
+  min={90}
+  max={100}
+  ticks={[90, 95, 100]}
+  rows={[
+    { label: "Mobile performance", from: 96, to: 100 },
+    { label: "Mobile accessibility", from: 96, to: 100 },
+    { label: "Mobile best practices", from: 96, to: 100 },
+    { label: "Desktop performance", from: 99, to: 100 },
+    { label: "Desktop accessibility", from: 96, to: 100 },
+  ]}
+/>
+
+<Dumbbell
+  title="Paint times before and after"
+  subtitle="Lower is better. First Contentful Paint (FCP) and Largest Contentful Paint (LCP)."
+  source="PageSpeed Insights runs on November 2, 2026, at 12:58 PM and 2:03 PM"
+  legend={["Before", "After"]}
+  labelHeader="Metric"
+  min={0}
+  max={2.5}
+  ticks={[0, 0.5, 1, 1.5, 2, 2.5]}
+  unit=" s"
+  decimals={1}
+  rows={[
+    { label: "Mobile FCP", from: 1.6, to: 0.9 },
+    { label: "Mobile LCP", from: 2.0, to: 1.7 },
+    { label: "Desktop FCP", from: 0.4, to: 0.3 },
+    { label: "Desktop LCP", from: 0.7, to: 0.6 },
+  ]}
+/>
+
+<BarChart
+  title="Homepage HTML size"
+  subtitle="Three decorative SVGs (208 KB) and the inlined CSS moved into cacheable files."
+  headers={["Build", "Size"]}
+  highlight={["After the audit"]}
+  rows={[
+    { label: "Before the audit", value: 398, display: "398 KB" },
+    { label: "After the audit", value: 131, display: "131 KB" },
+  ]}
+/>
+
+<BarChart
+  title="npm security advisories"
+  headers={["Stage", "Advisories"]}
+  highlight={["After Astro 7"]}
+  rows={[
+    { label: "Before the audit", value: 26 },
+    { label: "After npm audit fix", value: 8 },
+    { label: "After Astro 7", value: 2 },
+  ]}
+/>
+
 
 ## What I learned
 

@@ -1,0 +1,57 @@
+---
+/**
+ * A pipeline: steps connected by arrows. Runs left to right when it fits
+ * (<= 4 steps, sm and up) and top to bottom otherwise, so it never squeezes.
+ * A step can carry a value (e.g. a count) shown as its headline.
+ */
+import Figure from "./Figure.astro";
+
+interface Step {
+  title: string;
+  text?: string;
+  value?: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  source?: string;
+  steps: Step[];
+  /** Force a direction. Default: row when there are 4 steps or fewer. */
+  direction?: "row" | "column";
+}
+
+const { title, subtitle, source, steps, direction } = Astro.props;
+const row = (direction ?? (steps.length <= 4 ? "row" : "column")) === "row";
+---
+
+<Figure title={title} subtitle={subtitle} source={source}>
+  <ol
+    class={row
+      ? "flex flex-col items-stretch gap-2 sm:flex-row sm:items-stretch"
+      : "flex flex-col items-stretch gap-2"}
+    role="list"
+  >
+    {
+      steps.map((s, i) => (
+        <>
+          <li class="flex flex-1 flex-col gap-1 rounded-xl border px-4 py-3" style="border-color:var(--viz-border);background:var(--viz-surface)">
+            <span class="text-[11px] font-semibold uppercase tracking-wide text-[color:var(--viz-text-3)]">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            {s.value && <span class="text-2xl font-semibold text-[color:var(--viz-text)]">{s.value}</span>}
+            <span class="text-sm font-semibold text-[color:var(--viz-text)]">{s.title}</span>
+            {s.text && <span class="text-sm text-[color:var(--viz-text-2)]">{s.text}</span>}
+          </li>
+          {i < steps.length - 1 && (
+            <li aria-hidden="true" class={row ? "flex items-center justify-center sm:px-0" : "flex justify-center"}>
+              <svg width="20" height="20" viewBox="0 0 20 20" class={row ? "rotate-90 sm:rotate-0" : "rotate-90"} fill="none">
+                <path d="M4 10h11m0 0-4-4m4 4-4 4" stroke="var(--viz-1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </li>
+          )}
+        </>
+      ))
+    }
+  </ol>
+</Figure>

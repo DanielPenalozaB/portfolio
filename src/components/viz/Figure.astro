@@ -1,0 +1,84 @@
+---
+/**
+ * Card wrapper for every case-study visual: title, optional subtitle, the visual,
+ * an optional source line, and an optional "view the data" table (the accessible
+ * twin of the chart, so no value is reachable only by hovering).
+ */
+import { getLocaleFromUrl, useTranslations } from "../../i18n";
+
+export interface DataTable {
+  headers: string[];
+  rows: (string | number)[][];
+  /** Column indexes that hold numbers (right-aligned). */
+  numeric?: number[];
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  source?: string;
+  table?: DataTable;
+  /** Extra classes for the body (e.g. spacing). */
+  class?: string;
+}
+
+const { title, subtitle, source, table, class: bodyClass } = Astro.props;
+const t = useTranslations(getLocaleFromUrl(Astro.url));
+const numeric = new Set(table?.numeric ?? []);
+---
+
+<figure class="viz viz-figure not-prose my-10 rounded-2xl p-5 sm:p-6">
+  {
+    (title || subtitle) && (
+      <figcaption class="mb-5 flex flex-col gap-1">
+        {title && (
+          <span class="text-base font-semibold text-[color:var(--viz-text)]">{title}</span>
+        )}
+        {subtitle && (
+          <span class="text-sm text-[color:var(--viz-text-2)]">{subtitle}</span>
+        )}
+      </figcaption>
+    )
+  }
+  <div class={bodyClass}>
+    <slot />
+  </div>
+  {
+    source && (
+      <p class="mt-5 text-xs text-[color:var(--viz-text-3)]">
+        {t("viz.source")}: {source}
+      </p>
+    )
+  }
+  {
+    table && (
+      <details class="mt-4 text-sm text-[color:var(--viz-text-2)]">
+        <summary class="cursor-pointer select-none text-xs font-medium text-[color:var(--viz-text-3)] hover:text-[color:var(--viz-text)]">
+          {t("viz.viewData")}
+        </summary>
+        <div class="mt-3 overflow-x-auto">
+          <table class="viz-table">
+            <thead>
+              <tr>
+                {table.headers.map((h, i) => (
+                  <th scope="col" class={numeric.has(i) ? "num" : undefined}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {table.rows.map((row) => (
+                <tr>
+                  {row.map((cell, i) => (
+                    <td class={numeric.has(i) ? "num" : undefined}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    )
+  }
+</figure>
