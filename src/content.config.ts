@@ -1,4 +1,5 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
 const blog = defineCollection({
@@ -23,6 +24,8 @@ const projects = defineCollection({
 		description: z.string(),
 		image: z.string(),
 		tags: z.array(z.string()),
+		/** Display order; the first two render as featured cards. */
+		order: z.number().int(),
 		url: z.string().optional(),
 		repo: z.string().optional(),
 	}),

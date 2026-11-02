@@ -3,6 +3,7 @@ title: "Volo"
 description: "A gym companion app for building workout routines by body section, tracking nutrition, viewing exercise tutorials with targeted muscle groups, and recording weight progress over time."
 image: "/images/projects/volo/front.png"
 tags: ["Flutter", "FastAPI", "Python", "Mobile"]
+order: 4
 url: "/projects/volo"
 repo: ""
 ---

@@ -59,7 +59,6 @@ if (preloadLCP) {
   title={t("site.title")}
   href={new URL("rss.xml", Astro.site)}
 />
-<meta name="generator" content={Astro.generator} />
 
 {lcpImageUrl && (
   <link rel="preload" href={lcpImageUrl} as="image" type="image/webp" fetchpriority="high" />

@@ -3,6 +3,7 @@ title: "RecoAgua"
 description: "Plataforma educativa para el uso responsable del agua en Cali, Colombia. Incluye guías interactivas, gamificación con insignias y retos, calculadora de consumo hídrico, mapa interactivo con indicadores por zonas y un panel administrativo completo."
 image: "/images/projects/recoagua/front.png"
 tags: ["Next.js", "NestJS", "PostgreSQL", "Gamificación"]
+order: 2
 url: "/es/projects/recoagua"
 repo: "https://github.com/DanielPenalozaB/recoagua-fe"
 ---

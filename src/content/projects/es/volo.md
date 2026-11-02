@@ -3,6 +3,7 @@ title: "Volo"
 description: "App de gimnasio para crear rutinas por sección corporal, seguimiento nutricional, tutoriales de ejercicios con músculos objetivo y registro de progreso de peso a lo largo del tiempo."
 image: "/images/projects/volo/front.png"
 tags: ["Flutter", "FastAPI", "Python", "Mobile"]
+order: 4
 url: "/es/projects/volo"
 repo: ""
 ---
