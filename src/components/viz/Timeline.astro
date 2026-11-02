@@ -1,0 +1,39 @@
+---
+/** Vertical timeline of dated events; the last event is emphasized. */
+import Figure from "./Figure.astro";
+
+interface Item {
+  date: string;
+  title: string;
+  text?: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  source?: string;
+  items: Item[];
+}
+
+const { title, subtitle, source, items } = Astro.props;
+---
+
+<Figure title={title} subtitle={subtitle} source={source}>
+  <ol class="relative flex flex-col gap-6 pl-6" role="list">
+    <span class="absolute bottom-2 left-[5px] top-2 w-px" style="background:var(--viz-grid)" aria-hidden="true" />
+    {
+      items.map((it, i) => (
+        <li class="relative">
+          <span
+            class="viz-mark absolute -left-6 top-1 h-[11px] w-[11px] rounded-full"
+            style={`background:${i === items.length - 1 ? "var(--viz-1)" : "var(--viz-1-soft)"};box-shadow:0 0 0 2px var(--viz-card)`}
+            aria-hidden="true"
+          />
+          <p class="text-xs font-medium uppercase tracking-wide text-[color:var(--viz-text-3)]">{it.date}</p>
+          <p class="mt-0.5 text-sm font-semibold text-[color:var(--viz-text)]">{it.title}</p>
+          {it.text && <p class="mt-1 text-sm text-[color:var(--viz-text-2)]">{it.text}</p>}
+        </li>
+      ))
+    }
+  </ol>
+</Figure>

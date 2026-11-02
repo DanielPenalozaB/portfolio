@@ -1,0 +1,97 @@
+---
+/**
+ * Number line with labeled ranges (bands) and threshold markers. Bands use the
+ * categorical slots in fixed order; markers are hairlines with a label. A legend
+ * names each band, and the table lists every range and threshold.
+ */
+import Figure from "./Figure.astro";
+
+interface Band {
+  from: number;
+  to: number;
+  label: string;
+}
+
+interface Marker {
+  at: number;
+  label: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  source?: string;
+  min: number;
+  max: number;
+  ticks: number[];
+  bands: Band[];
+  markers?: Marker[];
+  /** Table headers: [item, range or value]. */
+  headers?: [string, string];
+  decimals?: number;
+}
+
+const {
+  title, subtitle, source, min, max, ticks, bands, markers = [],
+  headers = ["", ""], decimals = 2,
+} = Astro.props;
+const pos = (v: number) => ((v - min) / (max - min)) * 100;
+const f = (v: number) =>
+  v.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+const colors = ["var(--viz-2)", "var(--viz-1)", "var(--viz-3)"];
+---
+
+<Figure
+  title={title}
+  subtitle={subtitle}
+  source={source}
+  table={{
+    headers,
+    rows: [
+      ...bands.map((b) => [b.label, `${f(b.from)} – ${f(b.to)}`]),
+      ...markers.map((m) => [m.label, f(m.at)]),
+    ],
+  }}
+>
+  <ul class="mb-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-[color:var(--viz-text-2)]" role="list">
+    {
+      bands.map((b, i) => (
+        <li class="inline-flex items-center gap-2">
+          <span class="viz-mark inline-block h-3 w-3 rounded-[3px]" style={`background:${colors[i]}`} />
+          {b.label}
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="relative mx-2 h-28">
+    <div class="absolute inset-x-0 top-12 h-3 rounded-full" style="background:var(--viz-track)" />
+    {
+      bands.map((b, i) => (
+        <div
+          class="viz-mark viz-hit absolute top-12 h-3 rounded-[4px]"
+          style={`left:${pos(b.from)}%;width:${pos(b.to) - pos(b.from)}%;background:${colors[i]}`}
+          tabindex="0"
+          aria-label={`${b.label}: ${f(b.from)} – ${f(b.to)}`}
+        >
+          <span class="viz-tip" aria-hidden="true">{f(b.from)} – {f(b.to)}</span>
+        </div>
+      ))
+    }
+    {
+      markers.map((m, i) => (
+        <div class="absolute top-0 flex -translate-x-1/2 flex-col items-center" style={`left:${pos(m.at)}%`}>
+          <span class={`whitespace-nowrap text-[11px] text-[color:var(--viz-text-2)] ${i % 2 ? "translate-y-5" : ""}`}>
+            {m.label} · {f(m.at)}
+          </span>
+          <span class={`w-px ${i % 2 ? "mt-5 h-4" : "h-9"}`} style="background:var(--viz-text-3)" />
+        </div>
+      ))
+    }
+    <div class="absolute inset-x-0 top-[4.25rem] text-[11px] tabular-nums text-[color:var(--viz-text-3)]" aria-hidden="true">
+      {ticks.map((tk) => (
+        <span class="absolute -translate-x-1/2 whitespace-nowrap" style={`left:${pos(tk)}%`}>{f(tk)}</span>
+      ))}
+    </div>
+  </div>
+</Figure>

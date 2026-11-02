@@ -244,3 +244,101 @@ input {
     transition: none;
   }
 }
+
+/* ── Data visualization (project case studies) ─────────────────────────────
+   Categorical palette validated with the dataviz skill's validate_palette.js
+   (all checks pass) against the page surfaces: light #f5f5f4, dark #1c1917.
+   Single-series charts use --viz-1 only; --viz-muted is the de-emphasis gray. */
+.viz {
+  --viz-surface: #f5f5f4;
+  --viz-card: #fafaf9;
+  --viz-1: #00899e;
+  --viz-2: #d95926;
+  --viz-3: #6250d6;
+  --viz-1-soft: #9ccfd6;
+  --viz-muted: #a8a29e;
+  --viz-track: #e7e5e4;
+  --viz-grid: #e7e5e4;
+  --viz-border: #e7e5e4;
+  --viz-text: #292524;
+  --viz-text-2: #57534e;
+  --viz-text-3: #78716c;
+}
+.dark .viz {
+  --viz-surface: #1c1917;
+  --viz-card: #211d1b;
+  --viz-1: #1f9aaa;
+  --viz-2: #d95926;
+  --viz-3: #9085e9;
+  --viz-1-soft: #2d5f66;
+  --viz-muted: #57534e;
+  --viz-track: #292524;
+  --viz-grid: #322d2a;
+  --viz-border: #322d2a;
+  --viz-text: #f5f5f4;
+  --viz-text-2: #d6d3d1;
+  --viz-text-3: #a8a29e;
+}
+.viz-figure {
+  background: var(--viz-card);
+  border: 1px solid var(--viz-border);
+  color: var(--viz-text);
+}
+.viz-tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+  z-index: 20;
+  background: var(--viz-text);
+  color: var(--viz-surface);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+}
+.viz-hit:hover .viz-tip,
+.viz-hit:focus-visible .viz-tip {
+  opacity: 1;
+}
+.viz-hit:focus-visible {
+  outline: 2px solid var(--viz-1);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.viz-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+.viz-table th,
+.viz-table td {
+  text-align: left;
+  padding: 0.375rem 0.5rem;
+  border-bottom: 1px solid var(--viz-grid);
+}
+.viz-table th {
+  color: var(--viz-text-2);
+  font-weight: 600;
+}
+.viz-table td.num,
+.viz-table th.num {
+  text-align: right;
+}
+@media (forced-colors: active) {
+  .viz-mark {
+    forced-color-adjust: none;
+    border: 1px solid CanvasText;
+  }
+}
+
+/* Inline code: no literal backticks around it (Tailwind Typography adds them). */
+.prose-content :not(pre) > code::before,
+.prose-content :not(pre) > code::after {
+  content: none;
+}

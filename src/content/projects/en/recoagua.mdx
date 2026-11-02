@@ -1,0 +1,295 @@
+---
+title: "RecoAgua"
+description: "My Systems Engineering thesis: a web platform that helps households in Cali collect and use rainwater, with interactive guides, a rainwater calculator, a map of the city's rainfall zones and gamified progress."
+image: "/images/projects/recoagua/front.png"
+tags: ["Next.js", "NestJS", "PostgreSQL", "Gamification"]
+order: 3
+url: "/projects/recoagua"
+repo: "https://github.com/DanielPenalozaB/recoagua-fe"
+---
+
+import StatGrid from "../../../components/viz/StatGrid.astro";
+import Dumbbell from "../../../components/viz/Dumbbell.astro";
+import BarChart from "../../../components/viz/BarChart.astro";
+import Flow from "../../../components/viz/Flow.astro";
+import Layers from "../../../components/viz/Layers.astro";
+import Gallery from "../../../components/viz/Gallery.astro";
+import Formula from "../../../components/viz/Formula.astro";
+import SegmentedBar from "../../../components/viz/SegmentedBar.astro";
+import prototype from "../../../assets/images/projects/recoagua/prototype-figma.png";
+import screenGuides from "../../../assets/images/projects/recoagua/screen-guides.png";
+import screenCalculator from "../../../assets/images/projects/recoagua/screen-calculator.png";
+import screenMap from "../../../assets/images/projects/recoagua/screen-map.png";
+import screenProfile from "../../../assets/images/projects/recoagua/screen-profile.png";
+import screenAdmin from "../../../assets/images/projects/recoagua/screen-admin.png";
+import heatmap from "../../../assets/images/projects/recoagua/useberry-heatmap.png";
+import userFlow from "../../../assets/images/projects/recoagua/useberry-flow.png";
+
+## Overview
+
+RecoAgua was my Systems Engineering thesis at UNIAJC (Institución Universitaria Antonio José Camacho), built with Ismael Yate Calderón and directed by Beatriz E. Marín. It's a web platform that helps households in Cali, Colombia, collect rainwater and use it where drinking water isn't needed, like flushing toilets, washing clothes and cleaning.
+
+It supports households in four ways: interactive guides explain the topic, a calculator estimates how much rainwater a home could collect, a map shows the city's rainfall zones, and points, levels, badges and challenges keep people going. Administrators manage all of it from one panel.
+
+It's live at [recoagua.com](https://recoagua.com), and the code lives in two repositories: the [frontend](https://github.com/DanielPenalozaB/recoagua-fe) and the [backend](https://github.com/DanielPenalozaB/recoagua-be).
+
+<StatGrid
+  stats={[
+    { value: "410", label: "Households surveyed", note: "95% confidence, 5% margin of error" },
+    { value: "26", label: "Use cases modeled" },
+    { value: "113", label: "Documented tests", note: "All passing after fixes" },
+    { value: "15 / 15", label: "Usability participants who finished" },
+  ]}
+/>
+
+## The problem
+
+Cali's rivers get worse as they cross the city. Three of the four main rivers leave it with a water quality index rated "bad", and the city produces about half of the Cauca river's pollution. EMCALI's treatment plants take drinking water from those same rivers.
+
+<Dumbbell
+  title="Water quality index, entering vs. leaving Cali"
+  subtitle="From 0 to 1. Above 0.90 is good; 0.50 and below is bad."
+  source="DAGMA data reported by Cali Cómo Vamos (2025)"
+  legend={["Entering the city", "Leaving the city"]}
+  labelHeader="River"
+  min={0}
+  max={1}
+  ticks={[0, 0.25, 0.5, 0.75, 1]}
+  decimals={2}
+  rows={[
+    { label: "Cali", from: 0.87, to: 0.5 },
+    { label: "Meléndez", from: 0.68, to: 0.43 },
+    { label: "Cauca", from: 0.62, to: 0.45 },
+    { label: "Pance", from: 0.94, to: 0.91 },
+  ]}
+/>
+
+Before writing any code, we surveyed 410 households to see whether rainwater collection made sense locally.
+
+<StatGrid
+  stats={[
+    { value: "88%", label: "Depend on the municipal supply" },
+    { value: "32%", label: "Report service interruptions" },
+    { value: "82.9%", label: "Go online by phone" },
+    { value: "75.8%", label: "Have a low or mid-range phone" },
+  ]}
+  source="RecoAgua household survey, n = 410"
+/>
+
+<BarChart
+  title="What households use water for"
+  subtitle="Share of households; they could pick more than one use. All three work with rainwater."
+  source="RecoAgua household survey, n = 410"
+  headers={["Use", "Households"]}
+  max={100}
+  rows={[
+    { label: "Toilets", value: 72.7, display: "72.7%" },
+    { label: "Laundry", value: 65.4, display: "65.4%" },
+    { label: "Cleaning", value: 55.9, display: "55.9%" },
+  ]}
+/>
+
+<BarChart
+  title="How households store water today"
+  source="RecoAgua household survey, n = 410"
+  headers={["Storage", "Households"]}
+  max={100}
+  rows={[
+    { label: "Buckets", value: 56.6, display: "56.6%" },
+    { label: "No alternative storage", value: 19.5, display: "19.5%" },
+    { label: "Tanks", value: 12.2, display: "12.2%" },
+  ]}
+/>
+
+Most household water goes to uses where rainwater works fine, and many homes already store water, just informally. And 43.9% of households take no steps to save water at all. What people lacked was knowledge and tools. The phone numbers settled the format: a light, mobile-first web app.
+
+## How we built it
+
+We used ICONIX for the software, which goes from use cases to robustness diagrams to design, and ADDIE for the educational content.
+
+<Flow
+  title="From the survey to validation"
+  subtitle="Findings from testing fed back into requirements and design."
+  steps={[
+    { title: "Diagnosis", text: "Household survey of 410 homes" },
+    { title: "Requirements", text: "26 use cases and a 13-screen Figma prototype" },
+    { title: "Development", text: "ICONIX for the software, ADDIE for the guides" },
+    { title: "Verification", text: "113 tests documented following IEEE 829" },
+    { title: "Validation", text: "Usability study with 15 people and an exploratory session with 10" },
+  ]}
+/>
+
+| Layer      | Technology                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------ |
+| Frontend   | Next.js 16, React 19, TanStack Query and Table, React Hook Form with Zod, Tailwind CSS, Mapbox GL, Recharts |
+| Backend    | NestJS, TypeORM, Swagger docs, rate limiting, email with Resend                                  |
+| Database   | PostgreSQL                                                                                       |
+| Security   | bcrypt for passwords, 1-hour JWTs with renewal, role guards, HTTPS                               |
+| Deployment | Three Docker containers (frontend, API, database) on an Ubuntu VPS managed with Coolify          |
+
+We compared each piece with alternatives. Next.js beat Angular and Vue because server rendering loads fast on low-end phones. NestJS beat Django and Rails for its modular structure and because it let us use TypeScript on both sides. PostgreSQL beat MySQL and MongoDB for full ACID transactions on a schema we didn't expect to change much.
+
+<Layers
+  title="Deployment"
+  subtitle="Three containers on one VPS (Ubuntu 22.04) managed with Coolify. Each layer can scale on its own."
+  layers={[
+    { label: "Client", nodes: [{ title: "Phone or browser", text: "Mobile-first, from 320 px wide" }], link: "HTTPS" },
+    { label: "Containers", nodes: [{ title: "Next.js", text: "Server-rendered pages", accent: true }, { title: "NestJS REST API", text: "Modules, services, JWT and role guards", accent: true }], link: "TCP 5432" },
+    { label: "Data", nodes: [{ title: "PostgreSQL", text: "Users, guides, modules, blocks, zones and progress" }] },
+  ]}
+/>
+
+<Gallery
+  title="From prototype to product"
+  subtitle="The map module in the first Figma prototype (then called H2OCollect), and as it shipped."
+  shots={[
+    { src: prototype, alt: "Figma prototype of the map screen, with notes on what the user would see", caption: "Figma prototype" },
+    { src: screenMap, alt: "The finished map module in RecoAgua, with zones marked on a map of Cali", caption: "The finished map module" },
+  ]}
+/>
+
+## Features
+
+### Interactive guides
+
+Content is organized into guides, modules and blocks. A block can be text, a video, an image, a question, a quiz or an interactive exercise. Questions can be multiple choice, true or false, open-ended, matching or ordering, and the interactive exercises include drag and drop, sorting, fill in the blanks and simulations. Blocks and modules are worth points, and the platform tracks each user's progress through them.
+
+<Flow
+  title="The content we wrote"
+  steps={[
+    { value: "4", title: "Guides", text: "Beginner, intermediate or advanced" },
+    { value: "8", title: "Modules", text: "Each worth points" },
+    { value: "33", title: "Blocks", text: "24 of them with check questions" },
+  ]}
+/>
+
+### Rainwater calculator
+
+The calculator estimates how much rainwater a home could collect. Rainfall comes from the user's zone, roof efficiency depends on the roofing material, and system efficiency accounts for losses along the way. It's an estimate for a scenario, not a measurement of water actually collected.
+
+<Formula
+  title="The formula, with the thesis's worked example"
+  subtitle="A home in the south of Cali with a 50 m² green roof, a basic system and 2 people."
+  source="RecoAgua calculator source code; unit test PU-01 in the thesis"
+  terms={[
+    { label: "Rainfall", value: "1,600 mm/year", note: "South zone" },
+    { label: "Area", value: "50 m²" },
+    { label: "Roof efficiency", value: "0.5", note: "Green roof" },
+    { label: "System efficiency", value: "0.6", note: "Basic collection" },
+  ]}
+  result={{ label: "Rainwater per year", value: "24,000 L" }}
+  derived={[
+    { label: "Savings per year", value: "COP 65,640", note: "At 2.735 COP per liter" },
+    { label: "CO₂ avoided per year", value: "12 kg", note: "0.5 kg per 1,000 L" },
+    { label: "Available per person", value: "32.9 L/day", note: "For 2 people" },
+  ]}
+/>
+
+<BarChart
+  title="Roof efficiency by material"
+  subtitle="Share of the rain falling on the roof that the calculator assumes reaches the system."
+  source="RecoAgua calculator source code"
+  headers={["Roof", "Efficiency"]}
+  max={100}
+  rows={[
+    { label: "Metal or zinc", value: 90, display: "90%" },
+    { label: "Tiles or concrete", value: 80, display: "80%" },
+    { label: "Flat roof or terrace", value: 75, display: "75%" },
+    { label: "Fog catcher mesh", value: 50, display: "50%" },
+    { label: "Green roof or garden", value: 50, display: "50%" },
+  ]}
+/>
+
+<BarChart
+  title="System efficiency by collection setup"
+  source="RecoAgua calculator source code"
+  headers={["System", "Efficiency"]}
+  max={100}
+  rows={[
+    { label: "Complete system", value: 95, display: "95%" },
+    { label: "Semi-technical", value: 85, display: "85%" },
+    { label: "Direct collection", value: 70, display: "70%" },
+    { label: "Basic surface collection", value: 60, display: "60%" },
+  ]}
+/>
+
+### Rainfall zone map
+
+A Mapbox map shows the city's zones, grouped by region and city. Each zone has its average rainfall, altitude, average temperature, soil type and recommendations for collecting water there.
+
+### Gamification
+
+Users earn experience points by completing blocks and modules, move up through levels, unlock badges when they pass a threshold, and take on challenges. Challenges are educational, practical or community-based, and each one is rated easy, medium or hard.
+
+### Admin panel
+
+Administrators and moderators manage users, guides, modules and blocks, cities, regions and zones, and challenges, levels and badges from the same panel. Sign-up includes email confirmation, and users can reset their password by email.
+
+<Gallery
+  title="The platform"
+  subtitle="Screens from the deployed app, used in the thesis defense. Personal details are hidden."
+  shots={[
+    { src: screenGuides, alt: "The guides screen with guides, progress and challenges", caption: "Guides, progress and challenges" },
+    { src: screenCalculator, alt: "The rainwater calculator form and its results", caption: "Rainwater calculator" },
+    { src: screenMap, alt: "Map of Cali with rainfall zones", caption: "Rainfall zone map" },
+    { src: screenProfile, alt: "A user profile with experience points and badges", caption: "Profile with points and badges" },
+    { src: screenAdmin, alt: "The admin dashboard with users, completed guides, active challenges and participation", caption: "Admin dashboard", wide: true },
+  ]}
+/>
+
+## Built for the phones people actually have
+
+The survey shaped the interface. Since most people connect by phone, the layout is mobile-first and works down to 320 px wide. For low and mid-range phones, pages render on the server and stay light, with a goal of loading in under 3 seconds on 4G. Since 40% of respondents had at most a high school education, the language is plain and the main features are one tap from the home screen.
+
+## Testing and validation
+
+We documented 113 tests following IEEE 829, plus API checks in Postman. All of them passed after fixing the issues they found, such as an unclear sign-out button and missing sign-up notifications. We assessed quality against ISO/IEC 25010.
+
+<SegmentedBar
+  title="The 113 documented tests"
+  subtitle="95 functional, 13 non-functional and 5 unit tests."
+  headers={["Type", "Tests", "Share"]}
+  parts={[
+    { label: "Functional", value: 95 },
+    { label: "Non-functional", value: 13 },
+    { label: "Unit (Jest)", value: 5 },
+  ]}
+/>
+
+Then we tested it with people. 15 participants used Useberry to sign in, complete a guide, use the calculator, explore the map and review their profile, and all 15 finished.
+
+<BarChart
+  title="Participants who strongly agreed each part was easy to use"
+  source="Useberry study, 15 participants"
+  headers={["Part of the app", "Strongly agreed"]}
+  max={100}
+  rows={[
+    { label: "Profile", value: 100, display: "100%" },
+    { label: "Guides", value: 87, display: "87%" },
+    { label: "Map", value: 87, display: "87%" },
+    { label: "Calculator", value: 80, display: "80%" },
+  ]}
+/>
+
+<Gallery
+  title="How people used the sign-in screen"
+  subtitle="Where participants clicked, and the paths they took. 12 of 15 went straight in; 3 repeated the screen."
+  source="Useberry study, 15 participants"
+  shots={[
+    { src: heatmap, alt: "Click heatmap of the sign-in screen", caption: "Click heatmap" },
+    { src: userFlow, alt: "Flow diagram: 15 participants start, 12 go straight to the home page, 3 repeat sign-in", caption: "Paths through sign-in" },
+  ]}
+/>
+
+In a separate exploratory session, 10 first-semester engineering students and a professor completed 8 tasks and rated each dimension between 6.5 and 7.0 out of 7.
+
+These results show the platform works and is easy to use. They don't prove that households saved water or kept the habit; that would need a longer study.
+
+## What's next
+
+These come from the thesis's future work:
+
+- [ ] A longitudinal study of whether households adopt the practices
+- [ ] IoT sensors that report the water level in each tank
+- [ ] A WCAG 2.1 accessibility audit
+- [ ] Expanding to the rest of the metropolitan area

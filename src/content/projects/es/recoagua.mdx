@@ -1,0 +1,295 @@
+---
+title: "RecoAgua"
+description: "Mi tesis de Ingeniería de Sistemas: una plataforma web que ayuda a los hogares de Cali a recolectar y aprovechar el agua lluvia, con guías interactivas, una calculadora hídrica, un mapa de zonas de pluviosidad y progreso gamificado."
+image: "/images/projects/recoagua/front.png"
+tags: ["Next.js", "NestJS", "PostgreSQL", "Gamificación"]
+order: 3
+url: "/es/projects/recoagua"
+repo: "https://github.com/DanielPenalozaB/recoagua-fe"
+---
+
+import StatGrid from "../../../components/viz/StatGrid.astro";
+import Dumbbell from "../../../components/viz/Dumbbell.astro";
+import BarChart from "../../../components/viz/BarChart.astro";
+import Flow from "../../../components/viz/Flow.astro";
+import Layers from "../../../components/viz/Layers.astro";
+import Gallery from "../../../components/viz/Gallery.astro";
+import Formula from "../../../components/viz/Formula.astro";
+import SegmentedBar from "../../../components/viz/SegmentedBar.astro";
+import prototype from "../../../assets/images/projects/recoagua/prototype-figma.png";
+import screenGuides from "../../../assets/images/projects/recoagua/screen-guides.png";
+import screenCalculator from "../../../assets/images/projects/recoagua/screen-calculator.png";
+import screenMap from "../../../assets/images/projects/recoagua/screen-map.png";
+import screenProfile from "../../../assets/images/projects/recoagua/screen-profile.png";
+import screenAdmin from "../../../assets/images/projects/recoagua/screen-admin.png";
+import heatmap from "../../../assets/images/projects/recoagua/useberry-heatmap.png";
+import userFlow from "../../../assets/images/projects/recoagua/useberry-flow.png";
+
+## Resumen
+
+RecoAgua fue mi tesis de Ingeniería de Sistemas en la UNIAJC (Institución Universitaria Antonio José Camacho), desarrollada con Ismael Yate Calderón y dirigida por Beatriz E. Marín. Es una plataforma web que ayuda a los hogares de Cali, Colombia, a recolectar agua lluvia y usarla donde no hace falta agua potable, como en los sanitarios, el lavado de ropa y la limpieza.
+
+Apoya a los hogares de cuatro formas: las guías interactivas informan, una calculadora estima cuánta agua lluvia podría recoger una vivienda, un mapa muestra las zonas de pluviosidad de la ciudad, y los puntos, niveles, insignias y retos motivan a seguir. Los administradores gestionan todo desde un mismo panel.
+
+Está disponible en [recoagua.com](https://recoagua.com), y el código está en dos repositorios: el [frontend](https://github.com/DanielPenalozaB/recoagua-fe) y el [backend](https://github.com/DanielPenalozaB/recoagua-be).
+
+<StatGrid
+  stats={[
+    { value: "410", label: "Hogares encuestados", note: "95% de confianza y 5% de error" },
+    { value: "26", label: "Casos de uso modelados" },
+    { value: "113", label: "Pruebas documentadas", note: "Todas exitosas tras los ajustes" },
+    { value: "15 / 15", label: "Participantes que terminaron la prueba de usabilidad" },
+  ]}
+/>
+
+## El problema
+
+Los ríos de Cali se deterioran al atravesar la ciudad. Tres de los cuatro ríos principales salen de ella con un Índice de Calidad del Agua «malo», y Cali aporta cerca de la mitad de la contaminación del río Cauca. Las plantas de EMCALI toman el agua potable de esos mismos ríos.
+
+<Dumbbell
+  title="Índice de Calidad del Agua al entrar y al salir de Cali"
+  subtitle="De 0 a 1. Por encima de 0,90 es bueno; 0,50 o menos es malo."
+  source="Datos del DAGMA reportados por Cali Cómo Vamos (2025)"
+  legend={["Al entrar a la ciudad", "Al salir de la ciudad"]}
+  labelHeader="Río"
+  min={0}
+  max={1}
+  ticks={[0, 0.25, 0.5, 0.75, 1]}
+  decimals={2}
+  rows={[
+    { label: "Cali", from: 0.87, to: 0.5 },
+    { label: "Meléndez", from: 0.68, to: 0.43 },
+    { label: "Cauca", from: 0.62, to: 0.45 },
+    { label: "Pance", from: 0.94, to: 0.91 },
+  ]}
+/>
+
+Antes de escribir código, encuestamos a 410 hogares para saber si la recolección de agua lluvia tenía sentido en la ciudad.
+
+<StatGrid
+  stats={[
+    { value: "88%", label: "Depende del acueducto" },
+    { value: "32%", label: "Reporta interrupciones del servicio" },
+    { value: "82,9%", label: "Se conecta a internet por celular" },
+    { value: "75,8%", label: "Tiene un celular de gama baja o media" },
+  ]}
+  source="Encuesta de RecoAgua a hogares, n = 410"
+/>
+
+<BarChart
+  title="En qué usan el agua los hogares"
+  subtitle="Porcentaje de hogares; podían elegir más de un uso. Los tres admiten agua lluvia."
+  source="Encuesta de RecoAgua a hogares, n = 410"
+  headers={["Uso", "Hogares"]}
+  max={100}
+  rows={[
+    { label: "Sanitarios", value: 72.7, display: "72,7%" },
+    { label: "Lavado de ropa", value: 65.4, display: "65,4%" },
+    { label: "Limpieza", value: 55.9, display: "55,9%" },
+  ]}
+/>
+
+<BarChart
+  title="Cómo almacenan el agua hoy"
+  source="Encuesta de RecoAgua a hogares, n = 410"
+  headers={["Almacenamiento", "Hogares"]}
+  max={100}
+  rows={[
+    { label: "Canecas", value: 56.6, display: "56,6%" },
+    { label: "Ningún sistema alternativo", value: 19.5, display: "19,5%" },
+    { label: "Tanques", value: 12.2, display: "12,2%" },
+  ]}
+/>
+
+La mayor parte del agua de los hogares va a usos donde el agua lluvia sirve, y muchos ya la almacenan, aunque de manera informal. Además, el 43,9% de los hogares no aplica ninguna medida para ahorrar agua. Lo que faltaba era conocimiento y herramientas. Los datos de conectividad definieron el formato: una aplicación web liviana y pensada primero para el celular.
+
+## Cómo lo construimos
+
+Usamos ICONIX para el software, que va de los casos de uso a los diagramas de robustez y luego al diseño, y ADDIE para el contenido educativo.
+
+<Flow
+  title="De la encuesta a la validación"
+  subtitle="Los hallazgos de las pruebas volvían a los requerimientos y al diseño."
+  steps={[
+    { title: "Diagnóstico", text: "Encuesta a 410 hogares" },
+    { title: "Requerimientos", text: "26 casos de uso y un prototipo de 13 pantallas en Figma" },
+    { title: "Desarrollo", text: "ICONIX para el software y ADDIE para las guías" },
+    { title: "Verificación", text: "113 pruebas documentadas según IEEE 829" },
+    { title: "Validación", text: "Prueba de usabilidad con 15 personas y una sesión exploratoria con 10" },
+  ]}
+/>
+
+| Capa        | Tecnología                                                                                      |
+| ----------- | ----------------------------------------------------------------------------------------------- |
+| Frontend    | Next.js 16, React 19, TanStack Query y Table, React Hook Form con Zod, Tailwind CSS, Mapbox GL, Recharts |
+| Backend     | NestJS, TypeORM, documentación con Swagger, límite de peticiones, correos con Resend           |
+| Base de datos | PostgreSQL                                                                                    |
+| Seguridad   | bcrypt para las contraseñas, JWT de 1 hora con renovación, guards por rol, HTTPS               |
+| Despliegue  | Tres contenedores Docker (frontend, API y base de datos) en un VPS con Ubuntu gestionado con Coolify |
+
+Comparamos cada pieza con alternativas. Next.js le ganó a Angular y Vue porque el renderizado en el servidor carga rápido en celulares de gama baja. NestJS le ganó a Django y Rails por su estructura modular y porque nos permitía usar TypeScript en ambos lados. PostgreSQL le ganó a MySQL y MongoDB por sus transacciones ACID completas sobre un esquema que no esperábamos cambiar mucho.
+
+<Layers
+  title="Despliegue"
+  subtitle="Tres contenedores en un VPS (Ubuntu 22.04) gestionado con Coolify. Cada capa puede escalar por separado."
+  layers={[
+    { label: "Cliente", nodes: [{ title: "Celular o navegador", text: "Mobile-first, desde 320 px de ancho" }], link: "HTTPS" },
+    { label: "Contenedores", nodes: [{ title: "Next.js", text: "Páginas renderizadas en el servidor", accent: true }, { title: "API REST en NestJS", text: "Módulos, servicios, JWT y guards por rol", accent: true }], link: "TCP 5432" },
+    { label: "Datos", nodes: [{ title: "PostgreSQL", text: "Usuarios, guías, módulos, bloques, zonas y progreso" }] },
+  ]}
+/>
+
+<Gallery
+  title="Del prototipo al producto"
+  subtitle="El módulo de mapa en el primer prototipo en Figma (entonces llamado H2OCollect) y como quedó al final."
+  shots={[
+    { src: prototype, alt: "Prototipo en Figma de la pantalla del mapa, con notas sobre lo que vería el usuario", caption: "Prototipo en Figma" },
+    { src: screenMap, alt: "El módulo de mapa terminado de RecoAgua, con zonas marcadas sobre un mapa de Cali", caption: "El módulo de mapa terminado" },
+  ]}
+/>
+
+## Funcionalidades
+
+### Guías interactivas
+
+El contenido se organiza en guías, módulos y bloques. Un bloque puede ser texto, un video, una imagen, una pregunta, un quiz o un ejercicio interactivo. Las preguntas pueden ser de selección múltiple, falso o verdadero, abiertas, de emparejar o de ordenar, y los ejercicios interactivos incluyen arrastrar y soltar, clasificar, completar espacios y simulaciones. Los bloques y los módulos otorgan puntos, y la plataforma registra el avance de cada usuario.
+
+<Flow
+  title="El contenido que escribimos"
+  steps={[
+    { value: "4", title: "Guías", text: "Principiante, intermedio o avanzado" },
+    { value: "8", title: "Módulos", text: "Cada uno otorga puntos" },
+    { value: "33", title: "Bloques", text: "24 con preguntas de verificación" },
+  ]}
+/>
+
+### Calculadora hídrica
+
+La calculadora estima cuánta agua lluvia podría recoger una vivienda. La lluvia depende de la zona del usuario, la eficiencia del techo depende del material de la cubierta y la del sistema descuenta las pérdidas. Es una estimación de un escenario, no una medición del agua recolectada.
+
+<Formula
+  title="La fórmula, con el ejemplo de la tesis"
+  subtitle="Una vivienda en el sur de Cali con 50 m² de techo verde, un sistema básico y 2 personas."
+  source="Código fuente de la calculadora de RecoAgua; prueba unitaria PU-01 de la tesis"
+  terms={[
+    { label: "Lluvia", value: "1.600 mm/año", note: "Zona Sur" },
+    { label: "Área", value: "50 m²" },
+    { label: "Eficiencia del techo", value: "0,5", note: "Techo verde" },
+    { label: "Eficiencia del sistema", value: "0,6", note: "Captación básica" },
+  ]}
+  result={{ label: "Agua lluvia al año", value: "24.000 L" }}
+  derived={[
+    { label: "Ahorro al año", value: "COP 65.640", note: "A 2,735 COP por litro" },
+    { label: "CO₂ evitado al año", value: "12 kg", note: "0,5 kg por cada 1.000 L" },
+    { label: "Disponible por persona", value: "32,9 L/día", note: "Para 2 personas" },
+  ]}
+/>
+
+<BarChart
+  title="Eficiencia del techo según el material"
+  subtitle="Porcentaje de la lluvia que cae en el techo que la calculadora asume que llega al sistema."
+  source="Código fuente de la calculadora de RecoAgua"
+  headers={["Techo", "Eficiencia"]}
+  max={100}
+  rows={[
+    { label: "Metal o zinc", value: 90, display: "90%" },
+    { label: "Tejas o concreto", value: 80, display: "80%" },
+    { label: "Techo plano o terraza", value: 75, display: "75%" },
+    { label: "Atrapanieblas (malla Raschel)", value: 50, display: "50%" },
+    { label: "Techo verde o jardín", value: 50, display: "50%" },
+  ]}
+/>
+
+<BarChart
+  title="Eficiencia según el sistema de captación"
+  source="Código fuente de la calculadora de RecoAgua"
+  headers={["Sistema", "Eficiencia"]}
+  max={100}
+  rows={[
+    { label: "Sistema completo", value: 95, display: "95%" },
+    { label: "Semi-técnico", value: 85, display: "85%" },
+    { label: "Recolección directa", value: 70, display: "70%" },
+    { label: "Captación superficial básica", value: 60, display: "60%" },
+  ]}
+/>
+
+### Mapa de zonas de pluviosidad
+
+Un mapa hecho con Mapbox muestra las zonas de la ciudad, agrupadas por región y ciudad. Cada zona tiene su lluvia promedio, altitud, temperatura promedio, tipo de suelo y recomendaciones para recolectar agua allí.
+
+### Gamificación
+
+Los usuarios ganan puntos de experiencia al completar bloques y módulos, suben de nivel, desbloquean insignias al superar un umbral y aceptan retos. Los retos son educativos, prácticos o comunitarios, y cada uno tiene una dificultad fácil, media o difícil.
+
+### Panel de administración
+
+Los administradores y moderadores gestionan usuarios, guías, módulos y bloques, ciudades, regiones y zonas, y retos, niveles e insignias desde el mismo panel. El registro incluye confirmación por correo, y los usuarios pueden restablecer su contraseña por correo.
+
+<Gallery
+  title="La plataforma"
+  subtitle="Pantallas de la aplicación desplegada, usadas en la sustentación. Los datos personales están ocultos."
+  shots={[
+    { src: screenGuides, alt: "La pantalla de guías con guías, progreso y retos", caption: "Guías, progreso y retos" },
+    { src: screenCalculator, alt: "El formulario de la calculadora hídrica y sus resultados", caption: "Calculadora hídrica" },
+    { src: screenMap, alt: "Mapa de Cali con las zonas de pluviosidad", caption: "Mapa de zonas de pluviosidad" },
+    { src: screenProfile, alt: "Un perfil de usuario con puntos de experiencia e insignias", caption: "Perfil con puntos e insignias" },
+    { src: screenAdmin, alt: "El panel de administración con usuarios, guías completadas, retos activos y participación", caption: "Panel de administración", wide: true },
+  ]}
+/>
+
+## Pensada para los celulares que la gente tiene
+
+La encuesta definió la interfaz. Como la mayoría se conecta por celular, el diseño es mobile-first y funciona desde 320 px de ancho. Para los celulares de gama baja y media, las páginas se renderizan en el servidor y son livianas, con la meta de cargar en menos de 3 segundos en 4G. Y como el 40% de los encuestados tenía como máximo la secundaria, el lenguaje es claro y las funciones principales están a un toque desde el inicio.
+
+## Pruebas y validación
+
+Documentamos 113 pruebas según IEEE 829, además de pruebas de la API en Postman. Todas pasaron después de corregir los problemas que encontraron, como un botón de cerrar sesión poco visible y notificaciones de registro que faltaban. Evaluamos la calidad con el modelo ISO/IEC 25010.
+
+<SegmentedBar
+  title="Las 113 pruebas documentadas"
+  subtitle="95 funcionales, 13 no funcionales y 5 unitarias."
+  headers={["Tipo", "Pruebas", "Porcentaje"]}
+  parts={[
+    { label: "Funcionales", value: 95 },
+    { label: "No funcionales", value: 13 },
+    { label: "Unitarias (Jest)", value: 5 },
+  ]}
+/>
+
+Después la probamos con personas. 15 participantes usaron Useberry para iniciar sesión, completar una guía, usar la calculadora, explorar el mapa y revisar su perfil, y los 15 terminaron.
+
+<BarChart
+  title="Participantes totalmente de acuerdo en que cada parte era fácil de usar"
+  source="Estudio en Useberry, 15 participantes"
+  headers={["Parte de la aplicación", "Totalmente de acuerdo"]}
+  max={100}
+  rows={[
+    { label: "Perfil", value: 100, display: "100%" },
+    { label: "Guías", value: 87, display: "87%" },
+    { label: "Mapa", value: 87, display: "87%" },
+    { label: "Calculadora", value: 80, display: "80%" },
+  ]}
+/>
+
+<Gallery
+  title="Cómo usaron la pantalla de inicio de sesión"
+  subtitle="Dónde hicieron clic los participantes y qué caminos siguieron. 12 de 15 entraron directo; 3 repitieron la pantalla."
+  source="Estudio en Useberry, 15 participantes"
+  shots={[
+    { src: heatmap, alt: "Mapa de calor de clics en la pantalla de inicio de sesión", caption: "Mapa de calor de clics" },
+    { src: userFlow, alt: "Diagrama de flujo: 15 participantes empiezan, 12 pasan directo al inicio y 3 repiten el inicio de sesión", caption: "Caminos al iniciar sesión" },
+  ]}
+/>
+
+En una sesión exploratoria aparte, 10 estudiantes de primer semestre de Ingeniería y un docente completaron 8 tareas y calificaron cada dimensión entre 6,5 y 7,0 sobre 7.
+
+Estos resultados muestran que la plataforma funciona y es fácil de usar. No demuestran que los hogares ahorraran agua ni que mantuvieran el hábito; para eso haría falta un estudio más largo.
+
+## Próximos pasos
+
+Vienen del trabajo futuro de la tesis:
+
+- [ ] Un estudio longitudinal sobre si los hogares adoptan las prácticas
+- [ ] Sensores IoT que reporten el nivel de agua de cada tanque
+- [ ] Una auditoría de accesibilidad WCAG 2.1
+- [ ] Ampliarla al resto del área metropolitana

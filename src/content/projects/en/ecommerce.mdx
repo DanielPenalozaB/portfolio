@@ -8,11 +8,26 @@ url: "/projects/ecommerce"
 repo: "https://github.com/DanielPenalozaB/ecommerce"
 ---
 
+import StatGrid from "../../../components/viz/StatGrid.astro";
+import ChipGroups from "../../../components/viz/ChipGroups.astro";
+import Flow from "../../../components/viz/Flow.astro";
+import Layers from "../../../components/viz/Layers.astro";
+
 ## Overview
 
 YS Chic is an online store for botanical skincare and clean makeup, built as a monorepo with a Nuxt 4 storefront and a Strapi 5 headless API. The interface implements a Google Stitch design ("Tienda Skincare y Maquillaje"), and the store runs in Colombian pesos.
 
 The catalog, cart, promotions and checkout all work against the API, with demo data seeded on first boot. Payment isn't integrated yet, so checkout creates orders as pending.
+
+<StatGrid
+  stats={[
+    { value: "26", label: "Demo products", note: "Seeded from the design on first boot" },
+    { value: "14", label: "Categories" },
+    { value: "3 + 3", label: "Promo codes and automatic promotions" },
+    { value: "5", label: "Custom public endpoints", note: "All validated with Zod" },
+  ]}
+/>
+
 
 ## The storefront
 
@@ -29,6 +44,21 @@ Every catalog page renders on the server for SEO. The cart and favorites live in
 
 The Strapi content model covers products (simple, variable or bundles, with ingredients, clinical results and FAQs), variants with SKU, stock and low-stock thresholds, categories, brands, collections, skin concerns, ingredients, moderated reviews, shipping methods, samples and newsletter signups. Menus, pages and global settings like VAT and the free-shipping threshold are content too, so they can change without a deploy.
 
+<ChipGroups
+  title="The content model"
+  subtitle="Strapi content types, grouped by area."
+  source="backend/src in the ecommerce repository"
+  code
+  groups={[
+    { name: "Catalog", items: ["product", "product-variant", "product-option", "product-option-value"] },
+    { name: "Taxonomy", items: ["category", "brand", "collection", "tag", "skin-concern", "ingredient"] },
+    { name: "Promotions", items: ["promotion", "promotion-code"] },
+    { name: "Commerce", items: ["order", "shipping-method", "sample", "newsletter-subscriber", "review"] },
+    { name: "Content", items: ["menu", "page", "homepage", "global"] },
+  ]}
+/>
+
+
 A few rules keep the store honest:
 
 - Prices are always recalculated on the server. `POST /api/orders/quote` prices a cart (stock, promotions, gifts, shipping, samples and VAT), and checkout recalculates everything again before it creates the order.
@@ -40,6 +70,19 @@ A few rules keep the store honest:
 
 Promotions can be a percentage, a fixed amount, free shipping, buy X get Y, or a free gift. They can apply to the whole order or to specific products, categories, collections or brands, with minimum subtotals or quantities, date windows, and global or per-customer limits. Automatic promotions run first by priority, then the customer's code. A code that can't be combined is rejected with a message instead of silently replacing a better automatic discount. Discounts are split across order lines, so each line knows what it actually costs.
 
+<Flow
+  title="What a price quote goes through"
+  subtitle="POST /api/orders/quote runs this on the server, and checkout runs it again before creating the order."
+  steps={[
+    { title: "Stock", text: "Each variant in the cart is checked against available stock." },
+    { title: "Automatic promotions", text: "Applied first, in order of priority." },
+    { title: "Customer code", text: "Applied next. A code that can't be combined is rejected with a message." },
+    { title: "Gifts and free shipping", text: "Always combine with the other discounts." },
+    { title: "Shipping, samples and VAT", text: "Added to produce the total, with discounts split across order lines." },
+  ]}
+/>
+
+
 ## Stack
 
 | Layer      | Technology                                                                 |
@@ -49,6 +92,17 @@ Promotions can be a percentage, a fixed amount, free shipping, buy X get Y, or a
 | Database   | PostgreSQL in the Docker stack; throwaway SQLite databases in tests        |
 | Deployment | Docker Compose with Postgres, Strapi, Nuxt and Caddy                       |
 | Quality    | Airbnb ESLint, commitlint, lint-staged, GitHub Actions CI                  |
+
+<Layers
+  title="Deployment"
+  subtitle="One Docker Compose stack. Caddy serves the store and the CMS from the same domain."
+  layers={[
+    { label: "Edge", nodes: [{ title: "Caddy", text: "Storefront domain plus a cms. subdomain, with automatic HTTPS" }], link: "Reverse proxy" },
+    { label: "Apps", nodes: [{ title: "Nuxt 4", text: "Server-rendered storefront", accent: true }, { title: "Strapi 5", text: "Headless commerce API and admin", accent: true }], link: "SQL" },
+    { label: "Data", nodes: [{ title: "PostgreSQL", text: "Catalog, orders, promotions and content" }] },
+  ]}
+/>
+
 
 ## Testing
 

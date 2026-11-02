@@ -8,6 +8,8 @@ url: "/es/projects/volo"
 repo: ""
 ---
 
+import Flow from "../../../components/viz/Flow.astro";
+
 ## Estado
 
 Volo es un concepto. Ya definí el problema, las funcionalidades, las pantallas y la arquitectura, pero todavía no lo he construido, así que todo lo que sigue describe el plan.
@@ -94,6 +96,18 @@ Al iniciar una rutina, la aplicación pasaría a una pantalla de entrenamiento e
 ```
 
 La aplicación funcionaría primero sin conexión. En los gimnasios la señal suele ser mala, así que las rutinas y los datos de ejercicios se copiarían a una base de datos SQLite local, y los entrenamientos se sincronizarían cuando vuelva la conexión.
+
+<Flow
+  title="Sincronización sin conexión planeada"
+  subtitle="Es un diseño, todavía no está construido."
+  steps={[
+    { title: "Registrar una serie", text: "Se guarda de inmediato en SQLite local, marcada como no sincronizada." },
+    { title: "Esperar conexión", text: "Un isolate en segundo plano reintenta periódicamente." },
+    { title: "Resolver conflictos", text: "La última escritura gana, según la marca de tiempo." },
+    { title: "Marcar como sincronizada", text: "El servidor ya tiene el mismo registro." },
+  ]}
+/>
+
 
 Los enfoques que planeo para las partes difíciles:
 

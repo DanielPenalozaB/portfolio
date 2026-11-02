@@ -8,9 +8,23 @@ repo: "https://github.com/danielpenalozab/portfolio"
 url: "/es/projects/portfolio"
 ---
 
+import StatGrid from "../../../components/viz/StatGrid.astro";
+import Flow from "../../../components/viz/Flow.astro";
+import Dumbbell from "../../../components/viz/Dumbbell.astro";
+import BarChart from "../../../components/viz/BarChart.astro";
+
 ## Resumen
 
 Este portafolio muestra lo que construyo y cómo lo construyo. Lo diseñé desde cero en Figma y lo desarrollé con la arquitectura de islas de Astro. Si un sitio dice que le importan el rendimiento y el diseño, debería demostrarlo, así que le puse esa misma exigencia a este.
+
+<StatGrid
+  stats={[
+    { value: "100", label: "Puntuación de PageSpeed en las cuatro categorías", note: "Móvil y escritorio" },
+    { value: "398 → 131 KB", label: "HTML de la página de inicio", note: "Tras sacar los SVG y el CSS incrustados" },
+    { value: "26 → 2", label: "Alertas de seguridad de npm", note: "Las dos que quedan son moderadas y solo afectan el build" },
+  ]}
+/>
+
 
 ## El problema
 
@@ -107,6 +121,17 @@ Pasar de Astro 5 a 7 implicaba saltar dos versiones mayores, y Astro 7 elimina p
 
 El sitio se construye en una imagen Docker de varias etapas que sirve Nginx y se despliega con Coolify. Nginx envía cabeceras de seguridad en cada respuesta (`nosniff`, una política de referer, bloqueo de iframes, una política de permisos y una política de seguridad de contenido mínima), guarda en caché por un año los archivos con hash y obliga a revalidar el HTML en cada visita, así los despliegues se ven de inmediato. Cada pull request ejecuta la verificación de tipos y un build de producción en GitHub Actions.
 
+<Flow
+  title="De un pull request a producción"
+  steps={[
+    { title: "Pull request", text: "GitHub Actions ejecuta astro check y un build de producción." },
+    { title: "Merge", text: "Se integra con squash a master cuando el CI pasa." },
+    { title: "Build", text: "Coolify construye la imagen de varias etapas: Node 22 genera el sitio y Nginx lo sirve." },
+    { title: "Servir", text: "Nginx agrega cabeceras de seguridad, caché larga para los archivos con hash y HTML sin caché." },
+  ]}
+/>
+
+
 ## Rendimiento
 
 PageSpeed Insights en la página de inicio, 2 de noviembre de 2026:
@@ -117,6 +142,68 @@ PageSpeed Insights en la página de inicio, 2 de noviembre de 2026:
 | Accesibilidad          | 100   | 100        |
 | Prácticas recomendadas | 100   | 100        |
 | SEO                    | 100   | 100        |
+
+Todo eso salió de un día de correcciones. Estas son las puntuaciones que cambiaron entre la primera medición de PageSpeed, antes de la auditoría, y la última:
+
+<Dumbbell
+  title="Puntuaciones de PageSpeed antes y después de las correcciones"
+  subtitle="Solo las categorías que cambiaron. El SEO ya estaba en 100 en ambos."
+  source="Mediciones de PageSpeed Insights del 2 de noviembre de 2026, a las 12:58 p. m. y a las 2:03 p. m."
+  legend={["Antes", "Después"]}
+  labelHeader="Puntuación"
+  min={90}
+  max={100}
+  ticks={[90, 95, 100]}
+  rows={[
+    { label: "Rendimiento en móvil", from: 96, to: 100 },
+    { label: "Accesibilidad en móvil", from: 96, to: 100 },
+    { label: "Prácticas recomendadas en móvil", from: 96, to: 100 },
+    { label: "Rendimiento en escritorio", from: 99, to: 100 },
+    { label: "Accesibilidad en escritorio", from: 96, to: 100 },
+  ]}
+/>
+
+<Dumbbell
+  title="Tiempos de pintado antes y después"
+  subtitle="Menos es mejor. First Contentful Paint (FCP) y Largest Contentful Paint (LCP)."
+  source="Mediciones de PageSpeed Insights del 2 de noviembre de 2026, a las 12:58 p. m. y a las 2:03 p. m."
+  legend={["Antes", "Después"]}
+  labelHeader="Métrica"
+  min={0}
+  max={2.5}
+  ticks={[0, 0.5, 1, 1.5, 2, 2.5]}
+  unit=" s"
+  decimals={1}
+  rows={[
+    { label: "FCP en móvil", from: 1.6, to: 0.9 },
+    { label: "LCP en móvil", from: 2.0, to: 1.7 },
+    { label: "FCP en escritorio", from: 0.4, to: 0.3 },
+    { label: "LCP en escritorio", from: 0.7, to: 0.6 },
+  ]}
+/>
+
+<BarChart
+  title="Tamaño del HTML de la página de inicio"
+  subtitle="Tres SVG decorativos (208 KB) y el CSS incrustado pasaron a archivos que se guardan en caché."
+  headers={["Build", "Tamaño"]}
+  highlight={["Después de la auditoría"]}
+  rows={[
+    { label: "Antes de la auditoría", value: 398, display: "398 KB" },
+    { label: "Después de la auditoría", value: 131, display: "131 KB" },
+  ]}
+/>
+
+<BarChart
+  title="Alertas de seguridad de npm"
+  headers={["Etapa", "Alertas"]}
+  highlight={["Después de Astro 7"]}
+  rows={[
+    { label: "Antes de la auditoría", value: 26 },
+    { label: "Después de npm audit fix", value: 8 },
+    { label: "Después de Astro 7", value: 2 },
+  ]}
+/>
+
 
 ## Lo que aprendí
 

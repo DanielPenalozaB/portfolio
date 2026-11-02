@@ -1,0 +1,75 @@
+---
+/**
+ * Horizontal bar chart, one series. Bars share one baseline and one scale.
+ * - Single hue (--viz-1) by default.
+ * - `highlight` switches to emphasis: listed labels in the accent, the rest gray.
+ * Value is printed at each bar tip; hover/focus shows a tooltip; the Figure
+ * renders the same numbers as a table.
+ */
+import Figure from "./Figure.astro";
+
+interface Row {
+  label: string;
+  value: number;
+  /** Formatted value shown at the tip and in the table (defaults to the number). */
+  display?: string;
+}
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  source?: string;
+  rows: Row[];
+  /** Scale maximum. Defaults to the largest value. */
+  max?: number;
+  /** Labels to emphasize; everything else turns gray. */
+  highlight?: string[];
+  /** Table headers: [label column, value column]. */
+  headers?: [string, string];
+}
+
+const { title, subtitle, source, rows, max, highlight, headers } = Astro.props;
+const scaleMax = max ?? Math.max(...rows.map((r) => r.value));
+const fmt = (r: Row) => r.display ?? r.value.toLocaleString();
+const isOn = (r: Row) => !highlight || highlight.includes(r.label);
+---
+
+<Figure
+  title={title}
+  subtitle={subtitle}
+  source={source}
+  table={{
+    headers: headers ?? ["", ""],
+    rows: rows.map((r) => [r.label, fmt(r)]),
+    numeric: [1],
+  }}
+>
+  <ul class="flex flex-col gap-3" role="list">
+    {
+      rows.map((r) => {
+        const pct = scaleMax > 0 ? Math.max(0, (r.value / scaleMax) * 100) : 0;
+        return (
+          <li class="grid grid-cols-1 gap-1 sm:grid-cols-[minmax(0,11rem)_1fr] sm:items-center sm:gap-4">
+            <span class="text-sm text-[color:var(--viz-text-2)]">{r.label}</span>
+            <div
+              class="viz-hit relative flex items-center gap-2"
+              tabindex="0"
+              aria-label={`${r.label}: ${fmt(r)}`}
+            >
+              <div
+                class="viz-mark h-4 shrink-0 rounded-r-[4px]"
+                style={`width:calc((100% - 5rem) * ${pct / 100});min-width:2px;background:${isOn(r) ? "var(--viz-1)" : "var(--viz-muted)"}`}
+              />
+              <span class="shrink-0 text-sm font-medium text-[color:var(--viz-text)]">
+                {fmt(r)}
+              </span>
+              <span class="viz-tip" aria-hidden="true">
+                {r.label}: {fmt(r)}
+              </span>
+            </div>
+          </li>
+        );
+      })
+    }
+  </ul>
+</Figure>

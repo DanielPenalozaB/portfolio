@@ -8,11 +8,26 @@ url: "/es/projects/ecommerce"
 repo: "https://github.com/DanielPenalozaB/ecommerce"
 ---
 
+import StatGrid from "../../../components/viz/StatGrid.astro";
+import ChipGroups from "../../../components/viz/ChipGroups.astro";
+import Flow from "../../../components/viz/Flow.astro";
+import Layers from "../../../components/viz/Layers.astro";
+
 ## Resumen
 
 YS Chic es una tienda en línea de skincare botánico y maquillaje clean, construida como monorepo con un storefront en Nuxt 4 y una API headless en Strapi 5. La interfaz implementa un diseño de Google Stitch ("Tienda Skincare y Maquillaje"), y la tienda trabaja en pesos colombianos.
 
 El catálogo, el carrito, las promociones y el checkout funcionan contra la API, con datos de demostración que se cargan en el primer arranque. La pasarela de pagos todavía no está integrada, así que el checkout crea las órdenes como pendientes.
+
+<StatGrid
+  stats={[
+    { value: "26", label: "Productos de demostración", note: "Cargados desde el diseño en el primer arranque" },
+    { value: "14", label: "Categorías" },
+    { value: "3 + 3", label: "Códigos y promociones automáticas" },
+    { value: "5", label: "Endpoints públicos propios", note: "Todos validados con Zod" },
+  ]}
+/>
+
 
 ## La tienda
 
@@ -29,6 +44,21 @@ Todas las páginas del catálogo se renderizan en el servidor para el SEO. El ca
 
 El modelo de contenido de Strapi incluye productos (simples, con variantes o en paquete, con ingredientes, resultados clínicos y preguntas frecuentes), variantes con SKU, inventario y umbral de stock bajo, categorías, marcas, colecciones, preocupaciones de la piel, ingredientes, reseñas moderadas, métodos de envío, muestras y suscripciones al boletín. Los menús, las páginas y la configuración global, como el IVA y el monto para el envío gratis, también son contenido, así que se pueden cambiar sin desplegar.
 
+<ChipGroups
+  title="El modelo de contenido"
+  subtitle="Tipos de contenido de Strapi, agrupados por área."
+  source="backend/src en el repositorio de ecommerce"
+  code
+  groups={[
+    { name: "Catálogo", items: ["product", "product-variant", "product-option", "product-option-value"] },
+    { name: "Taxonomía", items: ["category", "brand", "collection", "tag", "skin-concern", "ingredient"] },
+    { name: "Promociones", items: ["promotion", "promotion-code"] },
+    { name: "Comercio", items: ["order", "shipping-method", "sample", "newsletter-subscriber", "review"] },
+    { name: "Contenido", items: ["menu", "page", "homepage", "global"] },
+  ]}
+/>
+
+
 Unas cuantas reglas mantienen la tienda confiable:
 
 - Los precios siempre se recalculan en el servidor. `POST /api/orders/quote` cotiza un carrito (inventario, promociones, regalos, envío, muestras e IVA), y el checkout vuelve a calcular todo antes de crear la orden.
@@ -40,6 +70,19 @@ Unas cuantas reglas mantienen la tienda confiable:
 
 Las promociones pueden ser un porcentaje, un monto fijo, envío gratis, lleve X y obtenga Y, o un regalo. Pueden aplicar a toda la orden o a productos, categorías, colecciones o marcas específicas, con subtotales o cantidades mínimas, fechas de vigencia y límites globales o por cliente. Primero se aplican las promociones automáticas según su prioridad y luego el código del cliente. Un código que no se puede combinar se rechaza con un mensaje en lugar de reemplazar en silencio un descuento automático mejor. Los descuentos se reparten entre las líneas de la orden, así cada línea sabe cuánto cuesta en realidad.
 
+<Flow
+  title="Por lo que pasa una cotización"
+  subtitle="POST /api/orders/quote lo ejecuta en el servidor, y el checkout lo vuelve a ejecutar antes de crear la orden."
+  steps={[
+    { title: "Inventario", text: "Cada variante del carrito se valida contra el inventario disponible." },
+    { title: "Promociones automáticas", text: "Se aplican primero, según su prioridad." },
+    { title: "Código del cliente", text: "Se aplica después. Un código que no se puede combinar se rechaza con un mensaje." },
+    { title: "Regalos y envío gratis", text: "Siempre se combinan con los demás descuentos." },
+    { title: "Envío, muestras e IVA", text: "Se suman para dar el total, con los descuentos repartidos entre las líneas." },
+  ]}
+/>
+
+
 ## Stack
 
 | Capa        | Tecnología                                                                  |
@@ -49,6 +92,17 @@ Las promociones pueden ser un porcentaje, un monto fijo, envío gratis, lleve X 
 | Base de datos | PostgreSQL en el stack de Docker; bases SQLite desechables en las pruebas |
 | Despliegue  | Docker Compose con Postgres, Strapi, Nuxt y Caddy                           |
 | Calidad     | ESLint de Airbnb, commitlint, lint-staged, CI en GitHub Actions             |
+
+<Layers
+  title="Despliegue"
+  subtitle="Un solo stack de Docker Compose. Caddy sirve la tienda y el CMS desde el mismo dominio."
+  layers={[
+    { label: "Entrada", nodes: [{ title: "Caddy", text: "Dominio de la tienda más un subdominio cms., con HTTPS automático" }], link: "Proxy inverso" },
+    { label: "Aplicaciones", nodes: [{ title: "Nuxt 4", text: "Tienda renderizada en el servidor", accent: true }, { title: "Strapi 5", text: "API de comercio headless y administración", accent: true }], link: "SQL" },
+    { label: "Datos", nodes: [{ title: "PostgreSQL", text: "Catálogo, órdenes, promociones y contenido" }] },
+  ]}
+/>
+
 
 ## Pruebas
 
