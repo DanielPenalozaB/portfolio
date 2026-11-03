@@ -3,7 +3,7 @@ import { ORBIT_RINGS } from "../data/orbits";
 import { getLocaleFromUrl, useTranslations, type Locale } from "../i18n";
 import OrbitItem from "./OrbitItem.astro";
 import ProfileCard from "./ProfileCard.astro";
-import DotGrid from "./DotGrid.jsx";
+import DotGrid from "./DotGrid.astro";
 
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
@@ -101,7 +101,6 @@ const t = useTranslations(locale);
   </div>
 
   <DotGrid
-    client:idle
     dotSize={5}
     gap={15}
     baseColor="#F1F0F0"
@@ -110,7 +109,6 @@ const t = useTranslations(locale);
     proximity={80}
     shockRadius={250}
     shockStrength={18}
-    resistance={750}
     returnDuration={0.5}
   />
 </section>
@@ -140,95 +138,87 @@ const t = useTranslations(locale);
   import gsap from "gsap";
 
   function initOrbitalHero() {
+    const hero = document.getElementById("orbital-hero");
+    if (!hero || hero.dataset.ready) return;
+    hero.dataset.ready = "true";
+
+    // ORBITAL ANIMATIONS
+    // The orbits are CSS animations (see OrbitItem). Hovering a ring slows it down by
+    // easing the playback rate of that ring's animations.
+    const orbitsContainer = document.getElementById("orbits-container");
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    // ORBITAL ANIMATIONS
-    const arms = document.querySelectorAll<HTMLElement>(".orbit-arm");
-    const orbitsContainer = document.getElementById("orbits-container");
+    if (orbitsContainer && !prefersReducedMotion) {
+      const rings = new Map<
+        number,
+        { rate: number; animations: Animation[] }
+      >();
 
-    if (arms.length === 0) return;
+      const getRing = (radius: number) => {
+        let ring = rings.get(radius);
+        if (!ring) {
+          ring = { rate: 1, animations: [] };
+          rings.set(radius, ring);
+        }
+        return ring;
+      };
 
-    const orbitTimelines: Map<number, gsap.core.Timeline> = new Map();
-
-    const getScale = () => {
-      if (!orbitsContainer) return 1;
-      const style = window.getComputedStyle(orbitsContainer);
-      const matrix = new DOMMatrixReadOnly(style.transform);
-      return matrix.a || 1;
-    };
-
-    arms.forEach((arm) => {
-      const speed = parseFloat(arm.dataset.speed || "25");
-      const direction = parseFloat(arm.dataset.direction || "1");
-      const radius = parseFloat(arm.dataset.radius || "353");
-      const initialAngle = parseFloat(arm.dataset.initialAngle || "0");
-      const rotator = arm.querySelector(".orbit-item-rotator");
-
-      gsap.set(arm, { rotation: initialAngle });
-      if (rotator) {
-        gsap.set(rotator, { rotation: -initialAngle });
-      }
-
-      if (prefersReducedMotion) return;
-
-      if (!orbitTimelines.has(radius)) {
-        orbitTimelines.set(radius, gsap.timeline());
-      }
-      const timeline = orbitTimelines.get(radius)!;
-
-      timeline.to(
-        arm,
-        {
-          rotation: `+=${360 * direction}`,
-          duration: speed,
-          repeat: -1,
-          ease: "none",
-        },
-        0,
-      );
-
-      if (rotator) {
-        timeline.to(
-          rotator,
-          {
-            rotation: `-=${360 * direction}`,
-            duration: speed,
-            repeat: -1,
-            ease: "none",
-          },
-          0,
-        );
-      }
-    });
-
-    if (orbitsContainer) {
-      const hitZone = 60;
-      orbitsContainer.addEventListener("mousemove", (e) => {
-        const rect = orbitsContainer.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const dist = Math.sqrt(
-          (e.clientX - centerX) ** 2 + (e.clientY - centerY) ** 2,
-        );
-
-        const scale = getScale();
-
-        orbitTimelines.forEach((tl, radius) => {
-          const isHovered = Math.abs(dist - radius * scale) < hitZone * scale;
-          gsap.to(tl, {
-            timeScale: isHovered ? 0.1 : 1,
-            duration: 0.6,
-            overwrite: true,
+      // Animations are collected on first hover, so nothing runs at load.
+      const collectAnimations = () => {
+        if (rings.size > 0) return;
+        orbitsContainer
+          .querySelectorAll<HTMLElement>(".orbit-arm")
+          .forEach((arm) => {
+            const radius = parseFloat(arm.dataset.radius || "0");
+            getRing(radius).animations.push(
+              ...arm.getAnimations({ subtree: true }),
+            );
           });
+      };
+
+      const setRingRate = (radius: number, rate: number) => {
+        const ring = getRing(radius);
+        gsap.to(ring, {
+          rate,
+          duration: 0.6,
+          overwrite: true,
+          onUpdate: () => {
+            ring.animations.forEach((animation) => {
+              animation.playbackRate = ring.rate;
+            });
+          },
         });
+      };
+
+      const hitZone = 60;
+      let hovered: number | null = null;
+
+      orbitsContainer.addEventListener("mousemove", (e) => {
+        collectAnimations();
+        const rect = orbitsContainer.getBoundingClientRect();
+        // The container is scaled down on small screens; rect is the scaled box.
+        const scale = rect.width / orbitsContainer.offsetWidth || 1;
+        const dist = Math.hypot(
+          e.clientX - (rect.left + rect.width / 2),
+          e.clientY - (rect.top + rect.height / 2),
+        );
+
+        let next: number | null = null;
+        rings.forEach((_, radius) => {
+          if (Math.abs(dist - radius * scale) < hitZone * scale) next = radius;
+        });
+
+        if (next === hovered) return;
+        if (hovered !== null) setRingRate(hovered, 1);
+        if (next !== null) setRingRate(next, 0.1);
+        hovered = next;
       });
 
       orbitsContainer.addEventListener("mouseleave", () => {
-        orbitTimelines.forEach((tl) => {
-          gsap.to(tl, { timeScale: 1, duration: 0.6, overwrite: true });
-        });
+        if (hovered !== null) setRingRate(hovered, 1);
+        hovered = null;
       });
     }
 
@@ -286,6 +276,6 @@ const t = useTranslations(locale);
     }
   }
 
-  requestAnimationFrame(initOrbitalHero);
-  document.addEventListener("astro:page-load", () => requestAnimationFrame(initOrbitalHero));
+  // Fires on the first load and after every client-side navigation.
+  document.addEventListener("astro:page-load", initOrbitalHero);
 </script>
