@@ -1,0 +1,321 @@
+---
+// Interactive dot grid behind the hero. Plain script instead of a React island, so the
+// homepage doesn't download React just to draw a canvas.
+interface Props {
+  dotSize?: number;
+  gap?: number;
+  baseColor?: string;
+  darkBaseColor?: string;
+  activeColor?: string;
+  proximity?: number;
+  speedTrigger?: number;
+  shockRadius?: number;
+  shockStrength?: number;
+  maxSpeed?: number;
+  returnDuration?: number;
+}
+
+const {
+  dotSize = 16,
+  gap = 32,
+  baseColor = "#5227FF",
+  darkBaseColor,
+  activeColor = "#5227FF",
+  proximity = 150,
+  speedTrigger = 100,
+  shockRadius = 250,
+  shockStrength = 5,
+  maxSpeed = 5000,
+  returnDuration = 1.5,
+} = Astro.props;
+
+const config = JSON.stringify({
+  dotSize,
+  gap,
+  baseColor,
+  darkBaseColor: darkBaseColor ?? baseColor,
+  activeColor,
+  proximity,
+  speedTrigger,
+  shockRadius,
+  shockStrength,
+  maxSpeed,
+  returnDuration,
+});
+---
+
+<div
+  class="dot-grid pointer-events-none absolute inset-0 z-0"
+  data-dot-grid={config}
+>
+  <canvas class="absolute inset-0 h-full w-full"></canvas>
+</div>
+
+<script>
+  import gsap from "gsap";
+
+  interface Config {
+    dotSize: number;
+    gap: number;
+    baseColor: string;
+    darkBaseColor: string;
+    activeColor: string;
+    proximity: number;
+    speedTrigger: number;
+    shockRadius: number;
+    shockStrength: number;
+    maxSpeed: number;
+    returnDuration: number;
+  }
+
+  interface Dot {
+    cx: number;
+    cy: number;
+    xOffset: number;
+    yOffset: number;
+    pushed: boolean;
+  }
+
+  const MAX_PUSH = 8;
+  const MOVE_THROTTLE_MS = 50;
+
+  function hexToRgb(hex: string) {
+    const m = hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+    if (!m) return { r: 0, g: 0, b: 0 };
+    return {
+      r: parseInt(m[1], 16),
+      g: parseInt(m[2], 16),
+      b: parseInt(m[3], 16),
+    };
+  }
+
+  function initDotGrid(wrapper: HTMLElement): () => void {
+    const canvas = wrapper.querySelector("canvas");
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx || !window.Path2D) return () => {};
+
+    const cfg: Config = JSON.parse(wrapper.dataset.dotGrid || "{}");
+    const activeRgb = hexToRgb(cfg.activeColor);
+    const circle = new Path2D();
+    circle.arc(0, 0, cfg.dotSize / 2, 0, Math.PI * 2);
+
+    let dots: Dot[] = [];
+    let width = 0;
+    let height = 0;
+    let visible = true;
+    let frame = 0;
+    const pointer = {
+      x: -1e6,
+      y: -1e6,
+      lastTime: 0,
+      lastX: 0,
+      lastY: 0,
+      lastMove: 0,
+    };
+
+    const isDark = () => document.documentElement.classList.contains("dark");
+
+    const draw = () => {
+      frame = 0;
+      const baseColor = isDark() ? cfg.darkBaseColor : cfg.baseColor;
+      const baseRgb = hexToRgb(baseColor);
+      const proxSq = cfg.proximity * cfg.proximity;
+
+      ctx.clearRect(0, 0, width, height);
+      for (const dot of dots) {
+        const dx = dot.cx - pointer.x;
+        const dy = dot.cy - pointer.y;
+        const dsq = dx * dx + dy * dy;
+
+        let fill = baseColor;
+        if (dsq <= proxSq) {
+          const t = 1 - Math.sqrt(dsq) / cfg.proximity;
+          const r = Math.round(baseRgb.r + (activeRgb.r - baseRgb.r) * t);
+          const g = Math.round(baseRgb.g + (activeRgb.g - baseRgb.g) * t);
+          const b = Math.round(baseRgb.b + (activeRgb.b - baseRgb.b) * t);
+          fill = `rgb(${r},${g},${b})`;
+        }
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
+        ctx.translate(dot.cx + dot.xOffset, dot.cy + dot.yOffset);
+        ctx.fillStyle = fill;
+        ctx.fill(circle);
+      }
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    };
+
+    // Draws on the next frame, at most once per frame, and only while on screen.
+    const requestDraw = () => {
+      if (!frame && visible) frame = requestAnimationFrame(draw);
+    };
+
+    let dpr = window.devicePixelRatio || 1;
+
+    // ResizeObserver reports the size without forcing a synchronous layout.
+    const buildGrid = (w: number, h: number) => {
+      width = w;
+      height = h;
+      dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+
+      const cell = cfg.dotSize + cfg.gap;
+      const cols = Math.floor((w + cfg.gap) / cell);
+      const rows = Math.floor((h + cfg.gap) / cell);
+      const startX = (w - (cell * cols - cfg.gap)) / 2 + cfg.dotSize / 2;
+      const startY = (h - (cell * rows - cfg.gap)) / 2 + cfg.dotSize / 2;
+
+      dots = [];
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          dots.push({
+            cx: startX + x * cell,
+            cy: startY + y * cell,
+            xOffset: 0,
+            yOffset: 0,
+            pushed: false,
+          });
+        }
+      }
+      requestDraw();
+    };
+
+    const resizeObserver = new ResizeObserver(([entry]) => {
+      buildGrid(entry.contentRect.width, entry.contentRect.height);
+    });
+    resizeObserver.observe(wrapper);
+
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        requestDraw();
+      },
+      { threshold: 0.1 },
+    );
+    visibilityObserver.observe(wrapper);
+
+    // Redraw when the theme toggles.
+    const themeObserver = new MutationObserver(requestDraw);
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    const pushDot = (dot: Dot, pushX: number, pushY: number) => {
+      const mag = Math.hypot(pushX, pushY);
+      if (mag > MAX_PUSH) {
+        pushX *= MAX_PUSH / mag;
+        pushY *= MAX_PUSH / mag;
+      }
+
+      dot.pushed = true;
+      gsap.killTweensOf(dot);
+      gsap.to(dot, {
+        xOffset: pushX,
+        yOffset: pushY,
+        duration: 0.3,
+        ease: "power2.out",
+        onUpdate: requestDraw,
+        onComplete: () => {
+          dot.pushed = false;
+          gsap.to(dot, {
+            xOffset: 0,
+            yOffset: 0,
+            duration: cfg.returnDuration,
+            ease: "power3.out",
+            onUpdate: requestDraw,
+          });
+        },
+      });
+    };
+
+    const onMove = (e: MouseEvent) => {
+      const now = performance.now();
+      if (now - pointer.lastMove < MOVE_THROTTLE_MS) return;
+      pointer.lastMove = now;
+
+      const dt = pointer.lastTime ? now - pointer.lastTime : 16;
+      let vx = ((e.clientX - pointer.lastX) / dt) * 1000;
+      let vy = ((e.clientY - pointer.lastY) / dt) * 1000;
+      let speed = Math.hypot(vx, vy);
+      if (speed > cfg.maxSpeed) {
+        vx *= cfg.maxSpeed / speed;
+        vy *= cfg.maxSpeed / speed;
+        speed = cfg.maxSpeed;
+      }
+      pointer.lastTime = now;
+      pointer.lastX = e.clientX;
+      pointer.lastY = e.clientY;
+
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = e.clientX - rect.left;
+      pointer.y = e.clientY - rect.top;
+      requestDraw();
+
+      if (!visible || speed <= cfg.speedTrigger) return;
+      for (const dot of dots) {
+        const dirX = dot.cx - pointer.x;
+        const dirY = dot.cy - pointer.y;
+        const dist = Math.hypot(dirX, dirY);
+        if (dist < cfg.proximity && !dot.pushed) {
+          const norm = dist || 1;
+          pushDot(
+            dot,
+            (dirX / norm) * 6 + vx * 0.001,
+            (dirY / norm) * 6 + vy * 0.001,
+          );
+        }
+      }
+    };
+
+    const onClick = (e: MouseEvent) => {
+      if (!visible) return;
+      const rect = canvas.getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+      for (const dot of dots) {
+        const dirX = dot.cx - cx;
+        const dirY = dot.cy - cy;
+        const dist = Math.hypot(dirX, dirY);
+        if (dist < cfg.shockRadius && !dot.pushed) {
+          const falloff = Math.max(0, 1 - dist / cfg.shockRadius);
+          const norm = dist || 1;
+          const force = cfg.shockStrength * falloff * 3;
+          pushDot(dot, (dirX / norm) * force, (dirY / norm) * force);
+        }
+      }
+    };
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (!reducedMotion) {
+      window.addEventListener("mousemove", onMove, { passive: true });
+      window.addEventListener("click", onClick);
+    }
+
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      visibilityObserver.disconnect();
+      themeObserver.disconnect();
+      dots.forEach((dot) => gsap.killTweensOf(dot));
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("click", onClick);
+    };
+  }
+
+  let cleanups: Array<() => void> = [];
+
+  document.addEventListener("astro:page-load", () => {
+    cleanups = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-dot-grid]"),
+    ).map(initDotGrid);
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    cleanups.forEach((cleanup) => cleanup());
+    cleanups = [];
+  });
+</script>

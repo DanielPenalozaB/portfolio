@@ -10,11 +10,25 @@ interface Props {
   darkStandalone?: boolean;
 }
 
-const { data: project, class: className, isFeatured, darkStandalone } =
-  Astro.props;
+const {
+  data: project,
+  class: className,
+  isFeatured,
+  darkStandalone,
+} = Astro.props;
 
 const slug = project.url?.split("/").pop() || "";
 const optimizedImage = await getProjectImage(project.image);
+
+// Rendered image width: the grid is max-w-5xl (two columns from lg), minus the card's
+// p-4 padding. Phones lose the page gutter too: px-10 on the homepage section, px-6 on
+// the standalone projects page.
+const phoneWidth = darkStandalone
+  ? "calc(100vw - 80px)"
+  : "calc(100vw - 112px)";
+const imageSizes = isFeatured
+  ? `(min-width: 1104px) 992px, ${phoneWidth}`
+  : `(min-width: 1104px) 464px, (min-width: 1024px) calc(50vw - 88px), ${phoneWidth}`;
 const titleColor = darkStandalone
   ? "text-stone-700! dark:text-stone-300!"
   : "text-stone-300!";
@@ -38,29 +52,31 @@ const tagBg = darkStandalone
         : "bg-stone-400/15",
     ]}
   >
-    {optimizedImage ? (
-      <Image
-        src={optimizedImage}
-        alt={project.title}
-        widths={[400, 800, 1200]}
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
-        format="webp"
-        quality={80}
-        class="aspect-video h-full w-full rounded-2xl! object-cover sm:aspect-21/9"
-        loading="lazy"
-        transition:name={`project-img-${slug}`}
-      />
-    ) : (
-      <img
-        src={project.image}
-        alt={project.title}
-        width="800"
-        height="450"
-        class="aspect-video h-full w-full rounded-2xl! object-cover sm:aspect-21/9"
-        loading="lazy"
-        transition:name={`project-img-${slug}`}
-      />
-    )}
+    {
+      optimizedImage ? (
+        <Image
+          src={optimizedImage}
+          alt={project.title}
+          widths={[400, 560, 800, 1000, 1400]}
+          sizes={imageSizes}
+          format="webp"
+          quality={80}
+          class="aspect-video h-full w-full rounded-2xl! object-cover sm:aspect-21/9"
+          loading="lazy"
+          transition:name={`project-img-${slug}`}
+        />
+      ) : (
+        <img
+          src={project.image}
+          alt={project.title}
+          width="800"
+          height="450"
+          class="aspect-video h-full w-full rounded-2xl! object-cover sm:aspect-21/9"
+          loading="lazy"
+          transition:name={`project-img-${slug}`}
+        />
+      )
+    }
   </a>
   <div
     class="flex w-full flex-col items-start gap-4 sm:flex-row sm:items-center"
