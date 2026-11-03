@@ -20,9 +20,10 @@ export default defineConfig({
     },
   },
   build: {
-    // "auto" inlines small stylesheets and links large ones so browsers can cache them
-    // across pages instead of re-downloading ~80 KB of CSS inside every HTML document.
-    inlineStylesheets: "auto",
+    // Inline all CSS so the first paint doesn't wait on a separate stylesheet request.
+    // This costs ~15 KB (gzip) per page and the CSS can't be cached across pages, but
+    // the render-blocking request was what held back Speed Index on mobile.
+    inlineStylesheets: "always",
   },
   vite: {
     plugins: [tailwindcss()],
